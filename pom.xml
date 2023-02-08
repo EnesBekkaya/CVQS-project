@@ -5,6 +5,8 @@
     <packaging>pom</packaging>
     <modules>
         <module>terminal-service</module>
+		<module>service-parent</module>
+        <module>user-management-service</module>
     </modules>
     <parent>
 		<groupId>org.springframework.boot</groupId>

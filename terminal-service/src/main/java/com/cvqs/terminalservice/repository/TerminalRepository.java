@@ -11,6 +11,8 @@ public interface TerminalRepository extends JpaRepository<Terminal,String> {
     List<Terminal>findTerminalByActive(Boolean active);
     Page<Terminal> findTerminalByActive(Boolean active, Pageable pageable);
 
+    List<Terminal> findTerminalBySection(String section);
+
 
 
 }

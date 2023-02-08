@@ -37,4 +37,11 @@ public class TerminalManager implements TerminalService {
         Page<TerminalDto> terminalDtos = terminals.map(terminal -> modelMapper.map(terminal, TerminalDto.class));
         return terminalDtos;
     }
+
+    @Override
+    public List<TerminalDto> findTerminalBySection(String section) {
+        List <Terminal> terminals=terminalRepository.findTerminalBySection(section);
+        List<TerminalDto> terminalDtos=terminals.stream().map(terminal1 -> modelMapper.map(terminal1,TerminalDto.class)).collect(Collectors.toList());
+        return terminalDtos;
+    }
 }

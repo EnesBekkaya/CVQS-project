@@ -28,5 +28,10 @@ public class TerminalController {
         return ResponseEntity.ok(terminalService.pagination(true,pageSize,page));
 
     }
+    @RequestMapping("/filter")
+    public ResponseEntity<List<TerminalDto>>getBySection(@RequestParam String section ){
+        return ResponseEntity.ok(terminalService.findTerminalBySection(section));
+
+    }
 
 }

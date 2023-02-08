@@ -8,14 +8,15 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>terminal-service</artifactId>
+    <artifactId>user-management-service</artifactId>
     <packaging>jar</packaging>
 
-    <name>terminal-service</name>
+    <name>user-management-service</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-            <java.version>17</java.version>
+        <java.version>17</java.version>
+
     </properties>
 
     <dependencies>
