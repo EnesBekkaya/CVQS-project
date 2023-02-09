@@ -17,15 +17,15 @@ public class Terminal {
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "uuid")
     @Column(length = 36, nullable = false, updatable = false)
     private String id;
-    @Column(name="name")
+    @Column(name="name",nullable = false)
     @Getter
     @Setter
     private String name;
-    @Column(name="active")
+    @Column(name="active",nullable = false)
     @Getter
     @Setter
     private Boolean active;
-    @Column(name="section")
+    @Column(name="section",nullable = false)
     @Getter
     @Setter
     private String section;

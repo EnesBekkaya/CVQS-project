@@ -3,6 +3,7 @@ package com.cvqs.usermanagementservice.model;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Where;
 
 import java.util.List;
 @Entity
@@ -10,6 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @EqualsAndHashCode(of={"id"})
 @Table(name="users")
+@Where(clause = "deleted = false")
 public class User {
     @Id
     @Getter
@@ -19,20 +21,25 @@ public class User {
     private String id;
     @Getter
     @Setter
-    @Column(name="name")
+    @Column(name="name",nullable = false)
     private String name;
     @Getter
     @Setter
-    @Column(name="last_name")
+    @Column(name="last_name",nullable = false)
     private String lastName;
     @Getter
     @Setter
-    @Column(name="user_name")
+    @Column(name="user_name",nullable = false)
     private String userName;
     @Getter
     @Setter
     @ManyToMany(fetch = FetchType.EAGER)
-    @Column(name="roles")
+    @Column(name="roles",nullable = false)
     private List<Role> roles;
+    @Getter
+    @Setter
+    @Column(name="deleted")
+    private boolean deleted=false;
+
 
 }

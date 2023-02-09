@@ -12,10 +12,9 @@ import org.hibernate.annotations.GenericGenerator;
 public class Role {
     @Id
     @Getter
-    @GenericGenerator(name = "uuid", strategy = "uuid")
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "uuid")
-    @Column(length = 36, nullable = false, updatable = false)
-    private String id;
+    @SequenceGenerator(name = "seq_role",allocationSize = 1)
+    @GeneratedValue(generator = "seq_role",strategy = GenerationType.IDENTITY)
+    private int id;
     @Column(name = "name")
     @Getter
     @Setter

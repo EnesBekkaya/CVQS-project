@@ -30,7 +30,6 @@ public class UserManager implements UserService {
         User user=modelMapper.map(userDto,User.class);
         return modelMapper.map(userRepository.save(user), UserDto.class);
     }
-//tamamlanmadı
     @Override
     public UserDto updateUser(UserDto userDto) {
         User user=userRepository.findById(userDto.getId()).orElseThrow(() -> new EntityNotFoundException("user can't be found"));;
@@ -38,8 +37,14 @@ public class UserManager implements UserService {
         user.setName(userDto.getName());
         user.setLastName(userDto.getLastName());
         user.setRoles(userDto.getRoles());
-        final User savedUser=userRepository.save(user);
 
-        return null;
+        return modelMapper.map(userRepository.save(user),UserDto.class);
+    }
+
+    @Override
+    public UserDto delete(UserDto userDto) {
+        User user=userRepository.findById(userDto.getId()).orElseThrow(() -> new EntityNotFoundException("user can't be found"));;
+        user.setDeleted(true);
+        return modelMapper.map(userRepository.save(user),UserDto.class);
     }
 }
