@@ -32,7 +32,7 @@ public class DefectManager implements DefectService {
 
         Defect defect=defectRepository.getDefectsByTypeAndVehichle(defectDto.getType(),vehichle);
         if(defect==null) {
-            defectDto.getLocation().forEach(location -> {
+            defectDto.getLocations().forEach(location -> {
                 savedLocation.setX(location.getX());
                 savedLocation.setY(location.getY());
                 savedLocation.setDefect(newDefect);
@@ -44,15 +44,21 @@ public class DefectManager implements DefectService {
             return modelMapper.map(defectRepository.save(newDefect), DefectDto.class);
         }
         else {
-            locationService.save(defectDto.getLocation(),defect);
+            locationService.save(defectDto.getLocations(),defect);
             return modelMapper.map(defect,DefectDto.class);
         }
     }
     @Override
     public List<DefectDto> getAll() {
         List <Defect> defects=defectRepository.findAll();
-        List<DefectDto> defectDtos=defects.stream().map(defect1 -> modelMapper.map(defect1,DefectDto.class)).collect(Collectors.toList());
-        return defectDtos;
+        return defects.stream().map(defect1 -> modelMapper.map(defect1,DefectDto.class)).collect(Collectors.toList());
     }
+
+    @Override
+    public List<DefectDto> findByRegistrationPlate(String registrationPlate) {
+        List<Defect> defects=defectRepository.findByRegistrationPlate( registrationPlate);
+        return defects.stream().map(defect -> modelMapper.map(defect, DefectDto.class)).collect(Collectors.toList());
+    }
+
 
 }

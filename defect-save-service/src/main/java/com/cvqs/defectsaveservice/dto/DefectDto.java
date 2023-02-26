@@ -8,5 +8,5 @@ import java.util.List;
 public class DefectDto {
     private String type;
     private Vehichle vehichle;
-    private List<Location> location;
+    private List<Location> locations;
 }

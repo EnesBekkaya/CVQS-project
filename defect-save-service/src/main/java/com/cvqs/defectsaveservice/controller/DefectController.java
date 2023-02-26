@@ -18,6 +18,10 @@ public class DefectController {
     public ResponseEntity<List<DefectDto>> getAllDefect(){
         return ResponseEntity.ok(defectService.getAll());
     }
+    @RequestMapping("/findByPlate")
+    public ResponseEntity<List<DefectDto>> getAllDefect(@RequestParam String registrationPlate){
+        return ResponseEntity.ok(defectService.findByRegistrationPlate(registrationPlate));
+    }
 
     @PostMapping("/save")
     public ResponseEntity<DefectDto> saveDefect(@RequestBody DefectDto defectDto){
