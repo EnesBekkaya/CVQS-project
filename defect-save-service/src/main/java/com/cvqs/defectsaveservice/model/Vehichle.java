@@ -36,6 +36,4 @@ public class Vehichle {
     @JsonIgnore
     private List<Defect> defect;
 
-
-
 }

@@ -7,14 +7,11 @@ import com.cvqs.defectsaveservice.service.abstracts.VehichleService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.stream.Collectors;
-
 @Service
 @RequiredArgsConstructor
 public class VehichleManager implements VehichleService {
-
     private final VehichleRepository vehichleRepository;
     private final ModelMapper modelMapper;
     @Override
