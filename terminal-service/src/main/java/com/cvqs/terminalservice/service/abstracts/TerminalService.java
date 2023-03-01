@@ -9,7 +9,7 @@ public interface TerminalService {
      List<TerminalDto> getActiveTerminals(Boolean active);
      Page<TerminalDto> pagination(Boolean active,int pageSize,int page);
 
-     List<TerminalDto> findTerminalBySection(String section);
-
+     List<TerminalDto> findTerminalBySection(String sectionName);
+     TerminalDto SaveTerminal(TerminalDto terminalDto);
 
 }

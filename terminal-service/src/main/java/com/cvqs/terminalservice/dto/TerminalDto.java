@@ -1,6 +1,9 @@
 package com.cvqs.terminalservice.dto;
 
+import com.cvqs.terminalservice.model.Section;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 
@@ -9,5 +12,5 @@ public class TerminalDto {
 
     private Boolean active;
 
-    private String section;
+    private List<Section> sections;
 }
