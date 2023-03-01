@@ -14,12 +14,12 @@ import java.util.List;
 public class DefectController {
     private final DefectService defectService;
 
-    @RequestMapping("/getAll")
-    public ResponseEntity<List<DefectDto>> getAllDefect(){
+    @GetMapping("/getAll")
+    public ResponseEntity<List<DefectDto>> getAllDefects(){
         return ResponseEntity.ok(defectService.getAll());
     }
-    @RequestMapping("/findByPlate")
-    public ResponseEntity<List<DefectDto>> getAllDefect(@RequestParam String registrationPlate){
+    @GetMapping("/getByPlate")
+    public ResponseEntity<List<DefectDto>> getDefectsByPlate(@RequestParam String registrationPlate){
         return ResponseEntity.ok(defectService.findByRegistrationPlate(registrationPlate));
     }
 
