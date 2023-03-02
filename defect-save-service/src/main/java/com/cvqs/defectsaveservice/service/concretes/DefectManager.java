@@ -1,6 +1,7 @@
 package com.cvqs.defectsaveservice.service.concretes;
 
 import com.cvqs.defectsaveservice.dto.DefectDto;
+import com.cvqs.defectsaveservice.exception.EntityNotFoundException;
 import com.cvqs.defectsaveservice.model.Defect;
 import com.cvqs.defectsaveservice.model.Location;
 import com.cvqs.defectsaveservice.model.Vehichle;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class DefectManager implements DefectService {
+public class    DefectManager implements DefectService {
     private final DefectRepository defectRepository;
     private final LocationService locationService;
     private final VehichleService vehichleService;
@@ -26,11 +27,13 @@ public class DefectManager implements DefectService {
     @Override
     public DefectDto save(DefectDto defectDto) {
         Vehichle vehichle=vehichleService.findVehichleByRegistrationPlate(defectDto.getVehichle().getRegistrationPlate());
+
         List<Location> locations=new ArrayList<>();
         Location savedLocation=new Location();
         Defect newDefect=new Defect();
 
         Defect defect=defectRepository.getDefectsByTypeAndVehichle(defectDto.getType(),vehichle);
+
         if(defect==null) {
             defectDto.getLocations().forEach(location -> {
                 savedLocation.setX(location.getX());
@@ -56,7 +59,9 @@ public class DefectManager implements DefectService {
 
     @Override
     public List<DefectDto> findByRegistrationPlate(String registrationPlate) {
-        List<Defect> defects=defectRepository.findByRegistrationPlate( registrationPlate);
+        List<Defect> defects=defectRepository.findByRegistrationPlate(registrationPlate);
+        if(defects.isEmpty())
+            throw new EntityNotFoundException("Hata bulunamadı");
         return defects.stream().map(defect -> modelMapper.map(defect, DefectDto.class)).collect(Collectors.toList());
     }
 

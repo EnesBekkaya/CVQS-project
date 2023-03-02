@@ -18,7 +18,7 @@ public class VehichleController {
 
     private final VehichleService vehichleService;
     @PostMapping("/save")
-    public ResponseEntity<VehichleDto> saveDefect(@RequestBody VehichleDto vehichleDto){
+    public ResponseEntity<VehichleDto> saveVehicle(@RequestBody VehichleDto vehichleDto){
         return ResponseEntity.ok(vehichleService.save(vehichleDto));
     }
 

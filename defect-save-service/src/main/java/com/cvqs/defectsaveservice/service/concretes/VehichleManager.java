@@ -1,6 +1,7 @@
 package com.cvqs.defectsaveservice.service.concretes;
 
 import com.cvqs.defectsaveservice.dto.VehichleDto;
+import com.cvqs.defectsaveservice.exception.EntityNotFoundException;
 import com.cvqs.defectsaveservice.model.Vehichle;
 import com.cvqs.defectsaveservice.repository.VehichleRepository;
 import com.cvqs.defectsaveservice.service.abstracts.VehichleService;
@@ -30,6 +31,8 @@ public class VehichleManager implements VehichleService {
     @Override
     public Vehichle findVehichleByRegistrationPlate(String registrationPlate) {
         Vehichle vehichle=vehichleRepository.findVehichleByRegistrationPlate(registrationPlate);
+        if(vehichle==null)
+            throw new EntityNotFoundException("araç bulunamadı");
         return vehichle;
     }
 }
