@@ -9,10 +9,10 @@ import java.util.List;
 
 @Data
 public class UserDto {
-    private String id;
     private String name;
     private String lastName;
     private String userName;
     private List<Role> roles;
+    private String password;
 
 }

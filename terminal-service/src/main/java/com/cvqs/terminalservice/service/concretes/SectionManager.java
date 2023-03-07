@@ -1,6 +1,7 @@
 package com.cvqs.terminalservice.service.concretes;
 
 import com.cvqs.terminalservice.dto.SectionDto;
+import com.cvqs.terminalservice.exception.EntityNotFoundException;
 import com.cvqs.terminalservice.model.Section;
 import com.cvqs.terminalservice.repository.SectionRepository;
 import com.cvqs.terminalservice.service.abstracts.SectionService;
@@ -36,5 +37,14 @@ public class SectionManager implements SectionService {
     public List<SectionDto> getAllSection() {
 
         return sectionRepository.findAll().stream().map(section -> modelMapper.map(section,SectionDto.class)).collect(Collectors.toList());
+    }
+
+    @Override
+    public Section findSectionByName(String sectionName) {
+        Section section=sectionRepository.findSectionByName(sectionName);
+        if(section==null)
+            throw new EntityNotFoundException("Terminal bulunamadı");
+        else
+            return section;
     }
 }

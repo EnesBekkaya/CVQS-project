@@ -18,6 +18,7 @@ public class Section {
     @GenericGenerator(name = "uuid", strategy = "uuid")
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "uuid")
     @Column(length = 36, nullable = false, updatable = false)
+    @JsonIgnore
     private String id;
     @Column(name="name",nullable = false)
     @Getter

@@ -3,7 +3,6 @@ package com.cvqs.usermanagementservice.controller;
 import com.cvqs.usermanagementservice.dto.UserDto;
 import com.cvqs.usermanagementservice.service.abstracts.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +15,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @RequestMapping("/getAll")
+    @GetMapping("/getAll")
     public ResponseEntity<List<UserDto>> getAllUser(){
         return ResponseEntity.ok(userService.getAll());
     }

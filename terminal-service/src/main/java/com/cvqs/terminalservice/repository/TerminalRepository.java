@@ -1,5 +1,6 @@
 package com.cvqs.terminalservice.repository;
 
+import com.cvqs.terminalservice.model.Section;
 import com.cvqs.terminalservice.model.Terminal;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,7 +12,7 @@ public interface TerminalRepository extends JpaRepository<Terminal,String> {
     List<Terminal>findTerminalByActive(Boolean active);
     Page<Terminal> findTerminalByActive(Boolean active, Pageable pageable);
 
-    List<Terminal> findTerminalBySections(String sectionName);
+    List<Terminal> findTerminalBySections(Section section);
     Terminal findTerminalByName(String name);
 
 

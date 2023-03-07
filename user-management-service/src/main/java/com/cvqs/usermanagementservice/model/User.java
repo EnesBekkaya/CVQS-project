@@ -29,17 +29,24 @@ public class User {
     private String lastName;
     @Getter
     @Setter
-    @Column(name="user_name",nullable = false)
+    @Column(name="user_name",nullable = false,unique = true)
     private String userName;
     @Getter
     @Setter
-    @ManyToMany(fetch = FetchType.EAGER)
+    @Column(name="password",nullable = false)
+    private String password;
+    @Getter
+    @Setter
+    @ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @JoinTable(name = "user_role",
+            joinColumns = { @JoinColumn(name = "user_id") },
+            inverseJoinColumns = { @JoinColumn(name = "role_id") })
     @Column(name="roles",nullable = false)
     private List<Role> roles;
     @Getter
     @Setter
     @Column(name="deleted")
-    private boolean deleted=false;
+    private boolean deleted;
 
 
 }

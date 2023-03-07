@@ -27,8 +27,8 @@ public class TerminalController {
 
     }
     @GetMapping("/filter")
-    public ResponseEntity<List<TerminalDto>>getBySection(@RequestParam String section ){
-        return ResponseEntity.ok(terminalService.findTerminalBySection(section));
+    public ResponseEntity<List<TerminalDto>>getBySection(@RequestParam String sectionName ){
+        return ResponseEntity.ok(terminalService.findTerminalBySection(sectionName));
 
     }
     @PostMapping("/save")

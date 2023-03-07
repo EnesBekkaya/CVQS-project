@@ -24,7 +24,7 @@ public class LocationManager implements LocationService {
         List<Location> savedLocation=locationRepository.findLocationByDefect(defect);
         locations.forEach(location -> {
             if(savedLocation!=null&&locationRepository.existsLocationsByXAndY(location.getX(), location.getY())) {
-                //eklenmek istenen lokasyonların aynısı aynı hata için mevcut bu yüzden ekleme yapılmıyor.
+                //eklenmek istenen lokasyonun aynısı aynı hata için mevcut bu yüzden ekleme yapılmıyor.
             }
             else{
                 newLocation.setDefect(defect);

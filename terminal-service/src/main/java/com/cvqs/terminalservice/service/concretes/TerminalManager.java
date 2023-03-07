@@ -38,7 +38,8 @@ public class TerminalManager implements TerminalService {
     }
     @Override
     public List<TerminalDto> findTerminalBySection(String sectionName) {
-        List <Terminal> terminals=terminalRepository.findTerminalBySections(sectionName);
+        Section section=sectionService.findSectionByName(sectionName);
+        List <Terminal> terminals=terminalRepository.findTerminalBySections(section);
         List<TerminalDto> terminalDtos=terminals.stream().map(terminal1 -> modelMapper.map(terminal1,TerminalDto.class)).collect(Collectors.toList());
         return terminalDtos;
     }
@@ -48,9 +49,8 @@ public class TerminalManager implements TerminalService {
         List<Section> sections= sectionService.saveSection(terminalDto.getSections());
         Terminal terminal=terminalRepository.findTerminalByName(terminalDto.getName());
         if(terminal!=null){
-            // terminal_section tablosuna kyıt yapılmıyor.
             terminal.setSections(sections);
-            return modelMapper.map(terminal,TerminalDto.class);
+            return modelMapper.map(terminalRepository.save(terminal),TerminalDto.class);
         }
         else{
             Terminal newTerminal=new Terminal();

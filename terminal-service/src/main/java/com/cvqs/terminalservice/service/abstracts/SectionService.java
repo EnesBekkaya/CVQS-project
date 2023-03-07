@@ -8,4 +8,5 @@ import java.util.List;
 public interface SectionService {
     List<Section> saveSection(List<Section> sections);
     List<SectionDto> getAllSection();
+    Section findSectionByName(String sectionName);
 }
