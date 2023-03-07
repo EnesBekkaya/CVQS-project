@@ -9,6 +9,7 @@
         <module>user-management-service</module>
 		<module>eureka-server</module>
         <module>defect-save-service</module>
+        <module>defect-listing-service</module>
     </modules>
     <parent>
 		<groupId>org.springframework.boot</groupId>
