@@ -3,6 +3,7 @@ package com.cvqs.defectsaveservice.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 @EqualsAndHashCode(of={"id"})
 @Table(name="defect")
 @JsonIgnoreProperties({"hibernateLazyInitializer","handler","vehichle","location"})
+
 public class Defect {
     @Id
     @Getter
@@ -32,6 +34,7 @@ public class Defect {
     @Getter
     @Setter
     @OneToMany(mappedBy = "defect",fetch = FetchType.LAZY,cascade =CascadeType.ALL)
+    @Size(min = 1)
     private List<Location> locations;
 
     //image eklenecek

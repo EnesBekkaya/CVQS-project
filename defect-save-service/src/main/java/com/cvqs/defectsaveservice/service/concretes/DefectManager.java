@@ -11,6 +11,8 @@ import com.cvqs.defectsaveservice.service.abstracts.LocationService;
 import com.cvqs.defectsaveservice.service.abstracts.VehichleService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,6 +26,7 @@ public class    DefectManager implements DefectService {
     private final LocationService locationService;
     private final VehichleService vehichleService;
     private final ModelMapper modelMapper;
+    private static final Logger LOGGER= LoggerFactory.getLogger(DefectManager.class);
     @Override
     public DefectDto save(DefectDto defectDto) {
         Vehichle vehichle=vehichleService.findVehichleByRegistrationPlate(defectDto.getVehichle().getRegistrationPlate());
@@ -60,8 +63,10 @@ public class    DefectManager implements DefectService {
     @Override
     public List<DefectDto> findByRegistrationPlate(String registrationPlate) {
         List<Defect> defects=defectRepository.findByRegistrationPlate(registrationPlate);
-        if(defects.isEmpty())
-            throw new EntityNotFoundException("Hata bulunamadı");
+        if(defects.isEmpty()) {
+            LOGGER.error("Araca kayıtlı hata bulunamadı");
+            throw new EntityNotFoundException("Araca kayıtlı hata bulunamadı");
+        }
         return defects.stream().map(defect -> modelMapper.map(defect, DefectDto.class)).collect(Collectors.toList());
     }
 
