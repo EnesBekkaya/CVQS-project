@@ -10,7 +10,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-
 public class DefectListingManager implements DefectListingService {
 
     private final DefectListingServiceClient defectSaveServiceClient;

@@ -7,6 +7,8 @@ import com.cvqs.usermanagementservice.service.abstracts.RoleService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,6 +16,8 @@ import org.springframework.stereotype.Service;
 public class RoleManager implements RoleService {
     private final RoleRepository roleRepository;
     private final ModelMapper modelMapper;
+    private static final Logger LOGGER= LoggerFactory.getLogger(RoleManager.class);
+
     @Override
     public RoleDto save(RoleDto roleDto) {
         Role role=new Role();
@@ -24,9 +28,12 @@ public class RoleManager implements RoleService {
     @Override
     public Role findRoleByName(String name) {
         Role role= roleRepository.findRoleByName(name);
-        if(role==null)
-            throw new EntityNotFoundException(name+": Bu isimde kayıtlı bir rol bulunamadı.");
+        if(role==null) {
+            LOGGER.warn("Parameter role is null in findRoleByName() method.");
+            throw new EntityNotFoundException(name + ": Bu isimde kayıtlı bir rol bulunamadı.");
+        }
         else
             return role;
     }
+
 }

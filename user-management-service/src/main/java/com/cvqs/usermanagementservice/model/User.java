@@ -1,6 +1,7 @@
 package com.cvqs.usermanagementservice.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Where;
@@ -42,6 +43,7 @@ public class User {
             joinColumns = { @JoinColumn(name = "user_id") },
             inverseJoinColumns = { @JoinColumn(name = "role_id") })
     @Column(name="roles",nullable = false)
+    @Size(min = 1)
     private List<Role> roles;
     @Getter
     @Setter

@@ -7,8 +7,8 @@
         </Console>
 
         <RollingFile name="RollingFile"
-                     fileName="./defect-save-service/logs/defect-save-service-log.log"
-                     filePattern="./logs/$${date:yyyy-MM}/defect-save-service-log-%d{-dd-MMMM-yyyy}-%i.log.gz">
+                     fileName="./user-management-service/logs/user-management-service-log.log"
+                     filePattern="./logs/$${date:yyyy-MM}/user-management-service-log-%d{-dd-MMMM-yyyy}-%i.log.gz">
             <PatternLayout>
                 <pattern>%d %p %C{1.} [%t] %m%n</pattern>
             </PatternLayout>

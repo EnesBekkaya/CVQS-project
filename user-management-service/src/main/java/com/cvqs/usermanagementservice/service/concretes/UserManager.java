@@ -9,6 +9,8 @@ import com.cvqs.usermanagementservice.service.abstracts.RoleService;
 import com.cvqs.usermanagementservice.service.abstracts.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,6 +24,8 @@ public class UserManager implements UserService {
     private final UserRepository userRepository;
     private final RoleService roleService;
     private final ModelMapper modelMapper;
+    private static final Logger LOGGER= LoggerFactory.getLogger(UserManager.class);
+
     @Override
     public List<UserDto> getAll() {
         List <User> users=userRepository.findAll();
@@ -44,16 +48,16 @@ public class UserManager implements UserService {
         newUser.setLastName(userDto.getLastName());
         newUser.setPassword(userDto.getPassword());
         newUser.setRoles(roles);
-
         return modelMapper.map(userRepository.save(newUser), UserDto.class);
     }
     @Override
     public UserDto updateUser(UserDto userDto ) {
         User user=userRepository.findUserByUserName(userDto.getUserName());
         List<Role> roles=new ArrayList<>();
-        if(user==null)
-            throw new EntityNotFoundException(userDto.getUserName()+" kullanıcı isimli bir kullanıcı bulunamadı");
-
+        if(user==null) {
+            LOGGER.warn("Parameter user is null in updateUser() method.");
+            throw new EntityNotFoundException(userDto.getUserName() + " kullanıcı isimli bir kullanıcı bulunamadı");
+        }
         userDto.getRoles().forEach(role -> {
             Role savedRole=roleService.findRoleByName(role.getName());
 
@@ -69,8 +73,11 @@ public class UserManager implements UserService {
     @Override
     public UserDto delete(UserDto userDto) {
         User user=userRepository.findUserByUserName(userDto.getUserName());
-        if(user==null)
-            throw new EntityNotFoundException(userDto.getUserName()+"  kullanıcı isimli bir kullanıcı bulunamadı");
+        if(user==null) {
+            LOGGER.warn("Parameter user is null in delete() method.");
+
+            throw new EntityNotFoundException(userDto.getUserName() + "  kullanıcı isimli bir kullanıcı bulunamadı");
+        }
         user.setDeleted(true);
         return modelMapper.map(userRepository.save(user),UserDto.class);
     }
