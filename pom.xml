@@ -10,6 +10,8 @@
 		<module>eureka-server</module>
         <module>defect-save-service</module>
         <module>defect-listing-service</module>
+        <module>security-service</module>
+        <module>gateway</module>
     </modules>
     <parent>
 		<groupId>org.springframework.boot</groupId>
