@@ -1,39 +1,34 @@
 package com.cvqs.defectsaveservice.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
-import java.util.List;
-
+import java.sql.Blob;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of={"id"})
-@Table(name="location")
-public class Location {
+@Table(name="images")
+public class Image {
     @Id
-    @Getter
     @GenericGenerator(name = "uuid", strategy = "uuid")
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "uuid")
+    @Getter
     @Column(length = 36, nullable = false, updatable = false)
-    @JsonIgnore
     private String id;
-    @Getter
+    
+
+    @Column(name = "data")
     @Setter
-    @Column(name="x",nullable = false)
-    private int x;
     @Getter
-    @Setter
-    @Column(name="y",nullable = false)
-    private int y;
+    @Lob
+    private Blob data;
 
     @Getter
     @Setter
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "locations")
-    @JsonIgnore
-    private List<Defect> defects;
+    @OneToOne(mappedBy = "image")
+    private Defect defect;
 
 }

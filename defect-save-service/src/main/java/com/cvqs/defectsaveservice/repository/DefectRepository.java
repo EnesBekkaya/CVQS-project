@@ -11,4 +11,9 @@ public interface DefectRepository extends JpaRepository<Defect,String> {
    Defect getDefectsByTypeAndVehichle(String type,Vehichle vehichle);
    @Query("SELECT t FROM Defect t WHERE t.vehichle.registrationPlate=:registrationPlate")
    List<Defect> findByRegistrationPlate(String registrationPlate);
+
+   @Query("SELECT t FROM Defect t WHERE t.vehichle.registrationPlate=:registrationPlate and t.type=:type")
+   Defect findDefectByregistrationPlateAndType(String registrationPlate,String type);
+
+
 }

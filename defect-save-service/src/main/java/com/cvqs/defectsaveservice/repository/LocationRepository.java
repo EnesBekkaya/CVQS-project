@@ -6,6 +6,7 @@ import com.cvqs.defectsaveservice.model.Defect;
 import java.util.List;
 
 public interface LocationRepository extends JpaRepository<Location,String> {
-  List<Location> findLocationByDefect(Defect defect);
+  List<Location> findLocationByDefects(Defect defect);
   Boolean existsLocationsByXAndY(int x,int y);
+  Location findLocationByXAndY(int x,int y);
 }
