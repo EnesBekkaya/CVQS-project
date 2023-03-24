@@ -81,4 +81,10 @@ public class UserManager implements UserService {
         user.setDeleted(true);
         return modelMapper.map(userRepository.save(user),UserDto.class);
     }
+
+    @Override
+    public User findUserByUserName(String userName) {
+       return userRepository.findUserByUserName(userName);
+
+    }
 }

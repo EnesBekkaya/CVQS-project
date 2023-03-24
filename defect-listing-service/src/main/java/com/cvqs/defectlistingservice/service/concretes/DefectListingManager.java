@@ -6,6 +6,7 @@ import com.cvqs.defectlistingservice.service.abstracts.DefectListingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @Service
@@ -24,5 +25,10 @@ public class DefectListingManager implements DefectListingService {
     public List<DefectDto>  findDefectByPlate(String registrationPlate) {
         List<DefectDto>  defectDto=defectSaveServiceClient.getDefectsByPlate(registrationPlate).getBody();
         return defectDto;
+    }
+
+    @Override
+    public byte[] getDefectImage(String registrationPlate, String defectType) throws SQLException {
+        return defectSaveServiceClient.getDefectImage(registrationPlate,defectType).getBody();
     }
 }

@@ -3,6 +3,8 @@ package com.cvqs.terminalservice.model;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
+
+import java.util.Date;
 import java.util.List;
 
 
@@ -34,6 +36,11 @@ public class Terminal {
     @Getter
     @Setter
     private Boolean deleted;
+
+    @Getter
+    @Setter
+    @Column(name = "createDate")
+    private Date createDate;
     @Getter
     @Setter
     @ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)

@@ -33,10 +33,17 @@ public class Defect {
     private Vehichle vehichle;
     @Getter
     @Setter
-    @OneToMany(mappedBy = "defect",fetch = FetchType.LAZY,cascade =CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @JoinTable(name = "defect_location",
+            joinColumns = { @JoinColumn(name = "defect_id") },
+            inverseJoinColumns = { @JoinColumn(name = "location_id") })
+    @Column(name="roles",nullable = false)
     @Size(min = 1)
     private List<Location> locations;
-
-    //image eklenecek
+    @Getter
+    @Setter
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "image_id", referencedColumnName = "id")
+    private Image image;
 
 }

@@ -18,7 +18,6 @@ public class VehichleManager implements VehichleService {
     private final VehichleRepository vehichleRepository;
     private final ModelMapper modelMapper;
     private static final Logger LOGGER= LoggerFactory.getLogger(DefectManager.class);
-
     @Override
     public VehichleDto save(VehichleDto vehichleDto) {
         Vehichle vehichle=modelMapper.map(vehichleDto,Vehichle.class);
