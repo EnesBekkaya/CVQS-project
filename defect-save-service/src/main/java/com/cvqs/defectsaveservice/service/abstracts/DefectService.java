@@ -1,6 +1,7 @@
 package com.cvqs.defectsaveservice.service.abstracts;
 
 import com.cvqs.defectsaveservice.dto.DefectDto;
+import com.cvqs.defectsaveservice.model.Defect;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -13,4 +14,5 @@ public interface DefectService {
    List<DefectDto> findByRegistrationPlate(String registrationPlate);
 
     byte[] getDefectImage(String registrationPlate,String defectType) throws SQLException;
+    List<DefectDto> getDefectSorted(Integer pageNo, Integer pageSize, String sortBy);
 }

@@ -1,6 +1,7 @@
 package com.cvqs.defectsaveservice.controller;
 
 import com.cvqs.defectsaveservice.dto.DefectDto;
+import com.cvqs.defectsaveservice.model.Defect;
 import com.cvqs.defectsaveservice.service.abstracts.DefectService;
 import com.cvqs.defectsaveservice.service.concretes.DefectManager;
 import jakarta.transaction.Transactional;
@@ -45,5 +46,9 @@ public class DefectController {
     public ResponseEntity<byte[]> getDefectImage(@RequestParam String registrationPlate,@RequestParam String defectType) throws SQLException {
         LOGGER.info("Incoming request for /defects/getImage");
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(defectService.getDefectImage(registrationPlate,defectType));
+    }
+    @GetMapping("/sort")
+    public ResponseEntity<List<DefectDto>> getDefectSorted(@RequestParam Integer pageNo, @RequestParam Integer pageSize, @RequestParam String sortBy){
+        return ResponseEntity.ok(defectService.getDefectSorted(pageNo,pageSize,sortBy));
     }
 }

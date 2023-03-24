@@ -18,7 +18,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/defectListing")
+    @RequestMapping("/defectListing")
 @RequiredArgsConstructor
 public class DefectListingController {
     private static final Logger LOGGER= LoggerFactory.getLogger(DefectListingController.class);
@@ -42,5 +42,11 @@ public class DefectListingController {
         LOGGER.info("Incoming request for /defectListing/getImage");
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(defectListingService.getDefectImage(registrationPlate,defectType));
 
+    }
+
+    @GetMapping("/sort")
+    ResponseEntity<List<DefectDto>> getDefectSorted(@RequestParam Integer pageNo, @RequestParam Integer pageSize, @RequestParam String sortBy){
+        LOGGER.info("Incoming request for /defectListing/sort");
+        return ResponseEntity.ok(defectListingService.getDefectSorted(pageNo,pageSize,sortBy));
     }
 }

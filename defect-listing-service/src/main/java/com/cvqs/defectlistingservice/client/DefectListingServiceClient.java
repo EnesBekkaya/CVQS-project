@@ -23,5 +23,7 @@ public interface DefectListingServiceClient {
     @Transactional
     ResponseEntity<byte[]> getDefectImage(@RequestParam String registrationPlate, @RequestParam String defectType) throws SQLException;
 
+    @GetMapping("/sort")
+     ResponseEntity<List<DefectDto>> getDefectSorted(@RequestParam Integer pageNo, @RequestParam Integer pageSize, @RequestParam String sortBy);
 
 }

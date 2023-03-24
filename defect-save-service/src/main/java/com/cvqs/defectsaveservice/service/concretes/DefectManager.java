@@ -15,6 +15,10 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -85,6 +89,13 @@ public class    DefectManager implements DefectService {
         Image image=imageService.getImage(defect.getImage());
         byte[] imageData = image.getData().getBytes(1, (int) image.getData().length());
         return imageData;
+    }
+
+    public List<DefectDto> getDefectSorted(Integer pageNo, Integer pageSize, String sortBy) {
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+
+        Page<Defect> defectDtos=defectRepository.findAll(paging);
+        return  defectDtos.getContent().stream().map(defect -> modelMapper.map(defect, DefectDto.class)).collect(Collectors.toList());
     }
 
 
