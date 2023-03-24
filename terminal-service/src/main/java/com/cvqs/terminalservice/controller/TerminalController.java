@@ -45,5 +45,11 @@ public class TerminalController {
 
         return ResponseEntity.ok(terminalService.SaveTerminal(terminalDto));
     }
+    @GetMapping("/sort")
+    public ResponseEntity<List<TerminalDto>> getTerminalSortedByDate(){
+        LOGGER.info("Incoming request for /terminals/sort");
+
+        return ResponseEntity.ok(terminalService.getTerminalSortedByDate());
+    }
 
 }

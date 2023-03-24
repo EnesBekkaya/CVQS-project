@@ -12,6 +12,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,10 +62,26 @@ public class TerminalManager implements TerminalService {
             newTerminal.setName(terminalDto.getName());
             newTerminal.setActive(true);
             newTerminal.setDeleted(false);
+            newTerminal.setCreateDate(new Date());
             newTerminal.setSections(sections);
             return modelMapper.map(terminalRepository.save(newTerminal),TerminalDto.class);
 
         }
 
+    }
+
+    public List<TerminalDto> getTerminalSortedByDate() {
+        List<TerminalDto>terminals=getActiveTerminals(true);
+        Comparator<TerminalDto> dateComparator = new Comparator<TerminalDto>() {
+            @Override
+            public int compare(TerminalDto t1, TerminalDto t2) {
+                return t2.getCreateDate().compareTo(t1.getCreateDate());            }
+
+        };
+
+        // Verileri tarihe göre sıralayın
+        Collections.sort(terminals, dateComparator);
+
+        return terminals;
     }
 }

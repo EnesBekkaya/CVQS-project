@@ -1,6 +1,7 @@
 package com.cvqs.terminalservice.service.abstracts;
 
 import com.cvqs.terminalservice.dto.TerminalDto;
+import com.cvqs.terminalservice.model.Terminal;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -11,5 +12,6 @@ public interface TerminalService {
 
      List<TerminalDto> findTerminalBySection(String sectionName);
      TerminalDto SaveTerminal(TerminalDto terminalDto);
+      List<TerminalDto> getTerminalSortedByDate();
 
 }
