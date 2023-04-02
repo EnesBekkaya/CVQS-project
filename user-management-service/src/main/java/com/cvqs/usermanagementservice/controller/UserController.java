@@ -1,6 +1,7 @@
 package com.cvqs.usermanagementservice.controller;
 
 import com.cvqs.usermanagementservice.dto.UserDto;
+import com.cvqs.usermanagementservice.model.User;
 import com.cvqs.usermanagementservice.service.abstracts.UserService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -42,5 +43,9 @@ public class UserController {
         LOGGER.info("Incoming request for /users/delete");
 
         return ResponseEntity.ok(userService.delete(userDto));
+    }
+    @GetMapping("/findUserByUsername")
+    public User findUserByUsername(@RequestParam("username") String username){
+        return userService.findUserByUserName(username);
     }
 }

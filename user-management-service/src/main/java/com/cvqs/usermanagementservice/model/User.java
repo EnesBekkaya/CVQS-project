@@ -27,11 +27,11 @@ public class User {
     @Getter
     @Setter
     @Column(name="last_name",nullable = false)
-    private String lastName;
+    private String lastname;
     @Getter
     @Setter
     @Column(name="user_name",nullable = false,unique = true)
-    private String userName;
+    private String username;
     @Getter
     @Setter
     @Column(name="password",nullable = false)

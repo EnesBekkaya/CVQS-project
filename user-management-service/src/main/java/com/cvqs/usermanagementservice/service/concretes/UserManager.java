@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,6 +25,8 @@ public class UserManager implements UserService {
     private final UserRepository userRepository;
     private final RoleService roleService;
     private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
+
     private static final Logger LOGGER= LoggerFactory.getLogger(UserManager.class);
 
     @Override
@@ -43,20 +46,20 @@ public class UserManager implements UserService {
             roles.add(savedRole);
         });
         newUser.setDeleted(false);
-        newUser.setUserName(userDto.getUserName());
+        newUser.setUsername(userDto.getUsername());
         newUser.setName(userDto.getName());
-        newUser.setLastName(userDto.getLastName());
-        newUser.setPassword(userDto.getPassword());
+        newUser.setLastname(userDto.getLastname());
+        newUser.setPassword(passwordEncoder.encode(userDto.getPassword()));
         newUser.setRoles(roles);
         return modelMapper.map(userRepository.save(newUser), UserDto.class);
     }
     @Override
     public UserDto updateUser(UserDto userDto ) {
-        User user=userRepository.findUserByUserName(userDto.getUserName());
+        User user=userRepository.findUserByUsername(userDto.getUsername());
         List<Role> roles=new ArrayList<>();
         if(user==null) {
             LOGGER.warn("Parameter user is null in updateUser() method.");
-            throw new EntityNotFoundException(userDto.getUserName() + " kullanıcı isimli bir kullanıcı bulunamadı");
+            throw new EntityNotFoundException(userDto.getUsername() + " kullanıcı isimli bir kullanıcı bulunamadı");
         }
         userDto.getRoles().forEach(role -> {
             Role savedRole=roleService.findRoleByName(role.getName());
@@ -64,7 +67,7 @@ public class UserManager implements UserService {
             roles.add(savedRole);
         });
         user.setName(userDto.getName());
-        user.setLastName(userDto.getLastName());
+        user.setLastname(userDto.getLastname());
         user.setPassword(userDto.getPassword());
         user.setRoles(roles);
         return modelMapper.map(userRepository.save(user),UserDto.class);
@@ -72,11 +75,11 @@ public class UserManager implements UserService {
 
     @Override
     public UserDto delete(UserDto userDto) {
-        User user=userRepository.findUserByUserName(userDto.getUserName());
+        User user=userRepository.findUserByUsername(userDto.getUsername());
         if(user==null) {
             LOGGER.warn("Parameter user is null in delete() method.");
 
-            throw new EntityNotFoundException(userDto.getUserName() + "  kullanıcı isimli bir kullanıcı bulunamadı");
+            throw new EntityNotFoundException(userDto.getUsername() + "  kullanıcı isimli bir kullanıcı bulunamadı");
         }
         user.setDeleted(true);
         return modelMapper.map(userRepository.save(user),UserDto.class);
@@ -84,7 +87,7 @@ public class UserManager implements UserService {
 
     @Override
     public User findUserByUserName(String userName) {
-       return userRepository.findUserByUserName(userName);
+       return userRepository.findUserByUsername(userName);
 
     }
 }

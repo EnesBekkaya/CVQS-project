@@ -1,33 +1,47 @@
 spring:
-  application:
-    name: gateway-service
   cloud:
     gateway:
       routes:
-        - id: :defect-save-service
-          uri: lb://defect-save-service
-          predicates:
-            - Path=/defects/**
-        - id: defect-listing-service
-          uri: lb://defect-listing-service
-          predicates:
-            -  Path=/defectListing/**
-        - id: user-management-service
-          uri: lb://user-management-service
-          predicates:
-            - Path=/users/**
         - id: terminal-service
-          uri: lb://terminal-service
+          uri: lb://TERMINAL-SERVICE
           predicates:
             - Path=/terminals/**
+          filters:
+            -name: AuthenticationFilter
+            args:
+              roles:[admin,takım lideri,operator]
+
+        - id: defect-listing-service
+          uri: lb://DEFECT-LISTING-SERVICE
+          predicates:
+            - Path=/defectListing/**
+          filters:
+            - AuthenticationFilter=takım lideri
+
+        - id: defect-save-service
+          uri: lb://DEFECT-SAVE-SERVICE
+          predicates:
+            - Path=/defects/**
+          filters:
+            - AuthenticationFilter=operator
+
+        - id: user-management-service
+          uri: lb://USER-MANAGEMENT-SERVICE
+          predicates:
+            - Path=/users/**
+          filters:
+            - AuthenticationFilter=admin
+
+        - id: security-service
+          uri: lb://SECURITY-SERVICE
+          predicates:
+            - Path=/auth/**
+  application:
+    name: gateway
 server:
   port: 8888
 
-
-eureka:
-  client:
-    register-with-eureka: true
-    service-url:
-      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
-  instance:
-    prefer-ip-address: true
+  eureka:
+    client:
+      service-url:
+        defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}

@@ -10,8 +10,8 @@ import java.util.List;
 @Data
 public class UserDto {
     private String name;
-    private String lastName;
-    private String userName;
+    private String lastname;
+    private String username;
     private List<Role> roles;
     private String password;
 
