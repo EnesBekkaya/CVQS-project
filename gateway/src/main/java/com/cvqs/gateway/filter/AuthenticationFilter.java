@@ -1,6 +1,8 @@
 package com.cvqs.gateway.filter;
 
 import lombok.Data;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -22,6 +24,8 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
     private RestTemplate restTemplate;
 
 
+    private static final Logger LOGGER= LoggerFactory.getLogger(AuthenticationFilter.class);
+
     public AuthenticationFilter() {
         super(Config.class);
     }
@@ -32,6 +36,8 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
             var request = exchange.getRequest();
             if (routeValidator.isSecured.test(exchange.getRequest())) {
                 if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
+                    LOGGER.error("missing authorization header");
+
                     throw new RuntimeException("missing authorization header");
                 }
                 String authHeader = exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
@@ -45,13 +51,13 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                     if (!isTokenValid){
                         var responsee = exchange.getResponse();
                         responsee.setStatusCode(HttpStatus.UNAUTHORIZED);
-                        System.out.println("Invalid access...!");
+                        LOGGER.error("Invalid access...!");
 
                         return responsee.setComplete();
                     }
 
                 } catch (Exception e) {
-                    System.out.println("Request failed...!");
+                    LOGGER.error("Failed to make request to the server");
                     throw new RuntimeException("Failed to make request to the server");
                 }
             }
