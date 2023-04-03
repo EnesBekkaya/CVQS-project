@@ -1,8 +1,10 @@
 package com.cvqs.defectsaveservice.service.concretes;
 
 import com.cvqs.defectsaveservice.dto.LocationDto;
+import com.cvqs.defectsaveservice.dto.VehichleDto;
 import com.cvqs.defectsaveservice.model.Defect;
 import com.cvqs.defectsaveservice.model.Location;
+import com.cvqs.defectsaveservice.model.Vehichle;
 import com.cvqs.defectsaveservice.repository.LocationRepository;
 import junit.framework.TestCase;
 import org.junit.jupiter.api.AfterEach;
@@ -11,6 +13,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
+import org.mockito.internal.verification.Times;
 import org.modelmapper.ModelMapper;
 import java.util.Arrays;
 import java.util.List;
@@ -45,7 +48,7 @@ public class LocationManagerTest extends TestCase {
 
         List<Location> expected=Arrays.asList(location2,location3);
 
-        Mockito.when(locationRepository.findLocationByDefect(defect)).thenReturn(locations);
+        Mockito.when(locationRepository.findLocationByDefects(defect)).thenReturn(locations);
 
         Mockito.when(locationRepository.existsLocationsByXAndY(ArgumentMatchers.eq(10), ArgumentMatchers.eq(20))).thenReturn(true);
         Mockito.when(locationRepository.existsLocationsByXAndY(ArgumentMatchers.eq(30), ArgumentMatchers.eq(40))).thenReturn(false);
@@ -53,14 +56,9 @@ public class LocationManagerTest extends TestCase {
 
         Mockito.when(locationRepository.saveAll(Mockito.anyIterable())).thenReturn(Arrays.asList(location1, location2));
 
-        List<LocationDto> result = locationManager.save(locations, defect);
+        List<LocationDto> result = locationManager.save(locations);
 
         assertEquals(expected.stream().map(location -> modelMapper.map(location,LocationDto.class)).collect(Collectors.toList()),result);
-
-
-
-
-
     }
 
     @AfterEach
