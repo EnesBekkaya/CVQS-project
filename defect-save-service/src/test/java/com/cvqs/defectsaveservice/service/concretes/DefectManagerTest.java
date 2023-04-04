@@ -17,6 +17,7 @@ import com.cvqs.defectsaveservice.repository.DefectRepository;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.sql.rowset.serial.SerialBlob;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -201,7 +202,6 @@ public class DefectManagerTest{
         List<DefectDto> result = defectManager.findByRegistrationPlate(vehichle.getRegistrationPlate());
 
 
-        // Assert
         Assertions.assertEquals(expectedDefectDtos,result);
    }
 
@@ -212,6 +212,7 @@ public class DefectManagerTest{
         Vehichle vehichle = new Vehichle();
         vehichle.setRegistrationPlate("ABC123");
         vehichle.setBrand("audi");
+
         List<Defect> defects = new ArrayList<>();
 
         Mockito.when(defectRepository.findByRegistrationPlate(vehichle.getRegistrationPlate())).thenReturn(defects);
@@ -223,6 +224,39 @@ public class DefectManagerTest{
         Assertions.assertNotNull(exception);
         Assertions.assertEquals("Araca kayıtlı hata bulunamadı", exception.getMessage());
         Mockito.verify(defectRepository).findByRegistrationPlate(vehichle.getRegistrationPlate());
+    }
+
+    @DisplayName("should Return Byte By Plate With RegistrationPlate And DefectType")
+    @Test
+    void shouldReturnByteByPlateWithregistrationPlateAndDefectType() throws SQLException{
+        String registrationPlate="34BA23";
+        String defectType="çizik";
+        Location location=new Location();
+        location.setX(100);
+        location.setY(200);
+        Location location2=new Location();
+        location2.setX(3);
+        location2.setY(23);
+
+        List<Location> locations = new ArrayList<>(Arrays.asList(location,location2));
+        Vehichle vehichle = new Vehichle();
+        byte[] data= "test-image".getBytes();
+        Image image=new Image();
+        image.setData(new SerialBlob(data));
+        vehichle.setRegistrationPlate("34BA23");
+        Defect defect1=new Defect();
+        defect1.setLocations(locations);
+        defect1.setVehichle(vehichle);
+        defect1.setType("çizik");
+        defect1.setImage(image);
+        byte[] expectedResult= data;
+        Mockito.when(defectRepository.findDefectByregistrationPlateAndType(registrationPlate,defectType)).thenReturn(defect1);
+        Mockito.when(imageService.getImage(image)).thenReturn(image);
+        byte[] result=defectManager.getDefectImage(registrationPlate,defectType);
+        Assertions.assertArrayEquals(expectedResult,result);
+        Mockito.verify(defectRepository).findDefectByregistrationPlateAndType(registrationPlate,defectType);
+        Mockito.verify(imageService).getImage(image);
+
     }
 
     @AfterEach

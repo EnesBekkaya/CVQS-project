@@ -4,12 +4,15 @@ import com.cvqs.defectsaveservice.dto.VehichleDto;
 import com.cvqs.defectsaveservice.exception.EntityNotFoundException;
 import com.cvqs.defectsaveservice.model.Vehichle;
 import com.cvqs.defectsaveservice.repository.VehichleRepository;
-
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 import org.mockito.internal.verification.Times;
 import org.modelmapper.ModelMapper;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 class VehichleManagerTest {
@@ -93,7 +96,26 @@ class VehichleManagerTest {
 
     }
 
+    @DisplayName("should Get All Vehicle Dto List ")
+    @Test
+    void shouldGetAllVehicleDtoList() {
+        Vehichle vehichle = new Vehichle();
+        vehichle.setBrand("Audi");
+        vehichle.setRegistrationPlate("34BA23");
 
+        Vehichle vehichle2 = new Vehichle();
+        vehichle2.setBrand("bmw");
+        vehichle2.setRegistrationPlate("34AD12");
+
+        List<Vehichle> vehichles=new ArrayList<>(Arrays.asList(vehichle,vehichle2));
+        List<VehichleDto> expectedResult=vehichles.stream().map(defect1 -> modelMapper.map(defect1,VehichleDto.class)).collect(Collectors.toList());
+        Mockito.when(vehichleRepository.findAll()).thenReturn(vehichles);
+        List<VehichleDto> result=vehichleManager.getAll();
+
+        Assertions.assertEquals(expectedResult,result);
+        Mockito.verify(vehichleRepository).findAll();
+
+    }
 
         @AfterEach
     public void tearDown() {
