@@ -13,7 +13,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -79,7 +78,6 @@ public class TerminalManager implements TerminalService {
 
         };
 
-        // Verileri tarihe göre sıralayın
         Collections.sort(terminals, dateComparator);
 
         return terminals;
