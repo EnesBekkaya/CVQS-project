@@ -4,18 +4,14 @@ import com.cvqs.defectlistingservice.client.DefectListingServiceClient;
 import com.cvqs.defectlistingservice.dto.DefectDto;
 import com.cvqs.defectlistingservice.dto.Location;
 import com.cvqs.defectlistingservice.dto.Vehichle;
-import junit.framework.TestCase;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 import org.springframework.http.ResponseEntity;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
- class DefectListingManagerTest extends TestCase {
+ class DefectListingManagerTest  {
     private DefectListingManager defectListingManager;
     private DefectListingServiceClient defectListingServiceClient;
 
@@ -44,7 +40,7 @@ import java.util.List;
         Mockito.when(defectListingServiceClient.getAllDefects()).thenReturn(ResponseEntity.ok(defectDtos));
 
         List<DefectDto> result=defectListingManager.getAllDefects();
-        assertEquals(expectedResult,result);
+        Assertions.assertEquals(expectedResult,result);
 
         Mockito.verify(defectListingServiceClient).getAllDefects();
 
@@ -70,7 +66,7 @@ import java.util.List;
          Mockito.when(defectListingServiceClient.getDefectsByPlate(registrationPlate)).thenReturn(ResponseEntity.ok(defectDtos));
 
          List<DefectDto> result=defectListingManager.findDefectByPlate(registrationPlate);
-         assertEquals(expectedResult,result);
+         Assertions.assertEquals(expectedResult,result);
 
          Mockito.verify(defectListingServiceClient).getDefectsByPlate(registrationPlate);
 

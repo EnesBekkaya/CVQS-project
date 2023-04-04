@@ -4,17 +4,15 @@ import com.cvqs.defectsaveservice.dto.VehichleDto;
 import com.cvqs.defectsaveservice.exception.EntityNotFoundException;
 import com.cvqs.defectsaveservice.model.Vehichle;
 import com.cvqs.defectsaveservice.repository.VehichleRepository;
-import junit.framework.TestCase;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+
+import org.checkerframework.checker.units.qual.A;
+import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 import org.mockito.internal.verification.Times;
 import org.modelmapper.ModelMapper;
 
 
-class VehichleManagerTest extends TestCase {
+class VehichleManagerTest {
     private VehichleManager vehichleManager;
     private VehichleRepository vehichleRepository;
     private ModelMapper modelMapper;
@@ -43,7 +41,7 @@ class VehichleManagerTest extends TestCase {
         Mockito.when(modelMapper.map(Mockito.any(Vehichle.class), Mockito.eq(VehichleDto.class))).thenReturn(vehichleDto);
 
         VehichleDto result = vehichleManager.save(vehichleDto);
-        assertEquals(expectedResult, result);
+        Assertions.assertEquals(expectedResult, result);
 
         Mockito.verify(modelMapper).map(vehichleDto, Vehichle.class);
         Mockito.verify(vehichleRepository).save(vehichle);
@@ -68,7 +66,7 @@ class VehichleManagerTest extends TestCase {
 
         Vehichle result = vehichleRepository.findVehichleByRegistrationPlate(registrationPlate);
 
-        assertEquals(expectedResult, result);
+        Assertions.assertEquals(expectedResult, result);
         Mockito.verify(vehichleRepository).findVehichleByRegistrationPlate(registrationPlate);
         Mockito.verify(vehichleRepository, new Times(1)).findVehichleByRegistrationPlate(registrationPlate);
     }
@@ -90,8 +88,8 @@ class VehichleManagerTest extends TestCase {
             exception = e;
         }
 
-        assertNotNull(exception);
-        assertEquals("Plakaya ait Araç bulunamadı", exception.getMessage());
+        Assertions.assertNotNull(exception);
+        Assertions.assertEquals("Plakaya ait Araç bulunamadı", exception.getMessage());
 
     }
 

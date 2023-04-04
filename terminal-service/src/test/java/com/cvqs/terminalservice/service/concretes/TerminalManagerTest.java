@@ -5,6 +5,7 @@ import com.cvqs.terminalservice.model.Section;
 import com.cvqs.terminalservice.model.Terminal;
 import com.cvqs.terminalservice.repository.TerminalRepository;
 import com.cvqs.terminalservice.service.abstracts.SectionService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -59,7 +60,7 @@ public class TerminalManagerTest {
 
         List<TerminalDto> result=terminalManager.getActiveTerminals(true);
 
-        assertEquals(expectedResult,result);
+        Assertions.assertEquals(expectedResult,result);
         Mockito.verify(terminalRepository).findTerminalByActive(true);
     }
 
@@ -84,7 +85,7 @@ public class TerminalManagerTest {
 
         Page<TerminalDto> result = terminalManager.pagination(active,pageSize , page);
 
-        assertEquals(expectedResult,result);
+        Assertions.assertEquals(expectedResult,result);
 
         Mockito.verify(terminalRepository).findTerminalByActive(active, PageRequest.of(page, pageSize));
 
@@ -113,7 +114,7 @@ public class TerminalManagerTest {
 
         List<TerminalDto> result=terminalManager.findTerminalBySection(section1.getName());
 
-        assertEquals(expectedResult,result);
+        Assertions.assertEquals(expectedResult,result);
         Mockito.verify(sectionService).findSectionByName(section1.getName());
         Mockito.verify(terminalRepository).findTerminalBySections(section1);
 
@@ -143,7 +144,7 @@ public class TerminalManagerTest {
         Mockito.when(terminalRepository.save(terminal)).thenReturn(terminal);
 
         TerminalDto result=terminalManager.SaveTerminal(terminalDto);
-        assertEquals(expectedResult,result);
+        Assertions.assertEquals(expectedResult,result);
 
         Mockito.verify(sectionService).saveSection(sections);
         Mockito.verify(terminalRepository).findTerminalByName(terminalDto.getName());
@@ -177,7 +178,7 @@ public class TerminalManagerTest {
         Mockito.when(terminalRepository.save(terminal)).thenReturn(terminal);
 
         TerminalDto result=terminalManager.SaveTerminal(terminalDto);
-        assertEquals(expectedResult,result);
+        Assertions.assertEquals(expectedResult,result);
 
         Mockito.verify(sectionService).saveSection(sections);
         Mockito.verify(terminalRepository).findTerminalByName(terminalDto.getName());

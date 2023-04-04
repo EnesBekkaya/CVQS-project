@@ -4,6 +4,7 @@ import com.cvqs.terminalservice.dto.SectionDto;
 import com.cvqs.terminalservice.exception.EntityNotFoundException;
 import com.cvqs.terminalservice.model.Section;
 import com.cvqs.terminalservice.repository.SectionRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -51,7 +52,7 @@ class SectionManagerTest {
 
         List<Section> result = sectionManager.saveSection(sections);
 
-        assertEquals(expectedResult, result);
+        Assertions.assertEquals(expectedResult, result);
 
         Mockito.verify(sectionRepository).findSectionByName(section1.getName());
         Mockito.verify(sectionRepository).findSectionByName(section2.getName());
@@ -80,7 +81,7 @@ class SectionManagerTest {
 
         List<SectionDto> result=sectionManager.getAllSection();
 
-        assertEquals(expectedResult,result);
+        Assertions.assertEquals(expectedResult,result);
         Mockito.verify(sectionRepository).findAll();
     }
     @DisplayName("should Find Section By Name And Return Section")
@@ -93,7 +94,7 @@ class SectionManagerTest {
 
         Section result=sectionManager.findSectionByName(section1.getName());
 
-        assertEquals(expectedResult,result);
+        Assertions.assertEquals(expectedResult,result);
         Mockito.verify(sectionRepository).findSectionByName(section1.getName());
     }
     @DisplayName("should Throw Entity Not Found Exception when SectionName Does Not Exist")
@@ -110,7 +111,7 @@ class SectionManagerTest {
             exception = e;
         }
 
-        assertNotNull(exception);
+        Assertions.assertNotNull(exception);
         Mockito.verify(sectionRepository).findSectionByName(section1.getName());
     }
 

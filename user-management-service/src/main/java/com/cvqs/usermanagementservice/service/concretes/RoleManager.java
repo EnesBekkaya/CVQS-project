@@ -1,10 +1,10 @@
 package com.cvqs.usermanagementservice.service.concretes;
 
 import com.cvqs.usermanagementservice.dto.RoleDto;
+import com.cvqs.usermanagementservice.exception.EntityNotFoundException;
 import com.cvqs.usermanagementservice.model.Role;
 import com.cvqs.usermanagementservice.repository.RoleRepository;
 import com.cvqs.usermanagementservice.service.abstracts.RoleService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;

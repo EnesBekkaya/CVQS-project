@@ -10,20 +10,13 @@ import com.cvqs.defectsaveservice.model.Vehichle;
 import com.cvqs.defectsaveservice.service.abstracts.ImageService;
 import com.cvqs.defectsaveservice.service.abstracts.LocationService;
 import com.cvqs.defectsaveservice.service.abstracts.VehichleService;
-import junit.framework.TestCase;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
-import org.mockito.internal.verification.Times;
 import org.modelmapper.ModelMapper;
 import com.cvqs.defectsaveservice.repository.DefectRepository;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.sql.rowset.serial.SerialBlob;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -32,7 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-public class DefectManagerTest extends TestCase {
+public class DefectManagerTest{
     private DefectManager defectManager;
    private  DefectRepository defectRepository;
    private LocationService locationService;
@@ -86,14 +79,58 @@ public class DefectManagerTest extends TestCase {
         DefectDto expectedResult=defectDto;
 
         Mockito.when(vehichleService.findVehichleByRegistrationPlate(vehichle.getRegistrationPlate())).thenReturn(vehichle);
+        Mockito.when(defectRepository.getDefectsByTypeAndVehichle(defectDto.getType(),vehichle)).thenReturn(defect);
         Mockito.when(locationService.findLocationByXAndY(location.getX(), location.getY())).thenReturn(location);
-        Mockito.when(imageService.saveImage(file, locations)).thenReturn( new Image());
-        Mockito.when(defectRepository.getDefectsByTypeAndVehichle(defectDto.getType(), vehichle)).thenReturn(null);
         Mockito.when(modelMapper.map(defectRepository.save(defect),DefectDto.class)).thenReturn(defectDto);
 
         DefectDto result = defectManager.save(defectDto, file);
 
-      assertEquals(expectedResult,result);
+      Assertions.assertEquals(expectedResult,result);
+    }
+    @DisplayName("should save Defect By DefectDto when defect null and return defectDto")
+    @Test
+    void shouldSaveDefectDtoByDefectDtoWhenDefectNull() throws SQLException, IOException {
+        MultipartFile file = new MockMultipartFile("test.jpg", new byte[]{});
+
+        Vehichle vehichle = new Vehichle();
+        vehichle.setRegistrationPlate("ABC123");
+
+        DefectDto defectDto = new DefectDto();
+        defectDto.setType("test-type");
+        defectDto.setVehichle(vehichle);
+
+        List<Location> locations=new ArrayList<>();
+        Location location = new Location();
+        location.setX(10);
+        location.setY(25);
+        locations.add(location);
+
+        List<LocationDto> locationsDto = new ArrayList<>();
+
+        LocationDto locationDto = new LocationDto();
+        locationDto.setX(10);
+        locationDto.setY(25);
+
+        locationsDto.add(locationDto);
+        defectDto.setLocations(locations);
+
+        Defect defect=new Defect();
+        defect.setLocations(locations);
+        defect.setVehichle(vehichle);
+        defect.setType("test-type");
+        defect.setImage(new Image());
+
+        DefectDto expectedResult=defectDto;
+
+        Mockito.when(vehichleService.findVehichleByRegistrationPlate(vehichle.getRegistrationPlate())).thenReturn(vehichle);
+        Mockito.when(defectRepository.getDefectsByTypeAndVehichle(defectDto.getType(),vehichle)).thenReturn(null);
+        Mockito.when(locationService.findLocationByXAndY(location.getX(), location.getY())).thenReturn(location);
+        Mockito.when(imageService.saveImage(file, locations)).thenReturn( new Image());
+        Mockito.when(modelMapper.map(defectRepository.save(defect),DefectDto.class)).thenReturn(defectDto);
+
+        DefectDto result = defectManager.save(defectDto, file);
+
+        Assertions.assertEquals(expectedResult,result);
     }
 
     @DisplayName("should return defect list")
@@ -128,7 +165,7 @@ public class DefectManagerTest extends TestCase {
                 .collect(Collectors.toList());
         List<DefectDto> result = defectManager.getAll();
 
-        assertEquals(expectedDefectDtos, result);
+        Assertions.assertEquals(expectedDefectDtos, result);
         Mockito.verify(defectRepository).findAll();
 
     }
@@ -165,7 +202,7 @@ public class DefectManagerTest extends TestCase {
 
 
         // Assert
-        assertEquals(expectedDefectDtos,result);
+        Assertions.assertEquals(expectedDefectDtos,result);
    }
 
 
@@ -179,15 +216,13 @@ public class DefectManagerTest extends TestCase {
 
         Mockito.when(defectRepository.findByRegistrationPlate(vehichle.getRegistrationPlate())).thenReturn(defects);
 
-        EntityNotFoundException exception = null;
-        try {
+        EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class, () -> {
             defectManager.findByRegistrationPlate(vehichle.getRegistrationPlate());
-        } catch (EntityNotFoundException e) {
-            exception = e;
-        }
+        });
 
-        assertNotNull(exception);
-        assertEquals("Araca kayıtlı hata bulunamadı", exception.getMessage());
+        Assertions.assertNotNull(exception);
+        Assertions.assertEquals("Araca kayıtlı hata bulunamadı", exception.getMessage());
+        Mockito.verify(defectRepository).findByRegistrationPlate(vehichle.getRegistrationPlate());
     }
 
     @AfterEach

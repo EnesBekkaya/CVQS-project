@@ -5,6 +5,7 @@ import com.cvqs.securityservice.dto.AuthRequest;
 import com.cvqs.securityservice.dto.AuthenticationResponse;
 import com.cvqs.securityservice.dto.User;
 import com.cvqs.securityservice.dto.UserSecurityDto;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -59,7 +60,7 @@ class AuthenticationServiceTest {
 
         AuthenticationResponse result = authenticationService.authenticate(request);
 
-        assertEquals(expectedResult,result);
+        Assertions.assertEquals(expectedResult,result);
     }
 
 
