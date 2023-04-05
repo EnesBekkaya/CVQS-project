@@ -47,7 +47,7 @@ public class ImageManager implements ImageService {
         BufferedImage image = ImageIO.read(inputStream);
 
 
-        String imagePath = "defect-save-service/src/main/resources/hata_PHOTO.jpg";
+        String imagePath = "/path/in/container/hata_PHOTO.jpg";
         BufferedImage overlay = ImageIO.read(new File(imagePath));
         Graphics2D g2d = image.createGraphics();
         for (Location location : locations) {

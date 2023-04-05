@@ -45,7 +45,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                     authHeader = authHeader.substring(7);
                 }
                 try {
-                    ResponseEntity<Boolean> response = restTemplate.getForEntity("http://localhost:9092/auth/validateToken?token="+authHeader+"&role="+config.getRole(), Boolean.class);
+                    ResponseEntity<Boolean> response = restTemplate.getForEntity("http://host.docker.internal:9092/auth/validateToken?token="+authHeader+"&role="+config.getRole(), Boolean.class);
                     Boolean isTokenValid= response.getBody();
 
                     if (!isTokenValid){

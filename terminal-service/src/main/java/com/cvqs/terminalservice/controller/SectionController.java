@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/terminals/sections")
+@RequestMapping("/sections")
 @RequiredArgsConstructor
 public class SectionController {
     private static final Logger LOGGER= LoggerFactory.getLogger(TerminalController.class);
