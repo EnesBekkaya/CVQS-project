@@ -8,10 +8,13 @@ import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import reactor.core.publisher.Mono;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -38,7 +41,13 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                 if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
                     LOGGER.error("missing authorization header");
 
-                    throw new RuntimeException("missing authorization header");
+                    var responseMissing = exchange.getResponse();
+                    responseMissing.setStatusCode(HttpStatus.UNAUTHORIZED);
+                    responseMissing.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+                    String errorResponse = " Missing authorization header...!";
+                    var bufferFactory = responseMissing.bufferFactory();
+                    var dataBuffer = bufferFactory.wrap(errorResponse.getBytes(StandardCharsets.UTF_8));
+                    return responseMissing.writeWith(Mono.just(dataBuffer));
                 }
                 String authHeader = exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
                 if (authHeader != null && authHeader.startsWith("Bearer ")) {
@@ -49,11 +58,13 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                     Boolean isTokenValid= response.getBody();
 
                     if (!isTokenValid){
-                        var responsee = exchange.getResponse();
-                        responsee.setStatusCode(HttpStatus.UNAUTHORIZED);
-                        LOGGER.error("Invalid access...!");
-
-                        return responsee.setComplete();
+                        var responseUnauthorized = exchange.getResponse();
+                        responseUnauthorized.setStatusCode(HttpStatus.UNAUTHORIZED);
+                        responseUnauthorized.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+                        String errorResponse = " Error: Invalid access...! ";
+                        var bufferFactory = responseUnauthorized.bufferFactory();
+                        var dataBuffer = bufferFactory.wrap(errorResponse.getBytes(StandardCharsets.UTF_8));
+                        return responseUnauthorized.writeWith(Mono.just(dataBuffer));
                     }
 
                 } catch (Exception e) {
@@ -71,7 +82,6 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
     }
     @Override
     public List<String> shortcutFieldOrder() {
-        // we need this to use shortcuts in the application.yml
         return Arrays.asList("role");
     }
 }

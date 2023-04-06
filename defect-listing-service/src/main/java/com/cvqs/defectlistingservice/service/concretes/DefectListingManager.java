@@ -2,6 +2,7 @@ package com.cvqs.defectlistingservice.service.concretes;
 
 import com.cvqs.defectlistingservice.client.DefectListingServiceClient;
 import com.cvqs.defectlistingservice.dto.DefectDto;
+import com.cvqs.defectlistingservice.exception.EntityNotFoundException;
 import com.cvqs.defectlistingservice.service.abstracts.DefectListingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +25,13 @@ public class DefectListingManager implements DefectListingService {
 
     @Override
     public List<DefectDto>  findDefectByPlate(String registrationPlate) {
-        List<DefectDto>  defectDto=defectSaveServiceClient.getDefectsByPlate(registrationPlate).getBody();
-        return defectDto;
+        try {
+            List<DefectDto>  defectDto=defectSaveServiceClient.getDefectsByPlate(registrationPlate).getBody();
+            return defectDto;
+        }
+        catch (Exception e){
+            throw new EntityNotFoundException(" Araca kayıtlı hata bulunamadı");
+        }
     }
 
     @Override

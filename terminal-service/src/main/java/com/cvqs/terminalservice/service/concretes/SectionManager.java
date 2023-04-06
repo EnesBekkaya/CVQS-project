@@ -27,7 +27,7 @@ public class SectionManager implements SectionService {
     public List<Section> saveSection(List<Section> sections) {
         List<Section> newSection=new ArrayList<>();
         sections.forEach(section -> {
-            Section savedSection=sectionRepository.findSectionByName(section.getName());
+            Section savedSection=this.findSectionByName(section.getName());
             if(savedSection!=null){
                 newSection.add(savedSection);
             }

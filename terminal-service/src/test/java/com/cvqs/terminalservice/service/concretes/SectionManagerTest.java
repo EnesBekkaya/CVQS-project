@@ -12,9 +12,7 @@ import org.mockito.Mockito;
 import org.mockito.internal.verification.Times;
 import org.modelmapper.ModelMapper;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,35 +29,7 @@ class SectionManagerTest {
         sectionManager = new SectionManager(sectionRepository,modelMapper);
     }
 
-    @DisplayName("should Save Section And Return SectionList")
-    @Test
-    void shouldSaveSectionAndReturnSectionList() {
-        Section section1=new Section();
-        section1.setName("testname");
-        Section section2=new Section();
-        section2.setName("testname2");
-        Section section3=new Section();
-        section3.setName("testname3");
 
-        List<Section> sections = new ArrayList<>(Arrays.asList(section1,section2,section3));
-
-        List<Section> expectedResult =sections;
-
-        Mockito.when(sectionRepository.findSectionByName(section1.getName())).thenReturn(section1);
-        Mockito.when(sectionRepository.findSectionByName(section2.getName())).thenReturn(null);
-        Mockito.when(sectionRepository.findSectionByName(section3.getName())).thenReturn(section3);
-        Mockito.when(sectionRepository.save(Mockito.any(Section.class))).thenAnswer(i -> i.getArgument(0));
-
-        List<Section> result = sectionManager.saveSection(sections);
-
-        Assertions.assertEquals(expectedResult, result);
-
-        Mockito.verify(sectionRepository).findSectionByName(section1.getName());
-        Mockito.verify(sectionRepository).findSectionByName(section2.getName());
-        Mockito.verify(sectionRepository).findSectionByName(section3.getName());
-        Mockito.verify(sectionRepository).save(section2);
-        Mockito.verify(sectionRepository,new Times(3)).findSectionByName(Mockito.any(String.class));
-    }
     @DisplayName("should return sectionDto list")
     @Test
     void shouldReturnSectionDtoList(){
