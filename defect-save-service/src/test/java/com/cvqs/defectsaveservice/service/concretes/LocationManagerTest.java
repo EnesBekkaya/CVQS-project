@@ -1,16 +1,13 @@
 package com.cvqs.defectsaveservice.service.concretes;
 
 import com.cvqs.defectsaveservice.dto.LocationDto;
-import com.cvqs.defectsaveservice.dto.VehichleDto;
 import com.cvqs.defectsaveservice.model.Defect;
 import com.cvqs.defectsaveservice.model.Location;
-import com.cvqs.defectsaveservice.model.Vehichle;
 import com.cvqs.defectsaveservice.repository.LocationRepository;
 
 import org.junit.jupiter.api.*;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
-import org.mockito.internal.verification.Times;
 import org.modelmapper.ModelMapper;
 import java.util.Arrays;
 import java.util.List;

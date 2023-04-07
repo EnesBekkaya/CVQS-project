@@ -6,10 +6,10 @@ import com.cvqs.defectsaveservice.exception.EntityNotFoundException;
 import com.cvqs.defectsaveservice.model.Defect;
 import com.cvqs.defectsaveservice.model.Image;
 import com.cvqs.defectsaveservice.model.Location;
-import com.cvqs.defectsaveservice.model.Vehichle;
+import com.cvqs.defectsaveservice.model.Vehicle;
 import com.cvqs.defectsaveservice.service.abstracts.ImageService;
 import com.cvqs.defectsaveservice.service.abstracts.LocationService;
-import com.cvqs.defectsaveservice.service.abstracts.VehichleService;
+import com.cvqs.defectsaveservice.service.abstracts.VehicleService;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
@@ -30,17 +30,17 @@ public class DefectManagerTest{
     private DefectManager defectManager;
    private  DefectRepository defectRepository;
    private LocationService locationService;
-   private VehichleService vehichleService;
+   private VehicleService vehicleService;
    private  ModelMapper modelMapper;
     private ImageService imageService;
     @BeforeEach
     public void setUp() {
         defectRepository = Mockito.mock(DefectRepository.class);
         locationService = Mockito.mock(LocationService.class);
-        vehichleService = Mockito.mock(VehichleService.class);
+        vehicleService = Mockito.mock(VehicleService.class);
         modelMapper = Mockito.mock(ModelMapper.class);
         imageService=Mockito.mock(ImageService.class);
-        defectManager = new DefectManager(defectRepository,locationService,vehichleService, imageService,modelMapper);
+        defectManager = new DefectManager(defectRepository,locationService, vehicleService, imageService,modelMapper);
     }
 
 
@@ -49,12 +49,12 @@ public class DefectManagerTest{
     void shouldSaveDefectDtoByDefectDtoWhenNewDefect() throws SQLException, IOException {
         MultipartFile file = new MockMultipartFile("test.jpg", new byte[]{});
 
-        Vehichle vehichle = new Vehichle();
-        vehichle.setRegistrationPlate("ABC123");
+        Vehicle vehicle = new Vehicle();
+        vehicle.setRegistrationPlate("ABC123");
 
         DefectDto defectDto = new DefectDto();
         defectDto.setType("test-type");
-        defectDto.setVehichle(vehichle);
+        defectDto.setVehicle(vehicle);
 
         List<Location> locations=new ArrayList<>();
         Location location = new Location();
@@ -73,14 +73,14 @@ public class DefectManagerTest{
 
         Defect defect=new Defect();
         defect.setLocations(locations);
-        defect.setVehichle(vehichle);
+        defect.setVehicle(vehicle);
         defect.setType("test-type");
         defect.setImage(new Image());
 
         DefectDto expectedResult=defectDto;
 
-        Mockito.when(vehichleService.findVehichleByRegistrationPlate(vehichle.getRegistrationPlate())).thenReturn(vehichle);
-        Mockito.when(defectRepository.getDefectsByTypeAndVehichle(defectDto.getType(),vehichle)).thenReturn(defect);
+        Mockito.when(vehicleService.findVehichleByRegistrationPlate(vehicle.getRegistrationPlate())).thenReturn(vehicle);
+        Mockito.when(defectRepository.getDefectsByTypeAndVehichle(defectDto.getType(), vehicle)).thenReturn(defect);
         Mockito.when(locationService.findLocationByXAndY(location.getX(), location.getY())).thenReturn(location);
         Mockito.when(modelMapper.map(defectRepository.save(defect),DefectDto.class)).thenReturn(defectDto);
 
@@ -93,12 +93,12 @@ public class DefectManagerTest{
     void shouldSaveDefectDtoByDefectDtoWhenDefectNull() throws SQLException, IOException {
         MultipartFile file = new MockMultipartFile("test.jpg", new byte[]{});
 
-        Vehichle vehichle = new Vehichle();
-        vehichle.setRegistrationPlate("ABC123");
+        Vehicle vehicle = new Vehicle();
+        vehicle.setRegistrationPlate("ABC123");
 
         DefectDto defectDto = new DefectDto();
         defectDto.setType("test-type");
-        defectDto.setVehichle(vehichle);
+        defectDto.setVehicle(vehicle);
 
         List<Location> locations=new ArrayList<>();
         Location location = new Location();
@@ -117,14 +117,14 @@ public class DefectManagerTest{
 
         Defect defect=new Defect();
         defect.setLocations(locations);
-        defect.setVehichle(vehichle);
+        defect.setVehicle(vehicle);
         defect.setType("test-type");
         defect.setImage(new Image());
 
         DefectDto expectedResult=defectDto;
 
-        Mockito.when(vehichleService.findVehichleByRegistrationPlate(vehichle.getRegistrationPlate())).thenReturn(vehichle);
-        Mockito.when(defectRepository.getDefectsByTypeAndVehichle(defectDto.getType(),vehichle)).thenReturn(null);
+        Mockito.when(vehicleService.findVehichleByRegistrationPlate(vehicle.getRegistrationPlate())).thenReturn(vehicle);
+        Mockito.when(defectRepository.getDefectsByTypeAndVehichle(defectDto.getType(), vehicle)).thenReturn(null);
         Mockito.when(locationService.findLocationByXAndY(location.getX(), location.getY())).thenReturn(location);
         Mockito.when(imageService.saveImage(file, locations)).thenReturn( new Image());
         Mockito.when(modelMapper.map(defectRepository.save(defect),DefectDto.class)).thenReturn(defectDto);
@@ -147,15 +147,15 @@ public class DefectManagerTest{
         List<Location> locations = new ArrayList<>(Arrays.asList(location,location2));
 
 
-        Vehichle vehichle = new Vehichle();
-        vehichle.setRegistrationPlate("ABC123");
+        Vehicle vehicle = new Vehicle();
+        vehicle.setRegistrationPlate("ABC123");
         Defect defect1=new Defect();
         defect1.setLocations(locations);
-        defect1.setVehichle(vehichle);
+        defect1.setVehicle(vehicle);
         defect1.setType("çizik");
         Defect defect2=new Defect();
         defect2.setLocations(locations);
-        defect2.setVehichle(vehichle);
+        defect2.setVehicle(vehicle);
         defect2.setType("göçük");
         List<Defect> defects = Arrays.asList(defect1, defect2);
 
@@ -181,25 +181,25 @@ public class DefectManagerTest{
         location2.setY(23);
 
         List<Location> locations = new ArrayList<>(Arrays.asList(location,location2));
-        Vehichle vehichle = new Vehichle();
-        vehichle.setRegistrationPlate("ABC123");
+        Vehicle vehicle = new Vehicle();
+        vehicle.setRegistrationPlate("ABC123");
 
         Defect defect1=new Defect();
         defect1.setLocations(locations);
-        defect1.setVehichle(vehichle);
+        defect1.setVehicle(vehicle);
         defect1.setType("çizik");
         Defect defect2=new Defect();
         defect2.setLocations(locations);
-        defect2.setVehichle(vehichle);
+        defect2.setVehicle(vehicle);
         defect2.setType("göçük");
         List<Defect> defects = Arrays.asList(defect1, defect2);
         List<DefectDto> expectedDefectDtos = defects.stream()
                 .map(defect -> modelMapper.map(defect, DefectDto.class))
                 .collect(Collectors.toList());
 
-        Mockito.when(defectRepository.findByRegistrationPlate(vehichle.getRegistrationPlate())).thenReturn(defects);
+        Mockito.when(defectRepository.findByRegistrationPlate(vehicle.getRegistrationPlate())).thenReturn(defects);
 
-        List<DefectDto> result = defectManager.findByRegistrationPlate(vehichle.getRegistrationPlate());
+        List<DefectDto> result = defectManager.findByRegistrationPlate(vehicle.getRegistrationPlate());
 
 
         Assertions.assertEquals(expectedDefectDtos,result);
@@ -209,21 +209,21 @@ public class DefectManagerTest{
     @DisplayName("should throw EntityNotFoundException when the parameter of the findVehichleByRegistrationPlate RegistrationPlate does not exist ")
     @Test
     void shouldThrowEntityNotFoundException_whenRegistrationPlateDoesNotExist() {
-        Vehichle vehichle = new Vehichle();
-        vehichle.setRegistrationPlate("ABC123");
-        vehichle.setBrand("audi");
+        Vehicle vehicle = new Vehicle();
+        vehicle.setRegistrationPlate("ABC123");
+        vehicle.setBrand("audi");
 
         List<Defect> defects = new ArrayList<>();
 
-        Mockito.when(defectRepository.findByRegistrationPlate(vehichle.getRegistrationPlate())).thenReturn(defects);
+        Mockito.when(defectRepository.findByRegistrationPlate(vehicle.getRegistrationPlate())).thenReturn(defects);
 
         EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class, () -> {
-            defectManager.findByRegistrationPlate(vehichle.getRegistrationPlate());
+            defectManager.findByRegistrationPlate(vehicle.getRegistrationPlate());
         });
 
         Assertions.assertNotNull(exception);
         Assertions.assertEquals("Araca kayıtlı hata bulunamadı", exception.getMessage());
-        Mockito.verify(defectRepository).findByRegistrationPlate(vehichle.getRegistrationPlate());
+        Mockito.verify(defectRepository).findByRegistrationPlate(vehicle.getRegistrationPlate());
     }
 
     @DisplayName("should Return Byte By Plate With RegistrationPlate And DefectType")
@@ -239,14 +239,14 @@ public class DefectManagerTest{
         location2.setY(23);
 
         List<Location> locations = new ArrayList<>(Arrays.asList(location,location2));
-        Vehichle vehichle = new Vehichle();
+        Vehicle vehicle = new Vehicle();
         byte[] data= "test-image".getBytes();
         Image image=new Image();
         image.setData(new SerialBlob(data));
-        vehichle.setRegistrationPlate("34BA23");
+        vehicle.setRegistrationPlate("34BA23");
         Defect defect1=new Defect();
         defect1.setLocations(locations);
-        defect1.setVehichle(vehichle);
+        defect1.setVehicle(vehicle);
         defect1.setType("çizik");
         defect1.setImage(image);
         byte[] expectedResult= data;

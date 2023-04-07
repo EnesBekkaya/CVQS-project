@@ -1,7 +1,7 @@
 package com.cvqs.defectsaveservice.dto;
 
 import com.cvqs.defectsaveservice.model.Location;
-import com.cvqs.defectsaveservice.model.Vehichle;
+import com.cvqs.defectsaveservice.model.Vehicle;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,6 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 public class DefectDto {
     private String type;
-    private Vehichle vehichle;
+    private Vehicle vehicle;
     private List<Location> locations;
 }

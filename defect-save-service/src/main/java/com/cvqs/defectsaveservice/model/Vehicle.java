@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @EqualsAndHashCode(of={"id"})
 @Table(name="vehichle")
-public class Vehichle {
+public class Vehicle {
     @Id
     @Getter
     @GenericGenerator(name = "uuid", strategy = "uuid")
@@ -32,7 +32,7 @@ public class Vehichle {
 
     @Getter
     @Setter
-    @OneToMany(mappedBy = "vehichle",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "vehicle",cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Defect> defect;
 

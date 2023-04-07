@@ -30,7 +30,7 @@ public class Defect {
     @ManyToOne
     @JoinColumn(name="vehichle_id",nullable = false)
     @JsonIgnore
-    private Vehichle vehichle;
+    private Vehicle vehicle;
     @Getter
     @Setter
     @ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)

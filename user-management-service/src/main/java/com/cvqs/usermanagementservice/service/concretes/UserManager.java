@@ -17,7 +17,13 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
+/**
+ *  UserManager sınıfı, UserService arayüzünden türetilmiştir ve
+ *  user işlemlerini yönetir. Bu sınıf, veritabanı işlemleri için UserRepository nesnelerini kullanmaktadır.
+ *
+ *  @author Enes Bekkaya
+ *  @since  26.02.2023
+ */
 @Service
 @RequiredArgsConstructor
 public class UserManager implements UserService {
@@ -29,6 +35,10 @@ public class UserManager implements UserService {
 
     private static final Logger LOGGER= LoggerFactory.getLogger(UserManager.class);
 
+    /**
+     * Veritabanındaki tüm kullanıcıları alır ve UserDto listesi olarak döndürür.
+     * @return Veritabanındaki tüm kullanıcıların UserDto listesi.
+     */
     @Override
     public List<UserDto> getAll() {
         List <User> users=userRepository.findAll();
@@ -36,6 +46,14 @@ public class UserManager implements UserService {
         return userDtos;
     }
 
+    /**
+     * UserDto nesnesini alır, bu kullanıcının rollerini veritabanından alır ve kullanıcıyı kaydeder.
+     *
+     * @param userDto kaydedilecek UserDto nesnesi
+     *
+     * @return kaydedilen UserDto nesnesi
+
+     */
     @Override
     public UserDto save(UserDto userDto) {
         User newUser=new User();
@@ -53,6 +71,15 @@ public class UserManager implements UserService {
         newUser.setRoles(roles);
         return modelMapper.map(userRepository.save(newUser), UserDto.class);
     }
+
+    /**
+     * UserDto nesnesini alır ve veritabanında bu kullanıcı adına sahip bir kullanıcı varsa,
+     * kullanıcının bilgilerini günceller ve güncellenen UserDto nesnesini döndürür.
+     * Eğer kullanıcı yoksa, EntityNotFoundException fırlatır.
+     * @param userDto güncellenecek UserDto nesnesi
+     * @return güncellenen UserDto nesnesi
+     * @throws EntityNotFoundException kullanıcı adına sahip bir kullanıcı yoksa fırlatılır
+     */
     @Override
     public UserDto updateUser(UserDto userDto ) {
         User user=userRepository.findUserByUsername(userDto.getUsername());
@@ -73,6 +100,14 @@ public class UserManager implements UserService {
         return modelMapper.map(userRepository.save(user),UserDto.class);
     }
 
+    /**
+     * UserDto nesnesini alır ve veritabanında bu kullanıcı adına sahip bir kullanıcı varsa,
+     * kullanıcının deleted özelliğini true olarak günceller ve güncellenen UserDto nesnesini döndürür.
+     * Eğer kullanıcı yoksa, EntityNotFoundException fırlatır.
+     * @param userDto silinecek UserDto nesnesi
+     * @return silinen UserDto nesnesi
+     * @throws EntityNotFoundException kullanıcı adına sahip bir kullanıcı yoksa fırlatılır
+     */
     @Override
     public UserDto delete(UserDto userDto) {
         User user=userRepository.findUserByUsername(userDto.getUsername());
@@ -85,6 +120,13 @@ public class UserManager implements UserService {
         return modelMapper.map(userRepository.save(user),UserDto.class);
     }
 
+    /**
+     * Verilen kullanıcı adına sahip kullanıcıyı veritabanında arar ve bulduğu takdirde kullanıcıyı
+     * User nesnesi olarak döndürür. Eğer kullanıcı bulunamazsa null döndürür.
+     * @param userName aranacak kullanıcının kullanıcı adı
+     * @return bulunan kullanıcıyı User nesnesi olarak döndürür. Kullanıcı bulunamazsa null döndürür.
+
+     */
     @Override
     public User findUserByUserName(String userName) {
        return userRepository.findUserByUsername(userName);

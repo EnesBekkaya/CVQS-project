@@ -2,7 +2,7 @@ package com.cvqs.defectsaveservice.service.concretes;
 
 import com.cvqs.defectsaveservice.dto.VehichleDto;
 import com.cvqs.defectsaveservice.exception.EntityNotFoundException;
-import com.cvqs.defectsaveservice.model.Vehichle;
+import com.cvqs.defectsaveservice.model.Vehicle;
 import com.cvqs.defectsaveservice.repository.VehichleRepository;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-class VehichleManagerTest {
-    private VehichleManager vehichleManager;
+class VehicleManagerTest {
+    private VehicleManager vehichleManager;
     private VehichleRepository vehichleRepository;
     private ModelMapper modelMapper;
 
@@ -25,31 +25,31 @@ class VehichleManagerTest {
         vehichleRepository = Mockito.mock(VehichleRepository.class);
         vehichleRepository = Mockito.mock(VehichleRepository.class);
         modelMapper = Mockito.mock(ModelMapper.class);
-        vehichleManager = new VehichleManager(vehichleRepository, modelMapper);
+        vehichleManager = new VehicleManager(vehichleRepository, modelMapper);
     }
 
     @DisplayName("should save Vehicle and return vehicle dto")
     @Test
     void shouldSaveAndReturnVehicleDto() {
         VehichleDto vehichleDto = new VehichleDto("AUDI", "34BA23");
-        Vehichle vehichle = new Vehichle();
-        vehichle.setBrand("Audi");
-        vehichle.setRegistrationPlate("34ba22");
+        Vehicle vehicle = new Vehicle();
+        vehicle.setBrand("Audi");
+        vehicle.setRegistrationPlate("34ba22");
 
 
         VehichleDto expectedResult = new VehichleDto("AUDI", "34BA23");
 
-        Mockito.when(modelMapper.map(Mockito.any(VehichleDto.class), Mockito.eq(Vehichle.class))).thenReturn(vehichle);
-        Mockito.when(vehichleRepository.save(vehichle)).thenReturn(vehichle);
-        Mockito.when(modelMapper.map(Mockito.any(Vehichle.class), Mockito.eq(VehichleDto.class))).thenReturn(vehichleDto);
+        Mockito.when(modelMapper.map(Mockito.any(VehichleDto.class), Mockito.eq(Vehicle.class))).thenReturn(vehicle);
+        Mockito.when(vehichleRepository.save(vehicle)).thenReturn(vehicle);
+        Mockito.when(modelMapper.map(Mockito.any(Vehicle.class), Mockito.eq(VehichleDto.class))).thenReturn(vehichleDto);
 
         VehichleDto result = vehichleManager.save(vehichleDto);
         Assertions.assertEquals(expectedResult, result);
 
-        Mockito.verify(modelMapper).map(vehichleDto, Vehichle.class);
-        Mockito.verify(vehichleRepository).save(vehichle);
-        Mockito.verify(vehichleRepository, new Times(1)).save(Mockito.any(Vehichle.class));
-        Mockito.verify(modelMapper, new Times(1)).map(Mockito.any(VehichleDto.class), Mockito.eq(Vehichle.class));
+        Mockito.verify(modelMapper).map(vehichleDto, Vehicle.class);
+        Mockito.verify(vehichleRepository).save(vehicle);
+        Mockito.verify(vehichleRepository, new Times(1)).save(Mockito.any(Vehicle.class));
+        Mockito.verify(modelMapper, new Times(1)).map(Mockito.any(VehichleDto.class), Mockito.eq(Vehicle.class));
     }
 
 
@@ -57,17 +57,17 @@ class VehichleManagerTest {
     @Test
     void shouldFindVehichleByRegistrationPlateAndReturnVehichle() {
         String registrationPlate = "34BA23";
-        Vehichle vehichle = new Vehichle();
-        vehichle.setBrand("Audi");
-        vehichle.setRegistrationPlate("34BA23");
+        Vehicle vehicle = new Vehicle();
+        vehicle.setBrand("Audi");
+        vehicle.setRegistrationPlate("34BA23");
 
-        Vehichle expectedResult = new Vehichle();
+        Vehicle expectedResult = new Vehicle();
         expectedResult.setBrand("Audi");
         expectedResult.setRegistrationPlate("34BA23");
 
-        Mockito.when(vehichleRepository.findVehichleByRegistrationPlate(registrationPlate)).thenReturn(vehichle);
+        Mockito.when(vehichleRepository.findVehichleByRegistrationPlate(registrationPlate)).thenReturn(vehicle);
 
-        Vehichle result = vehichleRepository.findVehichleByRegistrationPlate(registrationPlate);
+        Vehicle result = vehichleRepository.findVehichleByRegistrationPlate(registrationPlate);
 
         Assertions.assertEquals(expectedResult, result);
         Mockito.verify(vehichleRepository).findVehichleByRegistrationPlate(registrationPlate);
@@ -78,9 +78,9 @@ class VehichleManagerTest {
     @Test
     void shouldThrowEntityNotFoundException_whenRegistrationPlateDoesNotExist() {
         String registrationPlate = "34BA23";
-        Vehichle vehichle = new Vehichle();
-        vehichle.setBrand("Audi");
-        vehichle.setRegistrationPlate("34BA23");
+        Vehicle vehicle = new Vehicle();
+        vehicle.setBrand("Audi");
+        vehicle.setRegistrationPlate("34BA23");
 
         Mockito.when(vehichleRepository.findVehichleByRegistrationPlate(registrationPlate)).thenReturn(null);
 
@@ -99,17 +99,17 @@ class VehichleManagerTest {
     @DisplayName("should Get All Vehicle Dto List ")
     @Test
     void shouldGetAllVehicleDtoList() {
-        Vehichle vehichle = new Vehichle();
-        vehichle.setBrand("Audi");
-        vehichle.setRegistrationPlate("34BA23");
+        Vehicle vehicle = new Vehicle();
+        vehicle.setBrand("Audi");
+        vehicle.setRegistrationPlate("34BA23");
 
-        Vehichle vehichle2 = new Vehichle();
-        vehichle2.setBrand("bmw");
-        vehichle2.setRegistrationPlate("34AD12");
+        Vehicle vehicle2 = new Vehicle();
+        vehicle2.setBrand("bmw");
+        vehicle2.setRegistrationPlate("34AD12");
 
-        List<Vehichle> vehichles=new ArrayList<>(Arrays.asList(vehichle,vehichle2));
-        List<VehichleDto> expectedResult=vehichles.stream().map(defect1 -> modelMapper.map(defect1,VehichleDto.class)).collect(Collectors.toList());
-        Mockito.when(vehichleRepository.findAll()).thenReturn(vehichles);
+        List<Vehicle> vehicles =new ArrayList<>(Arrays.asList(vehicle, vehicle2));
+        List<VehichleDto> expectedResult= vehicles.stream().map(defect1 -> modelMapper.map(defect1,VehichleDto.class)).collect(Collectors.toList());
+        Mockito.when(vehichleRepository.findAll()).thenReturn(vehicles);
         List<VehichleDto> result=vehichleManager.getAll();
 
         Assertions.assertEquals(expectedResult,result);

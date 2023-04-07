@@ -18,6 +18,17 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * GatewayFilter sınıfını miras alan ve bir yapılandırma sınıfını parametre olarak alan
+ *  AbstractGatewayFilterFactory alt sınıfıdır. Bu sınıf, bir isteğin kimlik doğrulamasını yapar
+ * ve yapılandırılmış olan güvenli olmayan endpoint'lerden gelen istekleri filtreler. Bu sınıf ayrıca
+ * bir RouteValidator ve bir RestTemplate bağımlılığı enjekte eder. Doğrulama için bir
+ * JWT token'ı ve kullanıcı rolü gerekir ve doğrulama isteği bir harici servis aracılığıyla gönderilir.
+ * İsteğin kimlik doğrulama mekanizmasına uymadığı durumda yanıt verir ve yanıtı döndürür.
+ *
+ * @author Enes Bekkaya
+ * @since  25.03.2023
+ */
 @Component
 public class AuthenticationFilter extends AbstractGatewayFilterFactory<AuthenticationFilter.Config>  {
 

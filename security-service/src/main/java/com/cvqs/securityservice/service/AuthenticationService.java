@@ -13,7 +13,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
-
+/**
+ * AuthenticationService, kullanıcı kimlik doğrulama ve JWT işlemleri için bir servistir.
+ *
+ * @author Enes Bekkaya
+ * @since  25.03.2023
+ */
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -25,7 +30,12 @@ public class AuthenticationService {
     private static final Logger LOGGER= LoggerFactory.getLogger(AuthenticationService.class);
 
 
-
+    /**
+     * Kullanıcının kimlik doğrulamasını yapar ve JWT token oluşturur.
+     *
+     * @param request  AuthRequest, kullanıcının kimlik bilgilerini içeren  nesne.
+     * @return AuthenticationResponse, kullanıcının kimlik doğrulaması başarılıysa JWT token döndürür.
+     */
     public AuthenticationResponse authenticate(AuthRequest request) {
 
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
@@ -35,7 +45,13 @@ public class AuthenticationService {
                 .token(jwtToken)
                 .build();
     }
-
+    /**
+     * Verilen JWT token'ın geçerli olup olmadığını ve belirtilen rolü içerip içermediğini kontrol eder.
+     *
+     * @param token String, kontrol edilecek JWT token'ı.
+     * @param role String, kontrol edilecek rol.
+     * @return boolean, token geçerliyse ve belirtilen rolü içeriyorsa true, aksi halde false döndürür.
+     */
     public boolean isInvalid(String token,String role) {
         try {
             String username = jwtService.extractUsername(token);
