@@ -11,8 +11,10 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,12 +52,15 @@ public class UserManager implements UserService {
      * UserDto nesnesini alır, bu kullanıcının rollerini veritabanından alır ve kullanıcıyı kaydeder.
      *
      * @param userDto kaydedilecek UserDto nesnesi
-     *
+     * @throw new ResponseStatusException kullanıcı adı veritabanında kayıtlıysa fırlatılır
      * @return kaydedilen UserDto nesnesi
 
      */
     @Override
     public UserDto save(UserDto userDto) {
+        if(userRepository.findUserByUsername(userDto.getUsername())!=null){
+            throw new ResponseStatusException(HttpStatus.CONFLICT,"Bu kullanıcı adı zaten kayıtlı.");
+        }
         User newUser=new User();
         List<Role> roles=new ArrayList<>();
         userDto.getRoles().forEach(role -> {

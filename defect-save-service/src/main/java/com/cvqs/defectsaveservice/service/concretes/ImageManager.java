@@ -74,7 +74,7 @@ public class ImageManager implements ImageService {
         BufferedImage overlay = ImageIO.read(new File(imagePath));
         Graphics2D g2d = image.createGraphics();
         for (Location location : locations) {
-            g2d.drawImage(overlay, location.getX(), location.getY(), 20, 20, null);
+            g2d.drawImage(overlay, location.getX(), location.getY(), 40, 40, null);
         }
 
         g2d.dispose();

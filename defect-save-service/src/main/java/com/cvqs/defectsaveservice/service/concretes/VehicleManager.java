@@ -9,7 +9,10 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.List;
 import java.util.stream.Collectors;
 /**
@@ -29,11 +32,15 @@ public class VehicleManager implements VehicleService {
     /**
      * Verilen VehichleDto nesnesini kullanarak bir Vehichle nesnesi oluşturur ve bu nesneyi veritabanına kaydeder.
      * @param vehichleDto kaydedilecek VehichleDto nesnesi
+     * @throws ResponseStatusException kayıt plakasına sahip bir Vehichle nesnesi bulunduğunda fıraltılır
      * @return kaydedilen VehichleDto nesnesi
      *
      */
     @Override
     public VehichleDto save(VehichleDto vehichleDto) {
+        if (vehichleRepository.findVehichleByRegistrationPlate(vehichleDto.getRegistrationPlate()) != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Bu plaka koduna sahip araç zaten kayıtlı.");
+        }
         Vehicle vehicle =modelMapper.map(vehichleDto, Vehicle.class);
         return modelMapper.map(vehichleRepository.save(vehicle), VehichleDto.class);
     }

@@ -24,10 +24,6 @@ public class Terminal {
     @Getter
     @Setter
     private String name;
-   /* @Column(name="createdDate",nullable = false)
-    @Getter
-    @Setter
-    private Date createdDate;*/
     @Column(name="active",nullable = false)
     @Getter
     @Setter
