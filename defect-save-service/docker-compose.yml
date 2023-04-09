@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: defect_save_service
+    ports:
+      - "9091:9091"

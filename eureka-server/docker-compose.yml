@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: eureka
+    ports:
+      - "8761:8761"
