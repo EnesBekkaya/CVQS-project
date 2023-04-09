@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 /**
  *  DefectManager sınıfı, DefectService arayüzünden türetilmiştir ve
  *  hata yönetimi işlemlerini yönetir. Bu sınıf, veritabanı işlemleri için DefectRepository
- *  lokasyon işlemleri için LocationService, araç işlemleri için VehichleService
+ *  lokasyon işlemleri için LocationService, araç işlemleri için VehicleService
  *  resim işlemleri için ImageService} nesnelerini kullanmaktadır.
  *
  *  @author Enes Bekkaya
@@ -59,12 +59,12 @@ public class    DefectManager implements DefectService {
      */
     @Override
     public DefectDto save(DefectDto defectDto, MultipartFile file) throws IOException, SQLException {
-        Vehicle vehicle = vehicleService.findVehichleByRegistrationPlate(defectDto.getVehicle().getRegistrationPlate());
+        Vehicle vehicle = vehicleService.findVehicleByRegistrationPlate(defectDto.getVehicle().getRegistrationPlate());
 
         List<Location> locations=new ArrayList<>();
         Defect newDefect=new Defect();
 
-        Defect defect=defectRepository.getDefectsByTypeAndVehichle(defectDto.getType(), vehicle);
+        Defect defect=defectRepository.getDefectsByTypeAndVehicle(defectDto.getType(), vehicle);
 
         if(defect==null) {
             defectDto.getLocations().forEach(location -> {

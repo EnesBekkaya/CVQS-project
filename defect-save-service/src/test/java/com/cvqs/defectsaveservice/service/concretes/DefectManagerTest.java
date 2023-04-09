@@ -79,8 +79,8 @@ public class DefectManagerTest{
 
         DefectDto expectedResult=defectDto;
 
-        Mockito.when(vehicleService.findVehichleByRegistrationPlate(vehicle.getRegistrationPlate())).thenReturn(vehicle);
-        Mockito.when(defectRepository.getDefectsByTypeAndVehichle(defectDto.getType(), vehicle)).thenReturn(defect);
+        Mockito.when(vehicleService.findVehicleByRegistrationPlate(vehicle.getRegistrationPlate())).thenReturn(vehicle);
+        Mockito.when(defectRepository.getDefectsByTypeAndVehicle(defectDto.getType(), vehicle)).thenReturn(defect);
         Mockito.when(locationService.findLocationByXAndY(location.getX(), location.getY())).thenReturn(location);
         Mockito.when(modelMapper.map(defectRepository.save(defect),DefectDto.class)).thenReturn(defectDto);
 
@@ -123,8 +123,8 @@ public class DefectManagerTest{
 
         DefectDto expectedResult=defectDto;
 
-        Mockito.when(vehicleService.findVehichleByRegistrationPlate(vehicle.getRegistrationPlate())).thenReturn(vehicle);
-        Mockito.when(defectRepository.getDefectsByTypeAndVehichle(defectDto.getType(), vehicle)).thenReturn(null);
+        Mockito.when(vehicleService.findVehicleByRegistrationPlate(vehicle.getRegistrationPlate())).thenReturn(vehicle);
+        Mockito.when(defectRepository.getDefectsByTypeAndVehicle(defectDto.getType(), vehicle)).thenReturn(null);
         Mockito.when(locationService.findLocationByXAndY(location.getX(), location.getY())).thenReturn(location);
         Mockito.when(imageService.saveImage(file, locations)).thenReturn( new Image());
         Mockito.when(modelMapper.map(defectRepository.save(defect),DefectDto.class)).thenReturn(defectDto);
@@ -206,7 +206,7 @@ public class DefectManagerTest{
    }
 
 
-    @DisplayName("should throw EntityNotFoundException when the parameter of the findVehichleByRegistrationPlate RegistrationPlate does not exist ")
+    @DisplayName("should throw EntityNotFoundException when the parameter of the findVehicleByRegistrationPlate RegistrationPlate does not exist ")
     @Test
     void shouldThrowEntityNotFoundException_whenRegistrationPlateDoesNotExist() {
         Vehicle vehicle = new Vehicle();

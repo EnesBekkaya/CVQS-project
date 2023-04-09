@@ -19,7 +19,7 @@ public interface DefectRepository extends JpaRepository<Defect,String> {
     * @param vehicle araç nesnesi
     * @return Arıza nesnesi
     */
-   Defect getDefectsByTypeAndVehichle(String type, Vehicle vehicle);
+   Defect getDefectsByTypeAndVehicle(String type, Vehicle vehicle);
 
    /**
     * Belirtilen plakaya sahip aracın arızalarını getirir.

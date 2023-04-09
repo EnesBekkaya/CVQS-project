@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class VehichleDto {
+public class VehicleDto {
     private String brand;
     private String  registrationPlate;
 }

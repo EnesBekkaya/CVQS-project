@@ -1,33 +1,33 @@
 package com.cvqs.defectsaveservice.service.abstracts;
 
-import com.cvqs.defectsaveservice.dto.VehichleDto;
+import com.cvqs.defectsaveservice.dto.VehicleDto;
 import com.cvqs.defectsaveservice.model.Vehicle;
 
 import java.util.List;
 /**
- * VehichleService arayüzü, Vehicle nesneleriyle ilgili işlemleri gerçekleştirir
+ * VehicleService arayüzü, Vehicle nesneleriyle ilgili işlemleri gerçekleştirir
  *
  * @author Enes Bekkaya
  * @since  12.02.2023
  */
 public interface VehicleService {
     /**
-     * Verilen VehichleDto nesnesini kaydeder
-     * @param vehichleDto kaydedilecek araç bilgileri nesnesi
-     * @return kaydedilen vehichleDto nesnesi
+     * Verilen VehicleDto nesnesini kaydeder
+     * @param vehicleDto kaydedilecek araç bilgileri nesnesi
+     * @return kaydedilen vehicleDto nesnesi
      */
-    VehichleDto save(VehichleDto vehichleDto);
+    VehicleDto save(VehicleDto vehicleDto);
 
     /**
      * Bütün araçların bir listesini döndürür.
-     * @return araçların listesi  VehichleDto
+     * @return araçların listesi  VehicleDto
      */
-     List<VehichleDto> getAll();
+     List<VehicleDto> getAll();
 
     /**
      * Belirtilen plakaya sahip aracı bulur ve döndürür
      * @param registrationPlate aracın plakası
      * @return belirtilen plakaya sahip araç Vehicle
      */
-     Vehicle findVehichleByRegistrationPlate(String registrationPlate);
+     Vehicle findVehicleByRegistrationPlate(String registrationPlate);
 }

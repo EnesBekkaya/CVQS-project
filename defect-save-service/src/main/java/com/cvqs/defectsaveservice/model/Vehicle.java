@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of={"id"})
-@Table(name="vehichle")
+@Table(name="vehicle")
 public class Vehicle {
     @Id
     @Getter

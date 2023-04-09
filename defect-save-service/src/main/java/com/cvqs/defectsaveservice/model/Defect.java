@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @EqualsAndHashCode(of={"id"})
 @Table(name="defect")
-@JsonIgnoreProperties({"hibernateLazyInitializer","handler","vehichle","location"})
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler","vehicle","location"})
 
 public class Defect {
     @Id
@@ -28,7 +28,7 @@ public class Defect {
     @Getter
     @Setter
     @ManyToOne
-    @JoinColumn(name="vehichle_id",nullable = false)
+    @JoinColumn(name="vehicle_id",nullable = false)
     @JsonIgnore
     private Vehicle vehicle;
     @Getter
