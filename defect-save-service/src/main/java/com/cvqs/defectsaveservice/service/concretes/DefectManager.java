@@ -83,6 +83,7 @@ public class    DefectManager implements DefectService {
                 locations.add(location1);
             });
             defect.setLocations(locations);
+            defect.setImage(imageService.saveImage(file,defectDto.getLocations()));
             return modelMapper.map(defectRepository.save(defect),DefectDto.class);
         }
     }
