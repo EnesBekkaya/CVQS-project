@@ -3,7 +3,7 @@ package com.cvqs.defectlistingservice.service.concretes;
 import com.cvqs.defectlistingservice.client.DefectListingServiceClient;
 import com.cvqs.defectlistingservice.dto.DefectDto;
 import com.cvqs.defectlistingservice.dto.Location;
-import com.cvqs.defectlistingservice.dto.Vehichle;
+import com.cvqs.defectlistingservice.dto.Vehicle;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 import org.springframework.http.ResponseEntity;
@@ -31,10 +31,10 @@ import java.util.List;
         Location location2=new Location(327,145);
         List< Location> locations=new ArrayList<>(Arrays.asList(location1,location2));
 
-        Vehichle vehichle=new Vehichle("audi","34BA23");
+        Vehicle vehicle =new Vehicle("audi","34BA23");
 
-        DefectDto defectDto1=new DefectDto("çizik",vehichle,locations);
-        DefectDto defectDto2=new DefectDto("göçük",vehichle,locations);
+        DefectDto defectDto1=new DefectDto("çizik", vehicle,locations);
+        DefectDto defectDto2=new DefectDto("göçük", vehicle,locations);
         List<DefectDto> defectDtos=new ArrayList<>(Arrays.asList(defectDto1,defectDto2));
 
         List<DefectDto> expectedResult=new ArrayList<>(Arrays.asList(defectDto1,defectDto2));
@@ -57,10 +57,10 @@ import java.util.List;
          Location location2=new Location(327,145);
          List< Location> locations=new ArrayList<>(Arrays.asList(location1,location2));
 
-         Vehichle vehichle=new Vehichle("audi","34BA23");
+         Vehicle vehicle =new Vehicle("audi","34BA23");
 
-         DefectDto defectDto1=new DefectDto("çizik",vehichle,locations);
-         DefectDto defectDto2=new DefectDto("göçük",vehichle,locations);
+         DefectDto defectDto1=new DefectDto("çizik", vehicle,locations);
+         DefectDto defectDto2=new DefectDto("göçük", vehicle,locations);
          List<DefectDto> defectDtos=new ArrayList<>(Arrays.asList(defectDto1,defectDto2));
 
          List<DefectDto> expectedResult=new ArrayList<>(Arrays.asList(defectDto1,defectDto2));
@@ -97,9 +97,9 @@ import java.util.List;
          Location location2=new Location(327,145);
          List< Location> locations=new ArrayList<>(Arrays.asList(location1,location2));
 
-         Vehichle vehichle=new Vehichle("audi","34BA23");
-         DefectDto defectDto1=new DefectDto("çizik",vehichle,locations);
-         DefectDto defectDto2=new DefectDto("göçük",vehichle,locations);
+         Vehicle vehicle =new Vehicle("audi","34BA23");
+         DefectDto defectDto1=new DefectDto("çizik", vehicle,locations);
+         DefectDto defectDto2=new DefectDto("göçük", vehicle,locations);
          List<DefectDto> defectDtos=new ArrayList<>(Arrays.asList(defectDto1,defectDto2));
         List<DefectDto> expectedResult=defectDtos;
         Mockito.when(defectListingServiceClient.getDefectSorted(pageNo,pageSize,sortBy)).thenReturn(ResponseEntity.ok(defectDtos));

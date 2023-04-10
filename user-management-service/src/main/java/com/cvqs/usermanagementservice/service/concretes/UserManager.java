@@ -109,17 +109,17 @@ public class UserManager implements UserService {
      * UserDto nesnesini alır ve veritabanında bu kullanıcı adına sahip bir kullanıcı varsa,
      * kullanıcının deleted özelliğini true olarak günceller ve güncellenen UserDto nesnesini döndürür.
      * Eğer kullanıcı yoksa, EntityNotFoundException fırlatır.
-     * @param userDto silinecek UserDto nesnesi
+     * @param username silinecek kullanıcının kullanıcı ismi
      * @return silinen UserDto nesnesi
      * @throws EntityNotFoundException kullanıcı adına sahip bir kullanıcı yoksa fırlatılır
      */
     @Override
-    public UserDto delete(UserDto userDto) {
-        User user=userRepository.findUserByUsername(userDto.getUsername());
+    public UserDto delete(String username) {
+        User user=userRepository.findUserByUsername(username);
         if(user==null) {
             LOGGER.warn("Parameter user is null in delete() method.");
 
-            throw new EntityNotFoundException(userDto.getUsername() + "  kullanıcı isimli bir kullanıcı bulunamadı");
+            throw new EntityNotFoundException(username + "  kullanıcı isimli bir kullanıcı bulunamadı");
         }
         user.setDeleted(true);
         return modelMapper.map(userRepository.save(user),UserDto.class);

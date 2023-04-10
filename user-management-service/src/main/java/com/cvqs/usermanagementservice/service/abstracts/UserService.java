@@ -34,10 +34,10 @@ public interface UserService {
     /**
      * Var olan bir kullanıcıyı siler.
      *
-     * @param userDto Silinecek kullanıcının bilgilerini içeren UserDto nesnesi.
+     * @param username Silinecek kullanıcının bilgilerini içeren UserDto nesnesi.
      * @return Silinen kullanıcının UserDto olarak dönüştürülmüş hali.
      */
-    UserDto delete(UserDto userDto);
+    UserDto delete(String username);
     /**
      * Kullanıcı adına göre bir kullanıcı getirir.
      *

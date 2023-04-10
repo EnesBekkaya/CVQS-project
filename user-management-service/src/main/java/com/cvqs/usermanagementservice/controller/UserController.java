@@ -62,15 +62,15 @@ public class UserController {
     /**
      * Kullanıcının silinmesi için http delete metodu kullanılarak çağrı yapılır.
      *
-     * @param userDto silinecek kullanıcının bilgilerini taşıyan UserDto nesnesi
+     * @param username silinecek kullanıcının kullanıcı ismi
      * @return ResponseEntity ile döndürülen silinmiş kullanıcının bilgilerini taşıyan UserDto nesnesi
 
      */
     @DeleteMapping ("/delete")
-    public ResponseEntity<UserDto> deleteUser(@RequestBody UserDto userDto){
+    public ResponseEntity<UserDto> deleteUser(@RequestParam String username){
         LOGGER.info("Incoming request for /users/delete");
 
-        return ResponseEntity.ok(userService.delete(userDto));
+        return ResponseEntity.ok(userService.delete(username));
     }
 
     /**

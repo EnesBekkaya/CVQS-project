@@ -79,7 +79,6 @@ class UserManagerTest {
         user.setUsername("testUsername");
         user.setPassword("encodedPassword");
         user.setRoles(roles);
-
         UserDto expectedResult=modelMapper.map(user,UserDto.class);
 
         Mockito.when(passwordEncoder.encode(userDto.getPassword())).thenReturn("encodedPassword");
@@ -93,7 +92,6 @@ class UserManagerTest {
         Mockito.verify(passwordEncoder).encode(userDto.getPassword());
         Mockito.verify(roleService).findRoleByName(role.getName());
         Mockito.verify(userRepository).save(user);
-
     }
 
     @DisplayName("should Update User By UserDto And Return UserDto")
@@ -175,7 +173,7 @@ class UserManagerTest {
         Mockito.when(userRepository.findUserByUsername(userDto.getUsername())).thenReturn(user);
         Mockito.when(userRepository.save(user)).thenReturn(user);
 
-        UserDto result=userManager.delete(userDto);
+        UserDto result=userManager.delete(userDto.getUsername());
 
         Assertions.assertEquals(expectedResult,result);
         Mockito.verify(userRepository).findUserByUsername(userDto.getUsername());
@@ -198,7 +196,7 @@ class UserManagerTest {
         Mockito.when(userRepository.findUserByUsername(userDto.getUsername())).thenReturn(null);
 
         EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class, () -> {
-            userManager.delete(userDto);
+            userManager.delete(userDto.getUsername());
         });
         Assertions.assertNotNull(exception);
         Assertions.assertEquals(userDto.getUsername() + "  kullanıcı isimli bir kullanıcı bulunamadı", exception.getMessage());

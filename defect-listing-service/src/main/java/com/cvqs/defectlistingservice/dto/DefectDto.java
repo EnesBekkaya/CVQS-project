@@ -10,6 +10,6 @@ import java.util.List;
 @AllArgsConstructor
 public class DefectDto {
     private String type;
-    private Vehichle vehichle;
+    private Vehicle vehicle;
    private List<Location> locations;
 }
