@@ -1,9 +1,7 @@
 package com.cvqs.defectsaveservice.controller;
 
 import com.cvqs.defectsaveservice.dto.DefectDto;
-import com.cvqs.defectsaveservice.model.Defect;
 import com.cvqs.defectsaveservice.service.abstracts.DefectService;
-import com.cvqs.defectsaveservice.service.concretes.DefectManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -27,7 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DefectController {
     private final DefectService defectService;
-    private static final Logger LOGGER= LoggerFactory.getLogger(DefectManager.class);
+    private static final Logger LOGGER= LoggerFactory.getLogger(DefectController.class);
 
     /**
      * Tüm hataları getirme isteklerini karşılamak için kullanılır.
@@ -52,14 +50,29 @@ public class DefectController {
     }
     /**
      * Yeni bir hata kaydı oluşturma isteklerini karşılamak için kullanılır
-     * @param defectDto Yeni arıza kaydı için kullanılacak bilgiler
+     * @param defectDto Yeni hata kaydı için kullanılacak bilgiler
      * @param file Arızaya ait resim dosyası
-     * @return Kaydedilen arıza kaydı bilgileri
+     * @return Kaydedilen hata kaydı bilgileri
      */
     @PostMapping("/save")
     public ResponseEntity<DefectDto> saveDefect(@RequestPart("defect") DefectDto defectDto,@RequestPart("file") MultipartFile file) throws IOException, SQLException {
         LOGGER.info("Incoming request for /defects/save");
         return ResponseEntity.ok(defectService.save(defectDto,file));
+    }
+
+    /**
+     *
+     * Bir hata kaydını güncelleme isteklerini karşılamak için kullanılır
+     * @param defectDto Hata kaydı verilerini içeren DefectDto nesnesi
+     * @param file Güncellenen hata kaydına eklenen dosya (isteğe bağlı)
+     * @return Güncellenen hata kaydını temsil eden DefectDto nesnesi
+     * @throws IOException Bir I/O hatası oluştuğunda fırlatılır
+     * @throws SQLException Veritabanı işlemleri sırasında bir hata oluştuğunda fırlatılır
+     */
+    @PostMapping("/update")
+    public ResponseEntity<DefectDto>updateDefect(@RequestPart("defect") DefectDto defectDto,@RequestPart("file") MultipartFile file) throws IOException, SQLException{
+    LOGGER.info("Incoming request for /defects/update");
+    return ResponseEntity.ok(defectService.update(defectDto,file));
     }
     /**
      * Plaka numarası ve hata tipine göre hata resimlerini getirme isteklerini karşılamak için kullanılır

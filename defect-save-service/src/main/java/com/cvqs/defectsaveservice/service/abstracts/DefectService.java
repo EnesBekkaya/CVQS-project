@@ -25,6 +25,15 @@ public interface DefectService {
     DefectDto save(DefectDto defectDto, MultipartFile file) throws IOException, SQLException;
 
     /**
+     * Bir hata kaydını güncellemek için kullanılan metottur.
+     * @param defectDto Hata kaydı verilerini içeren DefectDto nesnesi
+     * @param file Güncellenen hata kaydına eklenen dosya
+     * @return Güncellenen hata kaydını temsil eden DefectDto nesnesi
+     * @throws IOException Bir I/O hatası oluştuğunda fırlatılır
+     * @throws SQLException Veritabanı işlemleri sırasında bir hata oluştuğunda fırlatılır
+     */
+    DefectDto update(DefectDto defectDto,MultipartFile file) throws IOException, SQLException;
+    /**
      * Veritabanındaki tüm Defect nesnelerini bulur ve bunları DefectDto nesnelerine dönüştürerek bir liste olarak döndürür.
      * @return Veritabanındaki tüm Defect nesnelerinin DefectDto karşılıklarını içeren bir liste
      *

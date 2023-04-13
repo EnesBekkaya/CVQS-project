@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 public class VehicleManager implements VehicleService {
     private final VehicleRepository vehicleRepository;
     private final ModelMapper modelMapper;
-    private static final Logger LOGGER= LoggerFactory.getLogger(DefectManager.class);
+    private static final Logger LOGGER= LoggerFactory.getLogger(VehicleManager.class);
 
     /**
      * Verilen VehicleDto nesnesini kullanarak bir Vehicle nesnesi oluşturur ve bu nesneyi veritabanına kaydeder.
