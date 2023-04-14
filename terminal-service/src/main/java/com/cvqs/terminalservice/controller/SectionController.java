@@ -3,6 +3,7 @@ package com.cvqs.terminalservice.controller;
 import com.cvqs.terminalservice.dto.SectionDto;
 import com.cvqs.terminalservice.model.Section;
 import com.cvqs.terminalservice.service.abstracts.SectionService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,7 @@ public class SectionController {
      * @return Kaydedilen Section listesi
      */
     @PostMapping("/save")
-    public ResponseEntity<List<Section>>saveSection(@RequestBody List<Section> sections){
+    public ResponseEntity<List<Section>>saveSection(@RequestBody @Valid List<Section> sections){
         LOGGER.info("Incoming request for /sections/save");
 
         return ResponseEntity.ok(sectionService.saveSection(sections));

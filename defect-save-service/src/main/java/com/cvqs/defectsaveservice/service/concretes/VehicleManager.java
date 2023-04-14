@@ -39,6 +39,7 @@ public class VehicleManager implements VehicleService {
     @Override
     public VehicleDto save(VehicleDto vehicleDto) {
         if (vehicleRepository.findVehicleByRegistrationPlate(vehicleDto.getRegistrationPlate()) != null) {
+            LOGGER.warn("işlem başarısız!!{} plaka koduna sahip araç zaten kayıtlı. ",vehicleDto.getRegistrationPlate());
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Bu plaka koduna sahip araç zaten kayıtlı.");
         }
         Vehicle vehicle =modelMapper.map(vehicleDto, Vehicle.class);
@@ -68,7 +69,7 @@ public class VehicleManager implements VehicleService {
     public Vehicle findVehicleByRegistrationPlate(String registrationPlate) {
         Vehicle vehicle = vehicleRepository.findVehicleByRegistrationPlate(registrationPlate);
         if(vehicle ==null) {
-            LOGGER.error("Plakaya ait Araç bulunamadı");
+            LOGGER.warn("işlem başarısız!!{} plaka kodlu araç bulunamadı. ",registrationPlate);
             throw new EntityNotFoundException("Plakaya ait Araç bulunamadı");
         }
         return vehicle;

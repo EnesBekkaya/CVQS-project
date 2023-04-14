@@ -2,6 +2,7 @@ package com.cvqs.terminalservice.controller;
 
 import com.cvqs.terminalservice.dto.TerminalDto;
 import com.cvqs.terminalservice.service.abstracts.TerminalService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +69,7 @@ public class TerminalController {
      * @return Kaydedilen Terminal'in bilgileri
      */
     @PostMapping("/save")
-    public ResponseEntity<TerminalDto> saveTerminal(@RequestBody TerminalDto terminalDto){
+    public ResponseEntity<TerminalDto> saveTerminal(@RequestBody @Valid TerminalDto terminalDto){
         LOGGER.info("Incoming request for /terminals/save");
 
         return ResponseEntity.ok(terminalService.SaveTerminal(terminalDto));

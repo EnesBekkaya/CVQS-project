@@ -48,7 +48,7 @@ public class RoleManager implements RoleService {
     public Role findRoleByName(String name) {
         Role role= roleRepository.findRoleByName(name);
         if(role==null) {
-            LOGGER.warn("Parameter role is null in findRoleByName() method.");
+            LOGGER.warn("işlem başarısız!!{} isminde kayıtlı bir rol bulunamadı. ",name);
             throw new EntityNotFoundException(name + ": Bu isimde kayıtlı bir rol bulunamadı.");
         }
         else

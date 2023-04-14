@@ -1,6 +1,5 @@
 package com.cvqs.terminalservice.service.concretes;
 
-import com.cvqs.terminalservice.controller.TerminalController;
 import com.cvqs.terminalservice.dto.SectionDto;
 import com.cvqs.terminalservice.exception.EntityNotFoundException;
 import com.cvqs.terminalservice.model.Section;
@@ -72,7 +71,7 @@ public class SectionManager implements SectionService {
     public Section findSectionByName(String sectionName) {
         Section section=sectionRepository.findSectionByName(sectionName);
         if(section==null) {
-            LOGGER.error("Bu isimde bir terminal bulunamadı");
+            LOGGER.warn("işlem başarısız!!{} adlı terminal bulunamadı. ",sectionName);
             throw new EntityNotFoundException("Terminal bulunamadı");
         }
         else

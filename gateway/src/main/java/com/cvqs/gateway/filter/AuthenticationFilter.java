@@ -50,7 +50,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
             var request = exchange.getRequest();
             if (routeValidator.isSecured.test(exchange.getRequest())) {
                 if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-                    LOGGER.error("missing authorization header");
+                    LOGGER.warn("missing authorization header");
 
                     var responseMissing = exchange.getResponse();
                     responseMissing.setStatusCode(HttpStatus.UNAUTHORIZED);
@@ -66,6 +66,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                 }
                 try {
                     ResponseEntity<Boolean> response = restTemplate.getForEntity("http://host.docker.internal:9092/auth/validateToken?token="+authHeader+"&role="+config.getRole(), Boolean.class);
+                    LOGGER.info("Auth API'ye doğrulama isteği gönderildi.");
                     Boolean isTokenValid= response.getBody();
 
                     if (!isTokenValid){
@@ -79,7 +80,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                     }
 
                 } catch (Exception e) {
-                    LOGGER.error("Failed to make request to the server");
+                    LOGGER.warn("Failed to make request to the server");
                     throw new RuntimeException("Failed to make request to the server");
                 }
             }

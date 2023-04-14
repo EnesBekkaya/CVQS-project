@@ -2,6 +2,8 @@ package com.cvqs.defectsaveservice.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -24,11 +26,15 @@ public class Location {
     @Getter
     @Setter
     @Column(name="x",nullable = false)
-    private int x;
+    @NotNull(message = "x değeri boş bırakılamaz")
+    @Min(value = 0,message = "x koordinatı sıfırdan küçük olamaz")
+    private Integer x;
     @Getter
     @Setter
     @Column(name="y",nullable = false)
-    private int y;
+    @NotNull(message = "y değeri boş bırakılamaz")
+    @Min(value = 0,message = "y koordinatı sıfırdan küçük olamaz")
+    private Integer y;
 
     @Getter
     @Setter

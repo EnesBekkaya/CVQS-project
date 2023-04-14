@@ -3,6 +3,7 @@ package com.cvqs.usermanagementservice.controller;
 import com.cvqs.usermanagementservice.dto.UserDto;
 import com.cvqs.usermanagementservice.model.User;
 import com.cvqs.usermanagementservice.service.abstracts.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,7 @@ public class UserController {
 
      */
     @PostMapping ("/save")
-    public ResponseEntity<UserDto> saveUser(@RequestBody UserDto userDto){
+    public ResponseEntity<UserDto> saveUser(@RequestBody @Valid UserDto userDto){
         LOGGER.info("Incoming request for /users/saveUser");
 
         return ResponseEntity.ok(userService.save(userDto));

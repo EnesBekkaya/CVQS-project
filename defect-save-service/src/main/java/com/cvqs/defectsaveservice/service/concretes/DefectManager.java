@@ -62,6 +62,7 @@ public class DefectManager implements DefectService {
 
         Defect defect = defectRepository.getDefectsByTypeAndVehicle(defectDto.getType(), vehicle);
         if (defect != null) {
+            LOGGER.warn("işlem başarısız!!{} plaka kodlu araç için böyle bir hata kayıtlı. ",defectDto.getVehicle().getRegistrationPlate());
             throw new EntityNotFoundException(defectDto.getVehicle().getRegistrationPlate() +
                     " plaka kodlu araç için böyle bir hata kayıtlıdır.");
         }
@@ -94,6 +95,8 @@ public class DefectManager implements DefectService {
         Vehicle vehicle = vehicleService.findVehicleByRegistrationPlate(defectDto.getVehicle().getRegistrationPlate());
         Defect defect = defectRepository.getDefectsByTypeAndVehicle(defectDto.getType(), vehicle);
         if(defect==null){
+            LOGGER.warn("işlem başarısız!!{} plaka kodlu araç için böyle bir hata kayıtlı değil. ",defectDto.getVehicle().getRegistrationPlate());
+
             throw new EntityNotFoundException(defectDto.getVehicle().getRegistrationPlate() +
                     " plaka kodlu araç için böyle bir hata kayıtlı değildir.");
         }
@@ -131,7 +134,7 @@ public class DefectManager implements DefectService {
         List<Defect> defects = defectRepository.findByRegistrationPlate(registrationPlate);
 
         if (defects.isEmpty()) {
-            LOGGER.error("Araca kayıtlı hata bulunamadı");
+            LOGGER.warn("işlem başarısız!! {} plaka kodu için kayıtlı bir araç bulunamadı.",registrationPlate);
             throw new EntityNotFoundException("Araca kayıtlı hata bulunamadı");
         }
         return defects.stream().map(defect -> modelMapper.map(defect, DefectDto.class)).collect(Collectors.toList());

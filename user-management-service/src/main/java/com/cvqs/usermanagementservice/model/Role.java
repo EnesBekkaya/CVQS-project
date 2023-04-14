@@ -2,6 +2,7 @@ package com.cvqs.usermanagementservice.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class Role {
     @Column(name = "name",unique = true)
     @Getter
     @Setter
+    @NotEmpty(message = "Role için name alanı boş bırakılamaz")
     private String name;
     @Getter
     @Setter

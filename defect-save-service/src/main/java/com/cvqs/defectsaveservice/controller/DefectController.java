@@ -3,6 +3,7 @@ package com.cvqs.defectsaveservice.controller;
 import com.cvqs.defectsaveservice.dto.DefectDto;
 import com.cvqs.defectsaveservice.service.abstracts.DefectService;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +56,7 @@ public class DefectController {
      * @return Kaydedilen hata kaydı bilgileri
      */
     @PostMapping("/save")
-    public ResponseEntity<DefectDto> saveDefect(@RequestPart("defect") DefectDto defectDto,@RequestPart("file") MultipartFile file) throws IOException, SQLException {
+    public ResponseEntity<DefectDto> saveDefect(@RequestPart("defect")@Valid DefectDto defectDto, @RequestPart("file") MultipartFile file) throws IOException, SQLException {
         LOGGER.info("Incoming request for /defects/save");
         return ResponseEntity.ok(defectService.save(defectDto,file));
     }
@@ -70,7 +71,7 @@ public class DefectController {
      * @throws SQLException Veritabanı işlemleri sırasında bir hata oluştuğunda fırlatılır
      */
     @PostMapping("/update")
-    public ResponseEntity<DefectDto>updateDefect(@RequestPart("defect") DefectDto defectDto,@RequestPart("file") MultipartFile file) throws IOException, SQLException{
+    public ResponseEntity<DefectDto>updateDefect(@RequestPart("defect")@Valid DefectDto defectDto,@RequestPart("file") MultipartFile file) throws IOException, SQLException{
     LOGGER.info("Incoming request for /defects/update");
     return ResponseEntity.ok(defectService.update(defectDto,file));
     }

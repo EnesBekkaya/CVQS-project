@@ -2,6 +2,7 @@ package com.cvqs.defectsaveservice.controller;
 
 import com.cvqs.defectsaveservice.dto.VehicleDto;
 import com.cvqs.defectsaveservice.service.abstracts.VehicleService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,7 +30,7 @@ public class VehicleController {
      * @return Eklenen aracın bilgileri
      */
     @PostMapping("/save")
-    public ResponseEntity<VehicleDto> saveVehicle(@RequestBody VehicleDto vehicleDto){
+    public ResponseEntity<VehicleDto> saveVehicle(@RequestBody @Valid VehicleDto vehicleDto){
         return ResponseEntity.ok(vehicleService.save(vehicleDto));
     }
     /**

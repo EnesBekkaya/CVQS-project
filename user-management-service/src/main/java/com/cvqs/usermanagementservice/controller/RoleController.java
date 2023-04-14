@@ -2,6 +2,7 @@ package com.cvqs.usermanagementservice.controller;
 
 import com.cvqs.usermanagementservice.dto.RoleDto;
 import com.cvqs.usermanagementservice.service.abstracts.RoleService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,7 @@ public class RoleController {
      * @return Kaydedilen Role DTO'su
      */
     @PostMapping("/save")
-    public ResponseEntity<RoleDto> saveRole(@RequestBody RoleDto roleDto){
+    public ResponseEntity<RoleDto> saveRole(@RequestBody @Valid RoleDto roleDto){
         LOGGER.info("Incoming request for /roles/save");
         return ResponseEntity.ok(roleService.save(roleDto));
     }

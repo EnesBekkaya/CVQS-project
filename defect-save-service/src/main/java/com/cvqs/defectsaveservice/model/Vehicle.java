@@ -2,6 +2,7 @@ package com.cvqs.defectsaveservice.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -28,6 +29,7 @@ public class Vehicle {
     @Getter
     @Setter
     @Column(name="registrationPlate",nullable = false,unique = true)
+    @NotEmpty(message = "registrationPlate  değeri boş bırakılamaz")
     private String  registrationPlate;
 
     @Getter

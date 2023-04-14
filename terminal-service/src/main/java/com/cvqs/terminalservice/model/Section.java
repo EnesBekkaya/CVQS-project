@@ -2,6 +2,7 @@ package com.cvqs.terminalservice.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -23,6 +24,7 @@ public class Section {
     @Column(name="name",nullable = false)
     @Getter
     @Setter
+    @NotEmpty(message = "Section için name alanı boş bırakılamaz")
     private String name;
     @Getter
     @Setter
