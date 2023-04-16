@@ -5,7 +5,6 @@
             <PatternLayout
                     pattern="%style{%d{ISO8601}}{} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{1.}}{bright,yellow}: %msg%n%throwable" disableAnsi="false"/>
         </Console>
-
         <RollingFile name="RollingFile"
                      fileName="./defect-save-service/logs/defect-save-service-log.log"
                      filePattern="./logs/$${date:yyyy-MM}/defect-save-service-log-%d{-dd-MMMM-yyyy}-%i.log.gz">
@@ -13,7 +12,6 @@
                 <pattern>%d %p %C{1.} [%t] %m%n</pattern>
             </PatternLayout>
             <Policies>
-
                 <OnStartupTriggeringPolicy />
                 <SizeBasedTriggeringPolicy
                         size="10 MB" />
@@ -21,7 +19,6 @@
             </Policies>
         </RollingFile>
     </Appenders>
-
     <Loggers>
         <Root level="info">
             <AppenderRef ref="Console" />

@@ -1,4 +1,4 @@
-package com.cvqs.terminalservice.model;
+package com.cvqs.defectlistingservice.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -8,10 +8,10 @@ import org.hibernate.annotations.GenericGenerator;
 
 import java.util.List;
 
-@Entity(name = "section")
+@Entity(name = "vehicle")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Section {
+public class Vehicle {
     @Id
     @Getter
     @GenericGenerator(name = "uuid", strategy = "uuid")
@@ -19,14 +19,18 @@ public class Section {
     @Column(length = 36, nullable = false, updatable = false)
     @JsonIgnore
     private String id;
-    @Column(name="name",nullable = false)
     @Getter
     @Setter
-    @NotEmpty(message = "Section için name alanı boş bırakılamaz")
-    private String name;
+    @Column(name="brand",nullable = false)
+    private String brand;
     @Getter
     @Setter
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "sections")
+    @Column(name="registrationPlate",nullable = false,unique = true)
+    @NotEmpty(message = "registrationPlate  değeri boş bırakılamaz")
+    private String  registrationPlate;
+    @Getter
+    @Setter
+    @OneToMany(mappedBy = "vehicle",cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<Terminal> terminals;
+    private List<Defect> defect;
 }

@@ -15,34 +15,35 @@ import java.util.List;
  */
 public interface DefectListingService {
     /**
-     * Tüm hataların bir listesini döndürür.
+     * Veritabanındaki tüm Defect nesnelerini bulur ve bunları DefectDto nesnelerine dönüştürerek bir liste olarak döndürür.
+     * @return Veritabanındaki tüm Defect nesnelerinin DefectDto karşılıklarını içeren bir liste
      *
-     * @return DefectDto nesneleri olarak tüm hataların bir listesini döndürür.
      */
-    List<DefectDto> getAllDefects();
+    List< DefectDto> getAll();
+
     /**
-     * Belirtilen plakaya sahip hataların bir listesini döndürür.
+     * Verilen kayıt plakasına sahip Defect nesnelerini bulur ve bunları DefectDto nesnelerine dönüştürerek bir liste olarak döndürür.
+     * @param registrationPlate bulunacak Defect nesnelerinin kayıt plakası
+     * @return kayıt plakasına sahip Defect nesnelerinin DefectDto karşılıklarını içeren bir liste
      *
-     * @param registrationPlate aranacak plaka kodu
-     * @return Belirtilen plakaya sahip hataların bir listesi olarak DefectDto nesneleri döndürür.
      */
-    List<DefectDto>  findDefectByPlate(String registrationPlate);
+    List<DefectDto> findByRegistrationPlate(String registrationPlate);
+
     /**
-     * Belirtilen kayıt plakası ile ilişkili belirtilen hatanın resmini döndürür.
-     *
-     * @param registrationPlate hata ile ilişkili aracın kayıt plakası
-     * @param defectType resmini almak için hata türü
-     * @return belirtilen hatanın resmi, bir byte dizisi olarak döndürür
-     * @throws SQLException veritabanından resmi alırken bir sorun oluşursa fırlatılır
+     * Verilen kayıt plakası ve kusur tipine sahip bir Defect nesnesinin resim verisini döndürür.
+     * @param registrationPlate resmi alınacak Defect nesnesinin kayıt plakası
+     * @param defectType resmi alınacak Defect nesnesinin kusur tipi
+     * @return resim verisi
+     * @throws SQLException veritabanına erişilemediğinde veya resim verisi alınırken hata oluştuğunda fırlatılır
      */
-    byte[] getDefectImage(String registrationPlate, String defectType) throws SQLException;
+    byte[] getDefectImage(String registrationPlate,String defectType) throws SQLException;
+
     /**
-     * Sayfalanmış ve sıralanmış bir hata listesi döndürür.
-     *
-     * @param pageNo getirilecek sonuçların sayfa numarası
-     * @param pageSize sayfa başına getirilecek sonuç sayısı
-     * @param sortBy sonuçların hangi özellikle sıralanacağı
-     * @return sayfalanmış ve sıralanmış bir hata listesi, DefectDto nesneleri olarak döndürür
+     * Belirtilen sıralama parametrelerine göre sıralanmış bir DefectDto listesi döndürür
+     * @param pageNo alınacak sayfa numarası
+     * @param pageSize sayfa başına maksimum öğe sayısı
+     * @param sortBy ile sıralanacak alan
+     * @return belirtilen parametrelere göre sıralanmış bir  DefectDto listesi
      */
-     List<DefectDto> getDefectSorted( Integer pageNo,  Integer pageSize,  String sortBy);
+    List<DefectDto> getDefectSorted(Integer pageNo, Integer pageSize, String sortBy);
 }

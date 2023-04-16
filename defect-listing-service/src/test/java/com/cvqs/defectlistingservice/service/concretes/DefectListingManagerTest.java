@@ -1,113 +1,238 @@
 package com.cvqs.defectlistingservice.service.concretes;
 
-import com.cvqs.defectlistingservice.client.DefectListingServiceClient;
 import com.cvqs.defectlistingservice.dto.DefectDto;
-import com.cvqs.defectlistingservice.dto.Location;
-import com.cvqs.defectlistingservice.dto.Vehicle;
+import com.cvqs.defectlistingservice.exception.EntityNotFoundException;
+import com.cvqs.defectlistingservice.model.Defect;
+import com.cvqs.defectlistingservice.model.Image;
+import com.cvqs.defectlistingservice.model.Location;
+import com.cvqs.defectlistingservice.model.Vehicle;
+import com.cvqs.defectlistingservice.repository.DefectListingRepository;
+import com.cvqs.defectlistingservice.service.abstracts.ImageService;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
-import org.springframework.http.ResponseEntity;
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
+import javax.sql.rowset.serial.SerialBlob;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
- class DefectListingManagerTest  {
+class DefectListingManagerTest  {
     private DefectListingManager defectListingManager;
-    private DefectListingServiceClient defectListingServiceClient;
-
+    private  DefectListingRepository defectListingRepository;
+    private  ModelMapper modelMapper;
+    private  ImageService imageService;
     @BeforeEach
-     public void setUp(){
-        defectListingManager= Mockito.mock(DefectListingManager.class);
-        defectListingServiceClient=Mockito.mock(DefectListingServiceClient.class);
-        defectListingManager=new DefectListingManager(defectListingServiceClient);
-    }
+    public void setUp() {
+        defectListingRepository = Mockito.mock(DefectListingRepository.class);
+        modelMapper = Mockito.mock(ModelMapper.class);
+        imageService = Mockito.mock(ImageService.class);
 
+        defectListingManager = new DefectListingManager(defectListingRepository,modelMapper, imageService);
+    }
     @DisplayName("should return defect list")
-    @Test
-    void shouldReturnDefectList(){
-        Location location1=new Location(100,200);
-        Location location2=new Location(327,145);
-        List< Location> locations=new ArrayList<>(Arrays.asList(location1,location2));
+     @Test
+     void shouldReturnDefectList(){
+         Location location=new Location();
+         location.setX(100);
+         location.setY(200);
+         Location location2=new Location();
+         location2.setX(3);
+         location2.setY(23);
 
-        Vehicle vehicle =new Vehicle("audi","34BA23");
+         List<Location> locations = new ArrayList<>(Arrays.asList(location,location2));
 
-        DefectDto defectDto1=new DefectDto("çizik", vehicle,locations);
-        DefectDto defectDto2=new DefectDto("göçük", vehicle,locations);
-        List<DefectDto> defectDtos=new ArrayList<>(Arrays.asList(defectDto1,defectDto2));
 
-        List<DefectDto> expectedResult=new ArrayList<>(Arrays.asList(defectDto1,defectDto2));
+         Vehicle vehicle = new Vehicle();
+         vehicle.setRegistrationPlate("ABC123");
+         Defect defect1=new Defect();
+         defect1.setLocations(locations);
+         defect1.setVehicle(vehicle);
+         defect1.setType("çizik");
+         Defect defect2=new Defect();
+         defect2.setLocations(locations);
+         defect2.setVehicle(vehicle);
+         defect2.setType("göçük");
+         List<Defect> defects = Arrays.asList(defect1, defect2);
 
-        Mockito.when(defectListingServiceClient.getAllDefects()).thenReturn(ResponseEntity.ok(defectDtos));
+         Mockito.when(defectListingRepository.findAll()).thenReturn(defects);
 
-        List<DefectDto> result=defectListingManager.getAllDefects();
-        Assertions.assertEquals(expectedResult,result);
+         List<DefectDto> expectedDefectDtos = defects.stream()
+                 .map(defect -> modelMapper.map(defect, DefectDto.class))
+                 .collect(Collectors.toList());
+         List<DefectDto> result = defectListingManager.getAll();
 
-        Mockito.verify(defectListingServiceClient).getAllDefects();
+         Assertions.assertEquals(expectedDefectDtos, result);
+         Mockito.verify(defectListingRepository).findAll();
 
+     }
+     @DisplayName("should find Defect by RegistrationPlate and return DefectDto ")
+     @Test
+    void shouldFindDefectByRegistrationPlateAndReturnDefectDto(){
+         Location location=new Location();
+         location.setX(100);
+         location.setY(200);
+         Location location2=new Location();
+         location2.setX(3);
+         location2.setY(23);
+
+         List<Location> locations = new ArrayList<>(Arrays.asList(location,location2));
+         Vehicle vehicle = new Vehicle();
+         vehicle.setRegistrationPlate("ABC123");
+
+         Defect defect1=new Defect();
+         defect1.setLocations(locations);
+         defect1.setVehicle(vehicle);
+         defect1.setType("çizik");
+         Defect defect2=new Defect();
+         defect2.setLocations(locations);
+         defect2.setVehicle(vehicle);
+         defect2.setType("göçük");
+         List<Defect> defects = Arrays.asList(defect1, defect2);
+         List<DefectDto> expectedDefectDtos = defects.stream()
+                 .map(defect -> modelMapper.map(defect, DefectDto.class))
+                 .collect(Collectors.toList());
+
+         Mockito.when(defectListingRepository.findByRegistrationPlate(vehicle.getRegistrationPlate())).thenReturn(defects);
+
+         List<DefectDto> result = defectListingManager.findByRegistrationPlate(vehicle.getRegistrationPlate());
+
+
+         Assertions.assertEquals(expectedDefectDtos,result);
     }
 
-     @DisplayName("should return defect by plate with registrationPlate")
+
+     @DisplayName("should throw EntityNotFoundException when the parameter of the findVehicleByRegistrationPlate RegistrationPlate does not exist ")
      @Test
-     void shouldReturnDefectByPlateWithregistrationPlate(){
-         String registrationPlate="34BA23";
+     void shouldThrowEntityNotFoundException_whenRegistrationPlateDoesNotExist() {
+         Vehicle vehicle = new Vehicle();
+         vehicle.setRegistrationPlate("ABC123");
+         vehicle.setBrand("audi");
 
-         Location location1=new Location(100,200);
-         Location location2=new Location(327,145);
-         List< Location> locations=new ArrayList<>(Arrays.asList(location1,location2));
+         List<Defect> defects = new ArrayList<>();
 
-         Vehicle vehicle =new Vehicle("audi","34BA23");
+         Mockito.when(defectListingRepository.findByRegistrationPlate(vehicle.getRegistrationPlate())).thenReturn(defects);
 
-         DefectDto defectDto1=new DefectDto("çizik", vehicle,locations);
-         DefectDto defectDto2=new DefectDto("göçük", vehicle,locations);
-         List<DefectDto> defectDtos=new ArrayList<>(Arrays.asList(defectDto1,defectDto2));
+         EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class, () -> {
+             defectListingManager.findByRegistrationPlate(vehicle.getRegistrationPlate());
+         });
 
-         List<DefectDto> expectedResult=new ArrayList<>(Arrays.asList(defectDto1,defectDto2));
-
-         Mockito.when(defectListingServiceClient.getDefectsByPlate(registrationPlate)).thenReturn(ResponseEntity.ok(defectDtos));
-
-         List<DefectDto> result=defectListingManager.findDefectByPlate(registrationPlate);
-         Assertions.assertEquals(expectedResult,result);
-
-         Mockito.verify(defectListingServiceClient).getDefectsByPlate(registrationPlate);
-
+         Assertions.assertNotNull(exception);
+         Assertions.assertEquals("Araca kayıtlı hata bulunamadı", exception.getMessage());
+         Mockito.verify(defectListingRepository).findByRegistrationPlate(vehicle.getRegistrationPlate());
      }
 
      @DisplayName("should Return Byte By Plate With RegistrationPlate And DefectType")
      @Test
      void shouldReturnByteByPlateWithregistrationPlateAndDefectType() throws SQLException {
-        String registrationPlate="34BA23";
-        String defectType="çizik";
+         String registrationPlate="34BA23";
+         String defectType="çizik";
+         Location location=new Location();
+         location.setX(100);
+         location.setY(200);
+         Location location2=new Location();
+         location2.setX(3);
+         location2.setY(23);
 
-        byte[] expectedResult= "test-image".getBytes();
-        Mockito.when(defectListingServiceClient.getDefectImage(registrationPlate,defectType)).thenReturn(ResponseEntity.ok(expectedResult));
-         byte[] result = defectListingManager.getDefectImage(registrationPlate, defectType);
-         Assertions.assertEquals(expectedResult,result);
-         Mockito.verify(defectListingServiceClient).getDefectImage(registrationPlate,defectType);
+         List<Location> locations = new ArrayList<>(Arrays.asList(location,location2));
+         Vehicle vehicle = new Vehicle();
+         byte[] data= "test-image".getBytes();
+         Image image=new Image();
+         image.setData(new SerialBlob(data));
+         vehicle.setRegistrationPlate("34BA23");
+         Defect defect1=new Defect();
+         defect1.setLocations(locations);
+         defect1.setVehicle(vehicle);
+         defect1.setType("çizik");
+         defect1.setImage(image);
+         byte[] expectedResult= data;
+         Mockito.when(defectListingRepository.findDefectByregistrationPlateAndType(registrationPlate,defectType)).thenReturn(defect1);
+         Mockito.when(imageService.getImage(image)).thenReturn(image);
+         byte[] result=defectListingManager.getDefectImage(registrationPlate,defectType);
+         Assertions.assertArrayEquals(expectedResult,result);
+         Mockito.verify(defectListingRepository).findDefectByregistrationPlateAndType(registrationPlate,defectType);
+         Mockito.verify(imageService).getImage(image);
 
      }
-     @DisplayName("should Return List Of DefectDto By PageNo And PageSize And SortBy")
-     @Test
-     void shouldReturnListOfDefectDtoByPageNoAndPageSizeAndSortBy(){
-        int pageNo=1;
-        int pageSize=3;
-        String sortBy="type";
-         Location location1=new Location(100,200);
-         Location location2=new Location(327,145);
-         List< Location> locations=new ArrayList<>(Arrays.asList(location1,location2));
+    @DisplayName("should Return Byte By Plate With RegistrationPlate And DefectType")
+    @Test
+    void shouldThrowEntityNotFoundExceptionByRegistrationPlateAndDefectType() throws SQLException {
+        String registrationPlate="34BA23";
+        String defectType="çizik";
+        Location location=new Location();
+        location.setX(100);
+        location.setY(200);
+        Location location2=new Location();
+        location2.setX(3);
+        location2.setY(23);
 
-         Vehicle vehicle =new Vehicle("audi","34BA23");
-         DefectDto defectDto1=new DefectDto("çizik", vehicle,locations);
-         DefectDto defectDto2=new DefectDto("göçük", vehicle,locations);
-         List<DefectDto> defectDtos=new ArrayList<>(Arrays.asList(defectDto1,defectDto2));
-        List<DefectDto> expectedResult=defectDtos;
-        Mockito.when(defectListingServiceClient.getDefectSorted(pageNo,pageSize,sortBy)).thenReturn(ResponseEntity.ok(defectDtos));
-        List<DefectDto>result=defectListingManager.getDefectSorted(pageNo,pageSize,sortBy);
-        Assertions.assertEquals(expectedResult,result);
+        List<Location> locations = new ArrayList<>(Arrays.asList(location,location2));
+        Vehicle vehicle = new Vehicle();
+        byte[] data= "test-image".getBytes();
+        Image image=new Image();
+        image.setData(new SerialBlob(data));
+        vehicle.setRegistrationPlate("34BA23");
+        Defect defect1=new Defect();
+        defect1.setLocations(locations);
+        defect1.setVehicle(vehicle);
+        defect1.setType("çizik");
+        defect1.setImage(image);
+        byte[] expectedResult= data;
+        Mockito.when(defectListingRepository.findDefectByregistrationPlateAndType(registrationPlate,defectType)).thenReturn(null);
+        EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class, () -> {
+            defectListingManager.getDefectImage(registrationPlate,defectType);
+        });
 
-        Mockito.verify(defectListingServiceClient).getDefectSorted(pageNo,pageSize,sortBy);
+        Assertions.assertNotNull(exception);
+        Assertions.assertEquals(registrationPlate +
+                " plaka kodlu araç için böyle bir hata kayıtlı değildir.", exception.getMessage());
+        Mockito.verify(defectListingRepository).findDefectByregistrationPlateAndType(registrationPlate,defectType);
+
     }
+     @DisplayName("should Return List Of DefectDto By pageNo And pageSize And sortBy")
+     @Test
+     void shouldReturnListOfDefectDtoBypageNoAndpageSizeAndsortBy() throws SQLException{
+         DefectDto defectDto1 = new DefectDto();
+         DefectDto defectDto2 = new DefectDto();
+         Location location=new Location();
+         location.setX(100);
+         location.setY(200);
+         Location location2=new Location();
+         location2.setX(3);
+         location2.setY(23);
+
+         List<Location> locations = new ArrayList<>(Arrays.asList(location,location2));
+         Vehicle vehicle = new Vehicle();
+         vehicle.setRegistrationPlate("ABC123");
+
+         Defect defect1=new Defect();
+         defect1.setLocations(locations);
+         defect1.setVehicle(vehicle);
+         defect1.setType("çizik");
+         Defect defect2=new Defect();
+         defect2.setLocations(locations);
+         defect2.setVehicle(vehicle);
+         defect2.setType("göçük");
+         List<Defect> defects = Arrays.asList(defect1, defect2);
+         PageImpl<Defect> page = new PageImpl<>(defects);
+
+         List<DefectDto> expectedResult=Arrays.asList(defectDto1,defectDto2);
+         Mockito.when(defectListingRepository.findAll(Mockito.any(Pageable.class))).thenReturn(page);
+         Mockito.when(modelMapper.map(defect1, DefectDto.class)).thenReturn(defectDto1);
+         Mockito.when(modelMapper.map(defect2, DefectDto.class)).thenReturn(defectDto2);
+
+         List<DefectDto> result=defectListingManager.getDefectSorted(0,2,"type");
+
+         Assertions.assertEquals(expectedResult,result);
+
+         Mockito.verify(defectListingRepository).findAll(Mockito.any(Pageable.class));
+
+
+     }
      @AfterEach
     public void tearDown() {
 

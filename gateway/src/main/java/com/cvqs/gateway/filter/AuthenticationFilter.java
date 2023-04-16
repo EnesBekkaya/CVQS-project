@@ -58,6 +58,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                     String errorResponse = " Missing authorization header...!";
                     var bufferFactory = responseMissing.bufferFactory();
                     var dataBuffer = bufferFactory.wrap(errorResponse.getBytes(StandardCharsets.UTF_8));
+                    LOGGER.warn("Missing authorization header");
                     return responseMissing.writeWith(Mono.just(dataBuffer));
                 }
                 String authHeader = exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
@@ -76,6 +77,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                         String errorResponse = " Error: Invalid access...! ";
                         var bufferFactory = responseUnauthorized.bufferFactory();
                         var dataBuffer = bufferFactory.wrap(errorResponse.getBytes(StandardCharsets.UTF_8));
+                        LOGGER.warn("Invalid access");
                         return responseUnauthorized.writeWith(Mono.just(dataBuffer));
                     }
 

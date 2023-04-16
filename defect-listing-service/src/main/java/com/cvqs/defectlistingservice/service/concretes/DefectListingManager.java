@@ -1,14 +1,27 @@
 package com.cvqs.defectlistingservice.service.concretes;
 
-import com.cvqs.defectlistingservice.client.DefectListingServiceClient;
+
 import com.cvqs.defectlistingservice.dto.DefectDto;
 import com.cvqs.defectlistingservice.exception.EntityNotFoundException;
+import com.cvqs.defectlistingservice.model.Defect;
+import com.cvqs.defectlistingservice.model.Image;
+import com.cvqs.defectlistingservice.repository.DefectListingRepository;
 import com.cvqs.defectlistingservice.service.abstracts.DefectListingService;
+import com.cvqs.defectlistingservice.service.abstracts.ImageService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * Hata listeleme sınıfı
  *
@@ -18,55 +31,74 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class DefectListingManager implements DefectListingService {
-
-    private final DefectListingServiceClient defectSaveServiceClient;
+    private final DefectListingRepository defectListingRepository;
+    private final ModelMapper modelMapper;
+    private final ImageService imageService;
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefectListingManager.class);
 
     /**
-     * getAllDefects metodu veritabanına kayıtlı olan bütün hataları döndürür.
-     * @return sonuc DefectDto veri tipinde döndürür
+     * Tüm hasarları getiren metot.
+     *
+     * @return DefectDto tipindeki tüm hataları listesini döndürür.
      */
     @Override
-    public List<DefectDto> getAllDefects() {
-       List<DefectDto> defectDtos= defectSaveServiceClient.getAllDefects().getBody();
-       return defectDtos;
+    public List<DefectDto> getAll() {
+        List<Defect> defects = defectListingRepository.findAll();
+        return defects.stream().map(defect1 -> modelMapper.map(defect1, DefectDto.class)).collect(Collectors.toList());
     }
+
     /**
-     * findDefectByPlate metodu plakaya göre veritabanına kayıtlı olan bütün hataları döndürür.
-     * @param registrationPlate listenlenmek istenen hatanın ait olduğu aracın registrationPlate kodu.
-     * @throws EntityNotFoundException verilen plaka koduna ait araç yoksa fırlatılır.
-     * @return sonuc liste olarak DefectDto veri tipinde döndürür.
+     * Verilen plakaya ait hataları getiren metot.
+     *
+     * @param registrationPlate hasarların arandığı aracın plakası
+     * @return verilen plakaya ait hasarların listesini döndürür.
+     * @throws EntityNotFoundException eğer verilen plakaya ait hasar bulunamazsa fırlatılır
      */
     @Override
-    public List<DefectDto>  findDefectByPlate(String registrationPlate) {
-        try {
-            List<DefectDto>  defectDto=defectSaveServiceClient.getDefectsByPlate(registrationPlate).getBody();
-            return defectDto;
+    public List<DefectDto> findByRegistrationPlate(String registrationPlate) {
+        List<Defect> defects = defectListingRepository.findByRegistrationPlate(registrationPlate);
+
+        if (defects.isEmpty()) {
+            LOGGER.warn("işlem başarısız!! {} plaka kodu için kayıtlı bir araç bulunamadı.",registrationPlate);
+            throw new EntityNotFoundException("Araca kayıtlı hata bulunamadı");
         }
-        catch (Exception e){
-            throw new EntityNotFoundException(" Araca kayıtlı hata bulunamadı");
-        }
+        return defects.stream().map(defect -> modelMapper.map(defect, DefectDto.class)).collect(Collectors.toList());
     }
+
     /**
-     * getDefectImage metodu plakaya ve hata tipine göre veritabanına kayıtlı olan  hata resmini döndürür.
-     * @param registrationPlate listenlenmek istenen hatanın ait olduğu aracın registrationPlate kodu.
-     * @param defectType listenlenmek istenen hatanın tipi.
-     * @return sonuc byte[] veri tipinde döndürür.
+     * Belirtilen plaka ve hata türüne ait hasar resmini getiren metot.
+     *
+     * @param registrationPlate hata görüntüsünün arandığı aracın plakası
+     * @param defectType        hata görüntüsünün arandığı hasar türü
+     * @return hasar görüntüsünün byte dizisi döndürür
+     * @throws SQLException eğer veritabanı işlemleri sırasında bir hata oluşursa fırlatılır
      */
     @Override
     public byte[] getDefectImage(String registrationPlate, String defectType) throws SQLException {
-        return defectSaveServiceClient.getDefectImage(registrationPlate,defectType).getBody();
+        Defect defect = defectListingRepository.findDefectByregistrationPlateAndType(registrationPlate, defectType);
+        if(defect==null){
+            LOGGER.warn("işlem başarısız!!{} plaka kodlu araç için{} böyle bir hata kayıtlı değil. ",registrationPlate,defectType);
+
+            throw new EntityNotFoundException(registrationPlate +
+                    " plaka kodlu araç için böyle bir hata kayıtlı değildir.");
+        }
+        Image image = imageService.getImage(defect.getImage());
+        byte[] imageData = image.getData().getBytes(1, (int) image.getData().length());
+        return imageData;
     }
+
     /**
-     * getDefectSorted metodu sayfalama yapar..
-     * @param pageNo sayfa sayısı.
-     * @param pageSize sayfa büyüklüğü.
-     * @param sortBy neye göre sıralancağı.
-     * @return sonuc liste olarak DefectDto veri tipinde döndürür.
+     * Belirtilen sayfa numarası, sayfa boyutu ve sıralama ölçütüne göre kusurları sıralayarak, sayfalı bir şekilde döndüren metot.
+     *
+     * @param pageNo   döndürülecek sayfanın numarası
+     * @param pageSize sayfa başına döndürülecek kusur sayısı
+     * @param sortBy   kusurların nasıl sıralanacağına dair sıralama ölçütü
+     * @return sayfalı şekilde sıralanmış kusur DTO'ları döndürür
      */
-    @Override
     public List<DefectDto> getDefectSorted(Integer pageNo, Integer pageSize, String sortBy) {
-        return defectSaveServiceClient.getDefectSorted(pageNo,pageSize,sortBy).getBody();
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+
+        Page<Defect> defectDtos = defectListingRepository.findAll(paging);
+        return defectDtos.getContent().stream().map(defect -> modelMapper.map(defect, DefectDto.class)).collect(Collectors.toList());
     }
-
-
 }

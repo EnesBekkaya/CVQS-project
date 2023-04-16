@@ -8,11 +8,9 @@ import java.util.Date;
 import java.util.List;
 
 
-@Entity
+@Entity(name = "section")
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of={"id"})
-@Table(name="terminals")
 public class Terminal {
     @Id
     @Getter
