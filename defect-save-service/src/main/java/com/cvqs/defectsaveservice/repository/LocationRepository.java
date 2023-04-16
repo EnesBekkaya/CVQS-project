@@ -12,21 +12,6 @@ import java.util.List;
  */
 public interface LocationRepository extends JpaRepository<Location,String> {
   /**
-   * Verilen bir Defect objesine ait olan tüm Location kayıtlarını getirir.
-   *
-   * @param defect Bir Defect objesi
-   * @return Defect objesine ait olan tüm Location kayıtlarını içeren bir liste döndürür.
-   */
-  List<Location> findLocationByDefects(Defect defect);
-  /**
-   * Verilen x ve y koordinatlarına sahip bir Location kaydının var olup olmadığını kontrol eder.
-   *
-   * @param x X koordinatı
-   * @param y Y koordinatı
-   * @return Eğer verilen koordinatlara sahip bir Location kaydı varsa true, aksi halde false döndürür.
-   */
-  Boolean existsLocationsByXAndY(int x,int y);
-  /**
    * Verilen x ve y koordinatlarına sahip olan bir Location kaydını getirir.
    *
    * @param x X koordinatı

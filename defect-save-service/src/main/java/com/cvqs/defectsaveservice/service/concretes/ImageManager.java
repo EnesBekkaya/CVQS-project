@@ -1,10 +1,13 @@
 package com.cvqs.defectsaveservice.service.concretes;
 
+
 import com.cvqs.defectsaveservice.model.Image;
 import com.cvqs.defectsaveservice.model.Location;
 import com.cvqs.defectsaveservice.repository.ImageRepository;
 import com.cvqs.defectsaveservice.service.abstracts.ImageService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,7 +22,6 @@ import java.io.IOException;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
 /**
  * ImageManager sınıfı,ImageService arayüzünden türetilmiştir ve
  *  Bu sınıf, resim dosyalarının yüklenmesi, işlenmesi ve veritabanında saklanmasını sağlar.
@@ -33,6 +35,8 @@ import java.util.Optional;
 public class ImageManager implements ImageService {
 
     private final ImageRepository imageRepository;
+    private static final Logger LOGGER= LoggerFactory.getLogger(VehicleManager.class);
+
     /**
      * Verilen dosyayı işleyerek belirtilen konumlardaki nesneleri işaretleyen bir resim veritabanına kaydeder.
      * @param file kaydedilecek resim dosyası
@@ -44,15 +48,19 @@ public class ImageManager implements ImageService {
      */
     @Override
     public Image saveImage(MultipartFile file, List<Location> locations) throws IOException, SQLException {
+        try {
+            byte[] imageData = processingImage(file, locations);
 
-        byte[] imageData = processingImage(file, locations);
+            Blob imageBlob = new SerialBlob(imageData);
 
-        Blob imageBlob = new SerialBlob(imageData);
+            Image image = new Image();
+            image.setData(imageBlob);
 
-        Image image = new Image();
-        image.setData(imageBlob);
-
-        return imageRepository.save(image);
+            return imageRepository.save(image);
+        }catch (Exception e){
+            LOGGER.warn("fotoğraf veritabanına kaydedilemedi");
+            throw new IOException("kaydetme işlemi başarısız");
+        }
     }
 
     /**
@@ -65,34 +73,29 @@ public class ImageManager implements ImageService {
      */
     @Override
     public byte[] processingImage(MultipartFile file, List<Location> locations) throws IOException {
-        byte[] photoBytes = file.getBytes();
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(photoBytes);
-        BufferedImage image = ImageIO.read(inputStream);
+        try {
+            byte[] photoBytes = file.getBytes();
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(photoBytes);
+            BufferedImage image = ImageIO.read(inputStream);
 
 
-        String imagePath = "/path/in/container/hata_PHOTO.jpg";
-        BufferedImage overlay = ImageIO.read(new File(imagePath));
-        Graphics2D g2d = image.createGraphics();
-        for (Location location : locations) {
-            g2d.drawImage(overlay, location.getX(), location.getY(), 40, 40, null);
+            String imagePath = "defect-save-service/src/main/resources/hata_PHOTO.jpg";
+            BufferedImage overlay = ImageIO.read(new File(imagePath));
+            Graphics2D g2d = image.createGraphics();
+            for (Location location : locations) {
+                g2d.drawImage(overlay, location.getX(), location.getY(), 40, 40, null);
+            }
+
+            g2d.dispose();
+
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ImageIO.write(image, "jpg", outputStream);
+            byte[] markedBytes = outputStream.toByteArray();
+            return markedBytes;
+        }catch (IOException e){
+            LOGGER.warn("Dosyadan bayt okunurken hata oluştu");
+            throw  new IOException("Dosyadan bayt okunurken hata oluştu",e);
         }
 
-        g2d.dispose();
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        ImageIO.write(image, "jpg", outputStream);
-        byte[] markedBytes = outputStream.toByteArray();
-        return markedBytes;
-    }
-    /**
-     * Verilen Image nesnesinin veritabanındaki karşılığını bulup geri döndürür.
-     * @param image veritabanındaki Image nesnesinin kimliğini taşıyan Image nesnesi
-     * @return veritabanındaki Image nesnesi döndürür
-     *
-     */
-    @Override
-    public Image getImage(Image image) {
-        Optional<Image> savedImage=imageRepository.findById(image.getId());
-        return savedImage.get();
     }
 }

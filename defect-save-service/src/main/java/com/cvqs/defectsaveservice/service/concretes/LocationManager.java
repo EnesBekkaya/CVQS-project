@@ -1,17 +1,12 @@
 package com.cvqs.defectsaveservice.service.concretes;
 
-import com.cvqs.defectsaveservice.dto.LocationDto;
 import com.cvqs.defectsaveservice.model.Location;
 import com.cvqs.defectsaveservice.repository.LocationRepository;
 import com.cvqs.defectsaveservice.service.abstracts.LocationService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.stream.Collectors;
+
 /**
  * LocationManager sınıfı, LocationService arayüzünden türetilmiştir ve
  *  konumlarla ilgili işlemleri yönetir. Bu sınıf, veritabanı işlemleri için LocationRepository nesnelerini kullanmaktadır.
@@ -23,19 +18,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class LocationManager implements LocationService {
     private final LocationRepository locationRepository;
-    private final ModelMapper modelMapper;
-    /**
-     * Konumları depolamak için kullanılan konum deposuna verilen konumları kaydeder ve kaydedilen konumların DTO'larını döndürür.
-     * @param locations kaydedilecek konumlar
-     * @return kaydedilen konumların DTO'ları döndürür
-     *
-     */
-    @Override
-    public List<LocationDto> save(List<Location> locations) {
-        List<Location> locations1 = locationRepository.saveAll(locations);
-        return locations1.stream().map(location -> modelMapper.map(location, LocationDto.class)).collect(Collectors.toList());
-
-    }
     /**
      *
      * Verilen X ve Y koordinatlarına sahip bir konumu arar. Eğer böyle bir konum yoksa, yeni bir konum oluşturur ve kaydeder.
@@ -57,8 +39,4 @@ public class LocationManager implements LocationService {
         else return location;
 
     }
-
-
-
-
 }

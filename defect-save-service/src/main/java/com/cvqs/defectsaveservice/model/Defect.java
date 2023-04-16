@@ -7,13 +7,9 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import java.util.List;
-@Entity
+@Entity(name = "defect")
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of={"id"})
-@Table(name="defect")
-@JsonIgnoreProperties({"hibernateLazyInitializer","handler","vehicle","location"})
-
 public class Defect {
     @Id
     @Getter
@@ -45,5 +41,4 @@ public class Defect {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "image_id", referencedColumnName = "id")
     private Image image;
-
 }

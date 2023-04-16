@@ -8,11 +8,9 @@ import org.hibernate.annotations.GenericGenerator;
 
 import java.util.List;
 
-@Entity
+@Entity(name = "vehicle")
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of={"id"})
-@Table(name="vehicle")
 public class Vehicle {
     @Id
     @Getter
@@ -25,17 +23,14 @@ public class Vehicle {
     @Setter
     @Column(name="brand",nullable = false)
     private String brand;
-
     @Getter
     @Setter
     @Column(name="registrationPlate",nullable = false,unique = true)
     @NotEmpty(message = "registrationPlate  değeri boş bırakılamaz")
     private String  registrationPlate;
-
     @Getter
     @Setter
     @OneToMany(mappedBy = "vehicle",cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Defect> defect;
-
 }

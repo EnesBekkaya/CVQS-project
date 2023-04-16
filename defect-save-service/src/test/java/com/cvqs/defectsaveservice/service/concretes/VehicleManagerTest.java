@@ -1,5 +1,6 @@
 package com.cvqs.defectsaveservice.service.concretes;
 
+import com.cvqs.defectsaveservice.dto.DefectDto;
 import com.cvqs.defectsaveservice.dto.VehicleDto;
 import com.cvqs.defectsaveservice.exception.EntityNotFoundException;
 import com.cvqs.defectsaveservice.model.Vehicle;
@@ -8,6 +9,8 @@ import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 import org.mockito.internal.verification.Times;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,26 +36,38 @@ class VehicleManagerTest {
     void shouldSaveAndReturnVehicleDto() {
         VehicleDto vehicleDto = new VehicleDto("AUDI", "34BA23");
         Vehicle vehicle = new Vehicle();
-        vehicle.setBrand("Audi");
-        vehicle.setRegistrationPlate("34ba22");
+        vehicle.setBrand("AUDİ");
+        vehicle.setRegistrationPlate("34BA23");
 
 
         VehicleDto expectedResult = new VehicleDto("AUDI", "34BA23");
 
-        Mockito.when(modelMapper.map(Mockito.any(VehicleDto.class), Mockito.eq(Vehicle.class))).thenReturn(vehicle);
-        Mockito.when(vehicleRepository.save(vehicle)).thenReturn(vehicle);
-        Mockito.when(modelMapper.map(Mockito.any(Vehicle.class), Mockito.eq(VehicleDto.class))).thenReturn(vehicleDto);
+        Mockito.when(vehicleRepository.findVehicleByRegistrationPlate(vehicle.getRegistrationPlate())).thenReturn(null);
+        Mockito.when(modelMapper.map(vehicleRepository.save(vehicle), VehicleDto.class)).thenReturn(vehicleDto);
 
         VehicleDto result = vehicleManager.save(vehicleDto);
         Assertions.assertEquals(expectedResult, result);
+        Mockito.verify(vehicleRepository).findVehicleByRegistrationPlate(vehicle.getRegistrationPlate());
 
-        Mockito.verify(modelMapper).map(vehicleDto, Vehicle.class);
-        Mockito.verify(vehicleRepository).save(vehicle);
-        Mockito.verify(vehicleRepository, new Times(1)).save(Mockito.any(Vehicle.class));
-        Mockito.verify(modelMapper, new Times(1)).map(Mockito.any(VehicleDto.class), Mockito.eq(Vehicle.class));
     }
 
+    @DisplayName("should Throw ResponseStatusException And Return Exception")
+    @Test
+    void shouldThrowResponseStatusExceptionAndReturnException() {
+        VehicleDto vehicleDto = new VehicleDto("AUDI", "34BA23");
+        Vehicle vehicle = new Vehicle();
+        vehicle.setBrand("AUDİ");
+        vehicle.setRegistrationPlate("34BA23");
 
+        Mockito.when(vehicleRepository.findVehicleByRegistrationPlate(vehicle.getRegistrationPlate())).thenReturn(vehicle);
+        ResponseStatusException exception = Assertions.assertThrows(ResponseStatusException.class, () -> {
+            vehicleManager.save(vehicleDto);
+        });
+
+        Assertions.assertNotNull(exception);
+        Assertions.assertEquals(HttpStatus.CONFLICT, exception.getStatusCode());
+
+    }
     @DisplayName("should find Vehicle by RegistrationPlate and return Vehicle ")
     @Test
     void shouldFindVehicleByRegistrationPlateAndReturnVehicle() {
@@ -61,17 +76,15 @@ class VehicleManagerTest {
         vehicle.setBrand("Audi");
         vehicle.setRegistrationPlate("34BA23");
 
-        Vehicle expectedResult = new Vehicle();
-        expectedResult.setBrand("Audi");
-        expectedResult.setRegistrationPlate("34BA23");
+        Vehicle expectedResult = vehicle;
+
 
         Mockito.when(vehicleRepository.findVehicleByRegistrationPlate(registrationPlate)).thenReturn(vehicle);
 
-        Vehicle result = vehicleRepository.findVehicleByRegistrationPlate(registrationPlate);
+        Vehicle result = vehicleManager.findVehicleByRegistrationPlate(registrationPlate);
 
         Assertions.assertEquals(expectedResult, result);
         Mockito.verify(vehicleRepository).findVehicleByRegistrationPlate(registrationPlate);
-        Mockito.verify(vehicleRepository, new Times(1)).findVehicleByRegistrationPlate(registrationPlate);
     }
 
     @DisplayName("should throw EntityNotFoundException when the parameter of the findVehicleByRegistrationPlate RegistrationPlate does not exist ")

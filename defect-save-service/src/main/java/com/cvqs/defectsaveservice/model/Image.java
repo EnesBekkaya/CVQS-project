@@ -6,11 +6,9 @@ import org.hibernate.annotations.GenericGenerator;
 
 import java.sql.Blob;
 
-@Entity
+@Entity(name = "image")
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of={"id"})
-@Table(name="images")
 public class Image {
     @Id
     @GenericGenerator(name = "uuid", strategy = "uuid")
@@ -18,17 +16,13 @@ public class Image {
     @Getter
     @Column(length = 36, nullable = false, updatable = false)
     private String id;
-    
-
     @Column(name = "data")
     @Setter
     @Getter
     @Lob
     private Blob data;
-
     @Getter
     @Setter
     @OneToOne(mappedBy = "image")
     private Defect defect;
-
 }

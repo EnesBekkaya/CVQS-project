@@ -33,12 +33,4 @@ public interface ImageService {
      */
      byte[] processingImage(MultipartFile file, List<Location> locations) throws IOException;
 
-    /**
-     * Belirtilen  Image varlığına ait resmi getirir
-     * @param image getirilecek resmi içeren  Image
-     * @return belirtilen  Image varlığına ait resim verilerini içeren byte dizisi
-     */
-    Image getImage(Image image);
-
-
 }

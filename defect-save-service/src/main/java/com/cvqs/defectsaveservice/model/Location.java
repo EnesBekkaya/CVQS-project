@@ -10,11 +10,9 @@ import org.hibernate.annotations.GenericGenerator;
 import java.util.List;
 
 
-@Entity
+@Entity(name = "location")
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of={"id"})
-@Table(name="location")
 public class Location {
     @Id
     @Getter
@@ -35,11 +33,9 @@ public class Location {
     @NotNull(message = "y değeri boş bırakılamaz")
     @Min(value = 0,message = "y koordinatı sıfırdan küçük olamaz")
     private Integer y;
-
     @Getter
     @Setter
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "locations")
     @JsonIgnore
     private List<Defect> defects;
-
 }
