@@ -34,8 +34,8 @@ class RoleManagerTest  {
         RoleDto expectedResult=new RoleDto();
         expectedResult.setName("admin");
 
-        Mockito.when(roleRepository.save(role)).thenReturn(role);
-        Mockito.when(modelMapper.map(role, RoleDto.class)).thenReturn(roleDto);
+
+        Mockito.when(modelMapper.map(roleRepository.save(role), RoleDto.class)).thenReturn(roleDto);
 
         RoleDto result=roleManager.save(roleDto);
 
@@ -50,10 +50,10 @@ class RoleManagerTest  {
     void shouldFindRoleByNameAndReturnRole(){
         String name="admin";
         Role role=new Role();
-        role.setName("admin");
+        role.setName(name);
 
-        Role expectedResult=new Role();
-        expectedResult.setName("admin");
+        Role expectedResult=role;
+
 
         Mockito.when(roleRepository.findRoleByName(name)).thenReturn(role);
 

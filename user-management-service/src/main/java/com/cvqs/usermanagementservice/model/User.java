@@ -6,11 +6,9 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Where;
 
 import java.util.List;
-@Entity
+@Entity(name = "user")
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of={"id"})
-@Table(name="users")
 @Where(clause = "deleted = false")
 public class User {
     @Id

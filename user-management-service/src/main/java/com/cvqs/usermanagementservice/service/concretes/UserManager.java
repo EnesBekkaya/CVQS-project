@@ -59,6 +59,7 @@ public class UserManager implements UserService {
     @Override
     public UserDto save(UserDto userDto) {
         if(userRepository.findUserByUsername(userDto.getUsername())!=null){
+            LOGGER.warn("işlem başarısız!!{} adlı kullanıcı adı zaten kayıtlı. ", userDto.getUsername());
             throw new ResponseStatusException(HttpStatus.CONFLICT,"Bu kullanıcı adı zaten kayıtlı.");
         }
         User newUser=new User();
@@ -90,7 +91,7 @@ public class UserManager implements UserService {
         User user=userRepository.findUserByUsername(userDto.getUsername());
         List<Role> roles=new ArrayList<>();
         if(user==null) {
-            LOGGER.warn("Parameter user is null in updateUser() method.");
+            LOGGER.warn("işlem başarısız!!{} adlı kullanıcı bulunamadı ", userDto.getUsername());
             throw new EntityNotFoundException(userDto.getUsername() + " kullanıcı isimli bir kullanıcı bulunamadı");
         }
         userDto.getRoles().forEach(role -> {
@@ -117,8 +118,7 @@ public class UserManager implements UserService {
     public UserDto delete(String username) {
         User user=userRepository.findUserByUsername(username);
         if(user==null) {
-            LOGGER.warn("Parameter user is null in delete() method.");
-
+            LOGGER.warn("işlem başarısız!!{} adlı kullanıcı bulunamadı ", username);
             throw new EntityNotFoundException(username + "  kullanıcı isimli bir kullanıcı bulunamadı");
         }
         user.setDeleted(true);

@@ -7,11 +7,10 @@ import lombok.*;
 
 import java.util.List;
 
-@Entity
+@Entity(name = "role")
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of={"id"})
-@Table(name="roles")
+
 public class Role {
     @Id
     @Getter

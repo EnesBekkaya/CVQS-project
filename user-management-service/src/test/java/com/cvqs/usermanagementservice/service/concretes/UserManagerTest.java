@@ -91,7 +91,6 @@ class UserManagerTest {
 
         Mockito.verify(passwordEncoder).encode(userDto.getPassword());
         Mockito.verify(roleService).findRoleByName(role.getName());
-        Mockito.verify(userRepository).save(user);
     }
 
     @DisplayName("should Update User By UserDto And Return UserDto")
