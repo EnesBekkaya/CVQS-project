@@ -6,7 +6,6 @@ import com.cvqs.defectlistingservice.service.abstracts.ImageService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import java.awt.*;
 import java.util.Optional;
 
 /**

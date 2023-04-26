@@ -1,8 +1,10 @@
 package com.cvqs.terminalservice.service.concretes;
 
 import com.cvqs.terminalservice.dto.SectionDto;
+import com.cvqs.terminalservice.dto.TerminalDto;
 import com.cvqs.terminalservice.exception.EntityNotFoundException;
 import com.cvqs.terminalservice.model.Section;
+import com.cvqs.terminalservice.model.Terminal;
 import com.cvqs.terminalservice.repository.SectionRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +30,55 @@ class SectionManagerTest {
         modelMapper = Mockito.mock(ModelMapper.class);
         sectionManager = new SectionManager(sectionRepository,modelMapper);
     }
+    @DisplayName("should Save Section By Section")
+    @Test
+    void shouldSaveSectionBySection(){
+        Section section1=new Section();
+        section1.setName("testname");
+        Section section2=new Section();
+        section2.setName("testname2");
+        Section section3=new Section();
+        section3.setName("testname3");
 
+        List<Section> sections = new ArrayList<>(Arrays.asList(section1,section2,section3));
+        List<Section> expectedResult=sections;
+        Mockito.when(sectionRepository.findSectionByName(section1.getName())).thenReturn(section1);
+        Mockito.when(sectionRepository.findSectionByName(section2.getName())).thenReturn(section2);
+        Mockito.when(sectionRepository.findSectionByName(section3.getName())).thenReturn(section3);
+
+        List<Section> result=sectionManager.saveSection(sections);
+        Assertions.assertEquals(expectedResult,result);
+
+        Mockito.verify(sectionRepository).findSectionByName(section1.getName());
+        Mockito.verify(sectionRepository).findSectionByName(section2.getName());
+        Mockito.verify(sectionRepository).findSectionByName(section3.getName());
+
+    }
+    @DisplayName("should Save Section By Section Not Null")
+    @Test
+    void shouldSaveSectionBySectionNotNull(){
+        Section section1=new Section();
+        section1.setName("testname");
+        Section section2=new Section();
+        section2.setName("testname2");
+        Section section3=new Section();
+        section3.setName("testname3");
+
+        List<Section> sections = new ArrayList<>(Arrays.asList(section1,section2,section3));
+        List<Section> expectedResult=sections;
+        Mockito.when(sectionRepository.findSectionByName(section1.getName())).thenReturn(section1);
+        Mockito.when(sectionRepository.findSectionByName(section2.getName())).thenReturn(null);
+        Mockito.when(sectionRepository.findSectionByName(section3.getName())).thenReturn(section3);
+        Mockito.when(sectionRepository.save(section2)).thenReturn(section2);
+        List<Section> result=sectionManager.saveSection(sections);
+        Assertions.assertEquals(expectedResult,result);
+
+        Mockito.verify(sectionRepository).findSectionByName(section1.getName());
+        Mockito.verify(sectionRepository).findSectionByName(section2.getName());
+        Mockito.verify(sectionRepository).findSectionByName(section3.getName());
+        Mockito.verify(sectionRepository).save(section2);
+
+    }
 
     @DisplayName("should return sectionDto list")
     @Test

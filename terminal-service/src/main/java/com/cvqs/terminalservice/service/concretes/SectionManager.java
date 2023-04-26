@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
-public class SectionManager implements SectionService {
+public class  SectionManager implements SectionService {
     private static final Logger LOGGER= LoggerFactory.getLogger(SectionManager.class);
 
     private final SectionRepository sectionRepository;

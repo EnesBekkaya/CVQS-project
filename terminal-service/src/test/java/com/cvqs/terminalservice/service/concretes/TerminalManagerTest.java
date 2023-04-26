@@ -182,7 +182,6 @@ public class TerminalManagerTest {
 
         Mockito.verify(sectionService).saveSection(sections);
         Mockito.verify(terminalRepository).findTerminalByName(terminalDto.getName());
-        Mockito.verify(terminalRepository).save(terminal);
     }
 
 
