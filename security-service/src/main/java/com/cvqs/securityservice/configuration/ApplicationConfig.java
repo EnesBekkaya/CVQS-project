@@ -1,7 +1,7 @@
 package com.cvqs.securityservice.configuration;
 
-import com.cvqs.securityservice.client.SecurityClient;
 import com.cvqs.securityservice.dto.UserSecurityDto;
+import com.cvqs.securityservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
@@ -21,12 +21,12 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class ApplicationConfig {
-    private final SecurityClient securityClient;
+    private final UserRepository userRepository;
     private final ModelMapper modelMapper;
 
     @Bean
     public UserDetailsService userDetailsService(){
-        return username -> modelMapper.map(securityClient.findUserByUsername(username),UserSecurityDto.class);
+        return username -> modelMapper.map(userRepository.findByUsername(username),UserSecurityDto.class);
     }
 
     @Bean

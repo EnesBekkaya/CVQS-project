@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 
-@Entity(name = "section")
+@Entity(name = "terminal")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Terminal {

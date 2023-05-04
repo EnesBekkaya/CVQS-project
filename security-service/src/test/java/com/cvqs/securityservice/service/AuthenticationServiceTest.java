@@ -1,10 +1,10 @@
 package com.cvqs.securityservice.service;
 
-import com.cvqs.securityservice.client.SecurityClient;
 import com.cvqs.securityservice.dto.AuthRequest;
 import com.cvqs.securityservice.dto.AuthenticationResponse;
 import com.cvqs.securityservice.dto.User;
 import com.cvqs.securityservice.dto.UserSecurityDto;
+import com.cvqs.securityservice.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,23 +17,22 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 
-import static org.junit.jupiter.api.Assertions.*;
 
 class AuthenticationServiceTest {
     private AuthenticationService authenticationService;
-    private  SecurityClient securityClient;
+    private UserRepository userRepository;
     private  JwtService jwtService;
     private  AuthenticationManager authenticationManager;
     private  UserDetailsService userDetailsService;
     private  ModelMapper modelMapper;
     @BeforeEach
     public void setUp() {
-        securityClient = Mockito.mock(SecurityClient.class);
+        userRepository = Mockito.mock(UserRepository.class);
         jwtService = Mockito.mock(JwtService.class);
         authenticationManager = Mockito.mock(AuthenticationManager.class);
         modelMapper = Mockito.mock(ModelMapper.class);
         userDetailsService=Mockito.mock(UserDetailsService.class);
-        authenticationService = new AuthenticationService(securityClient,jwtService,authenticationManager, userDetailsService,modelMapper);
+        authenticationService = new AuthenticationService(userRepository,jwtService,authenticationManager, userDetailsService,modelMapper);
     }
 
     @DisplayName("should Authenticate And Return AuthenticationResponse")
@@ -52,7 +51,7 @@ class AuthenticationServiceTest {
         AuthenticationResponse expectedResult= AuthenticationResponse.builder()
                 .token(jwt)
                 .build();
-        Mockito.when(securityClient.findUserByUsername(request.getUsername())).thenReturn(user);
+        Mockito.when(userRepository.findByUsername(request.getUsername())).thenReturn(user);
 
 
         Mockito.when(jwtService.generateToken(userSecurityDto)).thenReturn(jwt);

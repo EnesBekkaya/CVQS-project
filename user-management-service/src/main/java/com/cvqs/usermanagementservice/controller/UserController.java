@@ -1,7 +1,8 @@
 package com.cvqs.usermanagementservice.controller;
 
+import com.cvqs.usermanagementservice.dto.AuthRequest;
+import com.cvqs.usermanagementservice.dto.AuthenticationResponse;
 import com.cvqs.usermanagementservice.dto.UserDto;
-import com.cvqs.usermanagementservice.model.User;
 import com.cvqs.usermanagementservice.service.abstracts.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -75,12 +76,12 @@ public class UserController {
     }
 
     /**
-     * Kullanıcının kullanıcı adı ile aranması için http get metodu kullanılarak çağrı yapılır.
-     * @param username aranacak kullanıcının kullanıcı adı
-     * @return User nesnesi ile döndürülen kullanıcının bilgilerini içeren UserDto nesnesi
+     * Kullanıcının kimlik doğrulama işlemini gerçekleştirmek için kullanılır.
+     * @param authRequest Kimlik doğrulama için kullanılacak istek nesnesi
+     * @return Kimlik doğrulama işlemi sonucunda oluşan yanıt nesnesi
      */
-    @GetMapping("/findUserByUsername")
-    public User findUserByUsername(@RequestParam("username") String username){
-        return userService.findUserByUserName(username);
+    @PostMapping("/login")
+    public AuthenticationResponse login(@RequestBody AuthRequest authRequest){
+        return userService.login(authRequest);
     }
 }

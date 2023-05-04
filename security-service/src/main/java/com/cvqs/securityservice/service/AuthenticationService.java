@@ -1,9 +1,9 @@
 package com.cvqs.securityservice.service;
 
-import com.cvqs.securityservice.client.SecurityClient;
 import com.cvqs.securityservice.dto.AuthRequest;
 import com.cvqs.securityservice.dto.AuthenticationResponse;
 import com.cvqs.securityservice.dto.UserSecurityDto;
+import com.cvqs.securityservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
-    private final SecurityClient securityClient;
+    private final UserRepository userRepository;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
@@ -37,9 +37,8 @@ public class AuthenticationService {
      * @return AuthenticationResponse, kullanıcının kimlik doğrulaması başarılıysa JWT token döndürür.
      */
     public AuthenticationResponse authenticate(AuthRequest request) {
-
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-        var user = securityClient.findUserByUsername(request.getUsername());
+        var user = userRepository.findByUsername(request.getUsername());
         var jwtToken = jwtService.generateToken(modelMapper.map(user, UserSecurityDto.class));
         return AuthenticationResponse.builder()
                 .token(jwtToken)

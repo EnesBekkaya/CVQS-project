@@ -1,7 +1,10 @@
 package com.cvqs.usermanagementservice.service.concretes;
 
+import com.cvqs.usermanagementservice.dto.AuthRequest;
+import com.cvqs.usermanagementservice.dto.AuthenticationResponse;
 import com.cvqs.usermanagementservice.dto.UserDto;
 import com.cvqs.usermanagementservice.exception.EntityNotFoundException;
+import com.cvqs.usermanagementservice.exception.ServerRequestException;
 import com.cvqs.usermanagementservice.model.Role;
 import com.cvqs.usermanagementservice.model.User;
 import com.cvqs.usermanagementservice.repository.UserRepository;
@@ -11,9 +14,11 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
@@ -34,6 +39,8 @@ public class UserManager implements UserService {
     private final RoleService roleService;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private RestTemplate restTemplate;
 
     private static final Logger LOGGER= LoggerFactory.getLogger(UserManager.class);
 
@@ -126,15 +133,22 @@ public class UserManager implements UserService {
     }
 
     /**
-     * Verilen kullanıcı adına sahip kullanıcıyı veritabanında arar ve bulduğu takdirde kullanıcıyı
-     * User nesnesi olarak döndürür. Eğer kullanıcı bulunamazsa null döndürür.
-     * @param userName aranacak kullanıcının kullanıcı adı
-     * @return bulunan kullanıcıyı User nesnesi olarak döndürür. Kullanıcı bulunamazsa null döndürür.
-
+     * Kullanıcının kimlik bilgileriyle kimlik doğrulamasını yapmak için, kimlik doğrulama sunucusuna REST isteği yaparak kullanıcının kimlik bilgilerini doğrular.
+     * @param authRequest kullanıcının kimlik bilgilerini içeren kimlik doğrulama isteği
+     * @return kullanıcının kimlik bilgisini içeren AuthenticationResponse nesnesi
+     * @throws ServerRequestException sunucuya REST isteği yaparken bir hata oluşursa fırlatılır
      */
     @Override
-    public User findUserByUserName(String userName) {
-       return userRepository.findUserByUsername(userName);
-
+    public AuthenticationResponse login(AuthRequest authRequest) {
+        try {
+            String url = "http://localhost:9092/auth/authenticate";
+            AuthenticationResponse response = restTemplate.postForObject(url, authRequest, AuthenticationResponse.class);
+            return response;
+        }catch (Exception e){
+            LOGGER.warn("Failed to make request to the server");
+            throw new ServerRequestException("Failed to make request to the server");
+        }
     }
+
+
 }

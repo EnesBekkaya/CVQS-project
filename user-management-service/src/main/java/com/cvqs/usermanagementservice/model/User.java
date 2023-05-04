@@ -6,7 +6,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Where;
 
 import java.util.List;
-@Entity(name = "user")
+@Entity(name="users")
 @NoArgsConstructor
 @AllArgsConstructor
 @Where(clause = "deleted = false")

@@ -29,6 +29,13 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         exceptionResponse.setTimeStamp(LocalDateTime.now());
         return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
     }
+    @ExceptionHandler({ServerRequestException.class})
+    public final ResponseEntity<ExceptionResponse> serverRequestException(Exception exception){
+        ExceptionResponse exceptionResponse=new ExceptionResponse();
+        exceptionResponse.setMessage(exception.getMessage());
+        exceptionResponse.setTimeStamp(LocalDateTime.now());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         Map<String, String> errors = new HashMap<>();

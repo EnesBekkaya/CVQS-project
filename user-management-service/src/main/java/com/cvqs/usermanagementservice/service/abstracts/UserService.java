@@ -1,7 +1,8 @@
 package com.cvqs.usermanagementservice.service.abstracts;
 
+import com.cvqs.usermanagementservice.dto.AuthRequest;
+import com.cvqs.usermanagementservice.dto.AuthenticationResponse;
 import com.cvqs.usermanagementservice.dto.UserDto;
-import com.cvqs.usermanagementservice.model.User;
 
 import java.util.List;
 /**
@@ -38,12 +39,12 @@ public interface UserService {
      * @return Silinen kullanıcının UserDto olarak dönüştürülmüş hali.
      */
     UserDto delete(String username);
+
     /**
-     * Kullanıcı adına göre bir kullanıcı getirir.
-     *
-     * @param userName Kullanıcı adı.
-     * @return  kullanıcı nesnesi.
+     * Bu metod kullanıcının kimlik doğrulama isteğini işler ve sonucunda bir AuthenticationResponse döndürür.
+     * @param authRequest Kullanıcının kimlik doğrulama isteği.
+     * @return Kimlik doğrulama işleminin sonucu olan AuthenticationResponse objesi.
      */
-    User findUserByUserName(String userName);
+    AuthenticationResponse login(AuthRequest authRequest);
 
 }

@@ -17,9 +17,9 @@ public class RouteValidator {
      * Açık API uç noktalarının listesi.
      */
     public static final List<String> openApiEndpoints = List.of(
-            "/auth/authenticate",
+            "/users/login",
             "/users/save",
-            "/terminals/**",
+            "/roles/save",
             "/eureka"
     );
     /**
