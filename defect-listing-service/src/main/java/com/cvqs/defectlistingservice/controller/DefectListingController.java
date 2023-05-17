@@ -4,8 +4,6 @@ import com.cvqs.defectlistingservice.dto.DefectDto;
 import com.cvqs.defectlistingservice.service.abstracts.DefectListingService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,61 +14,55 @@ import org.springframework.web.bind.annotation.RestController;
 import java.sql.SQLException;
 import java.util.List;
 /**
- * DefectListingController sınıfı, hata listeleme servislerinin isteklerini karşılamak için kullanılır.
- *
+ * DefectListingController class is used to handle the requests of defect listing services.
  * @author Enes Bekkaya
- * @since  12.02.2023
+ * @since 12.02.2023
  */
 @RestController
 @RequestMapping("/defectListing")
 @RequiredArgsConstructor
 public class DefectListingController {
     private final DefectListingService defectListingService;
-    private static final Logger LOGGER= LoggerFactory.getLogger(DefectListingController.class);
     /**
-     * Tüm hataları getirme isteklerini karşılamak için kullanılır.
-     * @return Tüm hataların listesi
+     * Used to handle requests for get all defects.
+     * @return the list of all defects
      */
     @GetMapping("/getAll")
     public ResponseEntity<List<DefectDto>> getAllDefects(){
 
-        LOGGER.info("Incoming request for /defectListing/getAll");
         return ResponseEntity.ok(defectListingService.getAll());
     }
     /**
-     * Plaka numarasına göre hata getirme isteklerini karşılamak için kullanılır.
+     * Used to handle requests for get defects by registration plate number of a vehicle.
      *
-     * @param registrationPlate Hataların getirileceği aracın plaka numarası.
-     * @return Verilen plaka numarasına ait hataların listesini döndürür.
+     * @param registrationPlate the registration plate number of the vehicle for which defects will be listed
+     * @return  the list of defects for the given registration plate number
      */
     @GetMapping("/getByPlate")
     public ResponseEntity<List<DefectDto>> getDefectsByPlate(@RequestParam String registrationPlate){
-        LOGGER.info("Incoming request for /defectListing/getByPlate");
         return ResponseEntity.ok(defectListingService.findByRegistrationPlate(registrationPlate));
     }
     /**
-     * Plaka numarası ve hata tipine göre hata resimlerini getirme isteklerini karşılamak için kullanılır
-     * @param registrationPlate Resmi getirilecek aracın plaka numarası
-     * @param defectType  Resmi getirilecek hatanın tipi
-     * @return Verilen plaka numarası ve hata tipine ait resmin byte dizisini döndürür
-     * @throws SQLException Veritabanı işlemleri sırasında bir hata oluşursa fırlatılır
+     *  This method is used to handle requests for getting defect images based on the registration plate number and defect type.
+     * @param registrationPlate The registration plate number of the vehicle for which the image will be get.
+     * @param defectType The type of the defect for which the image will be get.
+     * @return The byte array of the image for the given registration plate number and defect type.
+     * @throws SQLException If an error occurs during database operations.
      */
     @GetMapping("/getImage")
     @Transactional
     public ResponseEntity<byte[]> getDefectImage(@RequestParam String registrationPlate,@RequestParam String defectType) throws SQLException {
-        LOGGER.info("Incoming request for /defectListing/getImage");
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(defectListingService.getDefectImage(registrationPlate,defectType));
     }
     /**
-     * Sayfa numarası, sayfa boyutu ve sıralama ölçütüne göre hata listesi getirme isteklerini karşılamak için kullanılır.
-     * @param pageNo   Getirilecek sayfanın numarası.
-     * @param pageSize Sayfa boyutu.
-     * @param sortBy   Sıralama ölçütü.
-     * @return Verilen sayfa numarası, sayfa boyutu ve sıralama ölçütüne göre hataların listesini döndürür.
+     * Used to handle requests for getting defect list based on page number, page size, and sorting criteria.
+     * @param pageNo Number of the page to retrieve.
+     * @param pageSize Size of the page.
+     * @param sortBy Sorting criteria.
+     * @return List of defects based on the given page number, page size, and sorting criteria.
      */
     @GetMapping("/sort")
     public ResponseEntity<List<DefectDto>> getDefectSorted(@RequestParam Integer pageNo, @RequestParam Integer pageSize, @RequestParam String sortBy){
-        LOGGER.info("Incoming request for /defectListing/sort");
         return ResponseEntity.ok(defectListingService.getDefectSorted(pageNo,pageSize,sortBy));
     }
 }

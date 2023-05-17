@@ -1,49 +1,45 @@
 package com.cvqs.defectlistingservice.service.abstracts;
 
 import com.cvqs.defectlistingservice.dto.DefectDto;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.sql.SQLException;
 import java.util.List;
 /**
- * DefectListingService arayüzü, hataları getirme ve sıralama için yöntemler sağlar.
- *
+ *The DefectListingService interface provides methods for retrieving and sorting defects.
  * @author Enes Bekkaya
- * @since  12.02.2023
+ * @since 12.02.2023
  */
 public interface DefectListingService {
     /**
-     * Veritabanındaki tüm Defect nesnelerini bulur ve bunları DefectDto nesnelerine dönüştürerek bir liste olarak döndürür.
-     * @return Veritabanındaki tüm Defect nesnelerinin DefectDto karşılıklarını içeren bir liste
+     * Finds all Defect objects in the database and returns them as a list of DefectDto objects.
+     * @return A list containing DefectDto equivalents of all Defect objects in the database
      *
      */
     List< DefectDto> getAll();
 
     /**
-     * Verilen kayıt plakasına sahip Defect nesnelerini bulur ve bunları DefectDto nesnelerine dönüştürerek bir liste olarak döndürür.
-     * @param registrationPlate bulunacak Defect nesnelerinin kayıt plakası
-     * @return kayıt plakasına sahip Defect nesnelerinin DefectDto karşılıklarını içeren bir liste
+     * Finds Defect objects with the given registration plate and converts them to a list of DefectDto objects.
+     * @param registrationPlate the registration plate of the Defect objects to be found
+     * @return a list containing DefectDto counterparts of Defect objects with the given registration plate
      *
      */
     List<DefectDto> findByRegistrationPlate(String registrationPlate);
 
     /**
-     * Verilen kayıt plakası ve kusur tipine sahip bir Defect nesnesinin resim verisini döndürür.
-     * @param registrationPlate resmi alınacak Defect nesnesinin kayıt plakası
-     * @param defectType resmi alınacak Defect nesnesinin kusur tipi
-     * @return resim verisi
-     * @throws SQLException veritabanına erişilemediğinde veya resim verisi alınırken hata oluştuğunda fırlatılır
+     * Returns the image data of a Defect object with the given registration plate and defect type.
+     * @param registrationPlate the registration plate of the Defect object to retrieve the image data
+     * @param defectType the defect type of the Defect object to get the image data
+     * @return the image data
+     * @throws SQLException if there is an error accessing the database or getting the image data
      */
     byte[] getDefectImage(String registrationPlate,String defectType) throws SQLException;
 
     /**
-     * Belirtilen sıralama parametrelerine göre sıralanmış bir DefectDto listesi döndürür
-     * @param pageNo alınacak sayfa numarası
-     * @param pageSize sayfa başına maksimum öğe sayısı
-     * @param sortBy ile sıralanacak alan
-     * @return belirtilen parametrelere göre sıralanmış bir  DefectDto listesi
+     * Returns a sorted list of DefectDto objects according to the specified sorting parameters.
+     * @param pageNo the page number to be get
+     * @param pageSize the maximum number of items per page
+     * @param sortBy the field to be sorted by
+     * @return a sorted list of DefectDto objects according to the specified parameters
      */
     List<DefectDto> getDefectSorted(Integer pageNo, Integer pageSize, String sortBy);
 }

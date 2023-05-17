@@ -9,9 +9,8 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 /**
- * ImageManager sınıfı,ImageService arayüzünden türetilmiştir ve
- *  Bu sınıf, resim dosyalarının yüklenmesi, işlenmesi ve veritabanında saklanmasını sağlar.
- *  Bu sınıf, veritabanı işlemleri için imageRepository
+ * The ImageManager class is derived from the ImageService interface and
+ * This class provides functionality for retrieving image files from the database.
  *
  *  @author Enes Bekkaya
  *  @since  18.03.2023
@@ -23,9 +22,9 @@ public class ImageManager implements ImageService {
     private final ImageRepository imageRepository;
 
     /**
-     * Verilen Image nesnesinin veritabanındaki karşılığını bulup geri döndürür.
-     * @param image veritabanındaki Image nesnesinin kimliğini taşıyan Image nesnesi
-     * @return veritabanındaki Image nesnesi döndürür
+     * Finds and returns the equivalent of the given Image object in the database.
+     * @param image the Image object carrying the identity of the Image object in the database
+     * @return the Image object in the database
      *
      */
     @Override

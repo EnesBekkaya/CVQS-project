@@ -122,7 +122,7 @@ class DefectListingManagerTest  {
          });
 
          Assertions.assertNotNull(exception);
-         Assertions.assertEquals("Araca kayıtlı hata bulunamadı", exception.getMessage());
+         Assertions.assertEquals("No defect found for this vehicle.", exception.getMessage());
          Mockito.verify(defectListingRepository).findByRegistrationPlate(vehicle.getRegistrationPlate());
      }
 
@@ -188,14 +188,13 @@ class DefectListingManagerTest  {
         });
 
         Assertions.assertNotNull(exception);
-        Assertions.assertEquals(registrationPlate +
-                " plaka kodlu araç için böyle bir hata kayıtlı değildir.", exception.getMessage());
+        Assertions.assertEquals("No defect records found for the vehicle with the license plate code "+registrationPlate, exception.getMessage());
         Mockito.verify(defectListingRepository).findDefectByregistrationPlateAndType(registrationPlate,defectType);
 
     }
      @DisplayName("should Return List Of DefectDto By pageNo And pageSize And sortBy")
      @Test
-     void shouldReturnListOfDefectDtoBypageNoAndpageSizeAndsortBy() throws SQLException{
+     void shouldReturnListOfDefectDtoBypageNoAndpageSizeAndsortBy() {
          DefectDto defectDto1 = new DefectDto();
          DefectDto defectDto2 = new DefectDto();
          Location location=new Location();

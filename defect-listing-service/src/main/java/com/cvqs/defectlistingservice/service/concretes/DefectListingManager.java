@@ -10,8 +10,6 @@ import com.cvqs.defectlistingservice.service.abstracts.DefectListingService;
 import com.cvqs.defectlistingservice.service.abstracts.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Hata listeleme sınıfı
+ * Defect listing class
  *
  * @author Enes Bekkaya
  * @since  12.02.2023
@@ -34,12 +32,10 @@ public class DefectListingManager implements DefectListingService {
     private final DefectListingRepository defectListingRepository;
     private final ModelMapper modelMapper;
     private final ImageService imageService;
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefectListingManager.class);
 
     /**
-     * Tüm hasarları getiren metot.
-     *
-     * @return DefectDto tipindeki tüm hataları listesini döndürür.
+     Method for getting all defects.
+     @return A list of DefectDto containing all defects.
      */
     @Override
     public List<DefectDto> getAll() {
@@ -48,39 +44,36 @@ public class DefectListingManager implements DefectListingService {
     }
 
     /**
-     * Verilen plakaya ait hataları getiren metot.
+     * Method that gets the list of damages for the given registration plate.
      *
-     * @param registrationPlate hasarların arandığı aracın plakası
-     * @return verilen plakaya ait hasarların listesini döndürür.
-     * @throws EntityNotFoundException eğer verilen plakaya ait hasar bulunamazsa fırlatılır
+     * @param registrationPlate the registration plate of the vehicle for which damages are being searched
+     * @return a list of damages for the given registration plate
+     * @throws EntityNotFoundException if no damages are found for the given registration plate
      */
     @Override
     public List<DefectDto> findByRegistrationPlate(String registrationPlate) {
         List<Defect> defects = defectListingRepository.findByRegistrationPlate(registrationPlate);
 
         if (defects.isEmpty()) {
-            LOGGER.warn("işlem başarısız!! {} plaka kodu için kayıtlı bir araç bulunamadı.",registrationPlate);
-            throw new EntityNotFoundException("Araca kayıtlı hata bulunamadı");
+            throw new EntityNotFoundException("No defect found for this vehicle.");
         }
         return defects.stream().map(defect -> modelMapper.map(defect, DefectDto.class)).collect(Collectors.toList());
     }
 
     /**
-     * Belirtilen plaka ve hata türüne ait hasar resmini getiren metot.
+     * Method that gets the damage image as a byte array for the given registration plate and defect type.
      *
-     * @param registrationPlate hata görüntüsünün arandığı aracın plakası
-     * @param defectType        hata görüntüsünün arandığı hasar türü
-     * @return hasar görüntüsünün byte dizisi döndürür
-     * @throws SQLException eğer veritabanı işlemleri sırasında bir hata oluşursa fırlatılır
+     * @param registrationPlate the registration plate of the vehicle for which the damage image is being searched
+     * @param defectType the type of the damage for which the image is being searched
+     * @return a byte array of the damage image
+     * @throws SQLException if there is an error during the database operations
      */
     @Override
     public byte[] getDefectImage(String registrationPlate, String defectType) throws SQLException {
         Defect defect = defectListingRepository.findDefectByregistrationPlateAndType(registrationPlate, defectType);
         if(defect==null){
-            LOGGER.warn("işlem başarısız!!{} plaka kodlu araç için{} böyle bir hata kayıtlı değil. ",registrationPlate,defectType);
 
-            throw new EntityNotFoundException(registrationPlate +
-                    " plaka kodlu araç için böyle bir hata kayıtlı değildir.");
+            throw new EntityNotFoundException("No defect records found for the vehicle with the license plate code "+registrationPlate);
         }
         Image image = imageService.getImage(defect.getImage());
         byte[] imageData = image.getData().getBytes(1, (int) image.getData().length());
@@ -88,12 +81,12 @@ public class DefectListingManager implements DefectListingService {
     }
 
     /**
-     * Belirtilen sayfa numarası, sayfa boyutu ve sıralama ölçütüne göre kusurları sıralayarak, sayfalı bir şekilde döndüren metot.
+     * Method that returns the defects in a paginated manner, sorted according to the specified page number, page size and sorting criteria.
      *
-     * @param pageNo   döndürülecek sayfanın numarası
-     * @param pageSize sayfa başına döndürülecek kusur sayısı
-     * @param sortBy   kusurların nasıl sıralanacağına dair sıralama ölçütü
-     * @return sayfalı şekilde sıralanmış kusur DTO'ları döndürür
+     * @param pageNo the page number to be returned
+     * @param pageSize the number of defects to be returned per page
+     * @param sortBy the sorting criteria for how the defects should be sorted
+     * @return paginated sorted defect DTOs
      */
     public List<DefectDto> getDefectSorted(Integer pageNo, Integer pageSize, String sortBy) {
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
