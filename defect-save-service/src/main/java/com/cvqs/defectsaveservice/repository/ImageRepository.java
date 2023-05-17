@@ -3,7 +3,7 @@ package com.cvqs.defectsaveservice.repository;
 import com.cvqs.defectsaveservice.model.Image;
 import org.springframework.data.jpa.repository.JpaRepository;
 /**
- * ImageRepository, Image nesnelerinin veritabanı işlemlerini yapmak için kullanılan arayüz.
+ * ImageRepository interface is used for performing database operations for Image objects.
  *
  * @author Enes Bekkaya
  * @since  12.02.2023

@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 
 
 /**
- * LocationManager sınıfı, LocationService arayüzünden türetilmiştir ve
- *  konumlarla ilgili işlemleri yönetir. Bu sınıf, veritabanı işlemleri için LocationRepository nesnelerini kullanmaktadır.
+ * The LocationManager class is derived from the LocationService interface and
+ * manages operations related to locations. This class uses LocationRepository objects for database operations.
  *
  * @author Enes Bekkaya
  * @since  13.02.2023
@@ -19,11 +19,10 @@ import org.springframework.stereotype.Service;
 public class LocationManager implements LocationService {
     private final LocationRepository locationRepository;
     /**
-     *
-     * Verilen X ve Y koordinatlarına sahip bir konumu arar. Eğer böyle bir konum yoksa, yeni bir konum oluşturur ve kaydeder.
-     * @param x aranan konumun X koordinatı
-     * @param y aranan konumun Y koordinatı
-     * @return bulunan konum veya yeni oluşturulan konumu döndürür
+     * Finds a location with the given X and Y coordinates. If such a location does not exist, creates and saves a new location.
+     * @param x the X coordinate of the location to be searched for
+     * @param y the Y coordinate of the location to be searched for
+     * @return the found location or the newly created location
     */
     @Override
     public Location findLocationByXAndY(int x, int y) {

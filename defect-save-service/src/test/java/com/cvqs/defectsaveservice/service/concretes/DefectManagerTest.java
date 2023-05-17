@@ -85,7 +85,7 @@ public class DefectManagerTest{
     }
     @DisplayName("should Throw EntityNotFoundException By Defect Not Null")
     @Test
-    void shouldThrowEntityNotFoundExceptionByDefectNotNull() throws SQLException, IOException {
+    void shouldThrowEntityNotFoundExceptionByDefectNotNull() {
         MultipartFile file = new MockMultipartFile("test.jpg", new byte[]{});
 
         Vehicle vehicle = new Vehicle();
@@ -117,8 +117,8 @@ public class DefectManagerTest{
         });
 
         Assertions.assertNotNull(exception);
-        Assertions.assertEquals(defectDto.getVehicle().getRegistrationPlate() +
-                " plaka kodlu araç için böyle bir hata kayıtlıdır.", exception.getMessage());
+        Assertions.assertEquals("Operation failed!! The defect record exists for the vehicle with registration plate " +
+                defectDto.getVehicle().getRegistrationPlate(), exception.getMessage());
         Mockito.verify(vehicleService).findVehicleByRegistrationPlate(vehicle.getRegistrationPlate());
         Mockito.verify(defectRepository).getDefectsByTypeAndVehicle(defectDto.getType(),vehicle);
     }
@@ -178,20 +178,6 @@ public class DefectManagerTest{
         defectDto.setType("test-type");
         defectDto.setVehicle(vehicle);
 
-        List<Location> locations=new ArrayList<>();
-        Location location = new Location();
-        location.setX(10);
-        location.setY(25);
-        locations.add(location);
-
-        defectDto.setLocations(locations);
-
-        Defect defect=new Defect();
-        defect.setLocations(locations);
-        defect.setVehicle(vehicle);
-        defect.setType("test-type");
-        defect.setImage(new Image());
-
 
         Mockito.when(vehicleService.findVehicleByRegistrationPlate(vehicle.getRegistrationPlate())).thenReturn(vehicle);
         Mockito.when(defectRepository.getDefectsByTypeAndVehicle(defectDto.getType(), vehicle)).thenReturn(null);
@@ -200,8 +186,8 @@ public class DefectManagerTest{
         });
 
         Assertions.assertNotNull(exception);
-        Assertions.assertEquals(defectDto.getVehicle().getRegistrationPlate() +
-                " plaka kodlu araç için böyle bir hata kayıtlı değildir.", exception.getMessage());
+        Assertions.assertEquals(
+                "Operation failed!! No such defect is recorded for the vehicle with the registration plate "+defectDto.getVehicle().getRegistrationPlate(), exception.getMessage());
         Mockito.verify(vehicleService).findVehicleByRegistrationPlate(vehicle.getRegistrationPlate());
         Mockito.verify(defectRepository).getDefectsByTypeAndVehicle(defectDto.getType(),vehicle);
     }

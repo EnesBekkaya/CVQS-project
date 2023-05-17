@@ -1,7 +1,5 @@
 package com.cvqs.defectsaveservice.exception;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -13,6 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -21,7 +20,6 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
-    private static final Logger LOGGER= LoggerFactory.getLogger(ApiExceptionHandler.class);
 
     @ExceptionHandler({EntityNotFoundException.class})
     public final ResponseEntity<ExceptionResponse> entityNotFound(Exception exception) {
@@ -46,14 +44,16 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
-        LOGGER.warn("MethodArgumentNotValidException: "+ex.getMessage());
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(SQLException.class)
     public ResponseEntity<String> handleSQLException(SQLException ex) {
-        LOGGER.warn("SQLException: "+ex.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("İşlem başarısız. Veritabanı hatası oluştu.");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Operation failed. Database error occurred.");
+    }
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<String> handeleIOException(IOException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Operation failed: ");
     }
 
 }

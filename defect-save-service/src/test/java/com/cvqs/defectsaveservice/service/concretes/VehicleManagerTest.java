@@ -1,13 +1,11 @@
 package com.cvqs.defectsaveservice.service.concretes;
 
-import com.cvqs.defectsaveservice.dto.DefectDto;
 import com.cvqs.defectsaveservice.dto.VehicleDto;
 import com.cvqs.defectsaveservice.exception.EntityNotFoundException;
 import com.cvqs.defectsaveservice.model.Vehicle;
 import com.cvqs.defectsaveservice.repository.VehicleRepository;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
-import org.mockito.internal.verification.Times;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
@@ -86,29 +84,25 @@ class VehicleManagerTest {
         Assertions.assertEquals(expectedResult, result);
         Mockito.verify(vehicleRepository).findVehicleByRegistrationPlate(registrationPlate);
     }
-
-    @DisplayName("should throw EntityNotFoundException when the parameter of the findVehicleByRegistrationPlate RegistrationPlate does not exist ")
+    @DisplayName("should Dont Exist Vehicle By RegistrationPlate And Return Null")
     @Test
-    void shouldThrowEntityNotFoundException_whenRegistrationPlateDoesNotExist() {
+    void shouldDontExistVehicleByRegistrationPlateAndReturnNull() {
         String registrationPlate = "34BA23";
         Vehicle vehicle = new Vehicle();
         vehicle.setBrand("Audi");
         vehicle.setRegistrationPlate("34BA23");
 
         Mockito.when(vehicleRepository.findVehicleByRegistrationPlate(registrationPlate)).thenReturn(null);
-
-        EntityNotFoundException exception = null;
-        try {
+        EntityNotFoundException exception = Assertions.assertThrows(EntityNotFoundException.class, () -> {
             vehicleManager.findVehicleByRegistrationPlate(registrationPlate);
-        } catch (EntityNotFoundException e) {
-            exception = e;
-        }
-
+        });
         Assertions.assertNotNull(exception);
-        Assertions.assertEquals("Plakaya ait Araç bulunamadı", exception.getMessage());
 
+        Assertions.assertEquals("Operation failed!! No such vehicle with the registration plate " +
+                registrationPlate, exception.getMessage());
+
+        Mockito.verify(vehicleRepository).findVehicleByRegistrationPlate(registrationPlate);
     }
-
     @DisplayName("should Get All Vehicle Dto List ")
     @Test
     void shouldGetAllVehicleDtoList() {

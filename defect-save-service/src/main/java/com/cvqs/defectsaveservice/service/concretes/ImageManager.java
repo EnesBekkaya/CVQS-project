@@ -6,8 +6,6 @@ import com.cvqs.defectsaveservice.model.Location;
 import com.cvqs.defectsaveservice.repository.ImageRepository;
 import com.cvqs.defectsaveservice.service.abstracts.ImageService;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,9 +21,9 @@ import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.List;
 /**
- * ImageManager sınıfı,ImageService arayüzünden türetilmiştir ve
- *  Bu sınıf, resim dosyalarının yüklenmesi, işlenmesi ve veritabanında saklanmasını sağlar.
- *  Bu sınıf, veritabanı işlemleri için imageRepository
+ * The ImageManager class is derived from the ImageService interface and
+ * is responsible for uploading, processing, and storing image files in the database.
+ * This class uses the imageRepository for database operations.
  *
  *  @author Enes Bekkaya
  *  @since  18.03.2023
@@ -35,15 +33,14 @@ import java.util.List;
 public class ImageManager implements ImageService {
 
     private final ImageRepository imageRepository;
-    private static final Logger LOGGER= LoggerFactory.getLogger(VehicleManager.class);
 
     /**
-     * Verilen dosyayı işleyerek belirtilen konumlardaki nesneleri işaretleyen bir resim veritabanına kaydeder.
-     * @param file kaydedilecek resim dosyası
-     * @param locations işaretlenecek konumların listesi
-     * @return kaydedilen resim nesnesini döndürür
-     * @throws IOException eğer dosya işleme sırasında bir hata oluşursa
-     * @throws SQLException eğer veritabanına kayıt sırasında bir hata oluşursa
+     *  Processes the given file and saves an image object to the database that marks the objects at the specified locations.
+     * @param file the image file to be saved
+     * @param locations list of locations to mark
+     * @return the saved image object
+     * @throws IOException if an error occurs during file processing
+     * @throws SQLException if an error occurs during database insertion
      *
      */
     @Override
@@ -58,17 +55,16 @@ public class ImageManager implements ImageService {
 
             return imageRepository.save(image);
         }catch (Exception e){
-            LOGGER.warn("fotoğraf veritabanına kaydedilemedi");
             throw new IOException("kaydetme işlemi başarısız");
         }
     }
 
     /**
-     * Verilen resim dosyasını işleyerek belirtilen konumlarda nesneleri işaretleyen ve işaretli resmin byte dizisini döndürür.
-     * @param file işlenecek resim dosyası
-     * @param locations işaretlenecek nesnelerin konumları
-     * @return işaretlenmiş resmin byte dizisi döndürür
-     * @throws IOException eğer dosya işleme sırasında bir hata oluşursa
+     * Processes the given image file and marks objects at specified locations, returning the marked image as a byte array.
+     * @param file the image file to process
+     * @param locations the locations of the objects to mark
+     * @return the byte array of the marked image
+     * @throws IOException if an error occurs during file processing
      *
      */
     @Override
@@ -93,7 +89,6 @@ public class ImageManager implements ImageService {
             byte[] markedBytes = outputStream.toByteArray();
             return markedBytes;
         }catch (IOException e){
-            LOGGER.warn("Dosyadan bayt okunurken hata oluştu");
             throw  new IOException("Dosyadan bayt okunurken hata oluştu",e);
         }
 

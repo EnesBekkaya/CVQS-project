@@ -2,7 +2,6 @@ package com.cvqs.defectsaveservice.service.concretes;
 
 import com.cvqs.defectsaveservice.dto.DefectDto;
 import com.cvqs.defectsaveservice.exception.EntityNotFoundException;
-import com.cvqs.defectsaveservice.exception.FailedSaveException;
 import com.cvqs.defectsaveservice.model.Defect;
 import com.cvqs.defectsaveservice.model.Location;
 import com.cvqs.defectsaveservice.model.Vehicle;
@@ -13,21 +12,18 @@ import com.cvqs.defectsaveservice.service.abstracts.LocationService;
 import com.cvqs.defectsaveservice.service.abstracts.VehicleService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * DefectManager sınıfı, DefectService arayüzünden türetilmiştir ve
- * hata yönetimi işlemlerini yönetir. Bu sınıf, veritabanı işlemleri için DefectRepository
- * lokasyon işlemleri için LocationService, araç işlemleri için VehicleService
- * resim işlemleri için ImageService} nesnelerini kullanmaktadır.
+ * The DefectManager class is derived from the DefectService interface and manages defect management operations.
+ * This class uses the DefectRepository object for database operations, the LocationService object for location operations,
+ * the VehicleService object for vehicle operations, and the ImageService object for image operations.
  *
  * @author Enes Bekkaya
  * @since 12.02.2023
@@ -40,82 +36,57 @@ public class DefectManager implements DefectService {
     private final VehicleService vehicleService;
     private final ImageService imageService;
     private final ModelMapper modelMapper;
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefectManager.class);
 
     /**
-     * Verilen DefectDto nesnesine göre yeni bir Defect oluşturur veya mevcut bir Defect'in lokasyonlarını günceller ve geri döndürür.
+     * Saves a new defect object with the given data to the database.
      *
-     * @param defectDto DefectDto türünde, kaydedilecek Defect nesnesinin bilgilerini içeren nesne
-     * @param file MultipartFile türünde, kaydedilecek Defect nesnesine ait resim dosyası
-     * @return Kaydedilen veya güncellenen DefectDto nesnesi
-     * @throws IOException  Eğer resim dosyası kaydedilemezse fırlatılır
-     * @throws SQLException Eğer veritabanı işleminde bir hata olursa fırlatılır
-     * @throws EntityNotFoundException Verilen plaka koduna sahip araç için mevcut bir hata kaydı varsa fırlatılır.
-     * @throws FailedSaveException dosya okuma-yazma işlemi başarısız olursa fıtlatılır.
+     * @param defectDto The DTO object containing the defect data.
+     * @param file The image file associated with the defect.
+     * @return A DTO object representing the saved defect.
+     * @throws EntityNotFoundException If a defect with the same type and vehicle already exists in the database.
+     * @throws IOException If there is an error while reading or writing the image file.
+     * @throws SQLException If there is an error while saving the defect to the database.
      */
     @Override
     public DefectDto save(DefectDto defectDto, MultipartFile file) throws IOException, SQLException {
-        try {
-            Vehicle vehicle = vehicleService.findVehicleByRegistrationPlate(defectDto.getVehicle().getRegistrationPlate());
+        Vehicle vehicle = vehicleService.findVehicleByRegistrationPlate(defectDto.getVehicle().getRegistrationPlate());
 
-            Defect defect = defectRepository.getDefectsByTypeAndVehicle(defectDto.getType(), vehicle);
-            if (defect != null) {
-                LOGGER.warn("işlem başarısız!!{} plaka kodlu araç için böyle bir hata kayıtlı. ", defectDto.getVehicle().getRegistrationPlate());
-                throw new EntityNotFoundException(defectDto.getVehicle().getRegistrationPlate() +
-                        " plaka kodlu araç için böyle bir hata kayıtlıdır.");
-            }
-            List<Location> locations = new ArrayList<>();
-            Defect newDefect = new Defect();
-
-            defectDto.getLocations().forEach(location -> {
-                Location location1 = locationService.findLocationByXAndY(location.getX(), location.getY());
-                locations.add(location1);
-            });
-            newDefect.setType(defectDto.getType());
-            newDefect.setVehicle(vehicle);
-            newDefect.setLocations(locations);
-            newDefect.setImage(imageService.saveImage(file, defectDto.getLocations()));
-            return modelMapper.map(defectRepository.save(newDefect), DefectDto.class);
-        }catch (IOException e){
-            LOGGER.warn("{} plaka kodlu araç için kayıt işlemi başarısız. ", defectDto.getVehicle().getRegistrationPlate());
-            throw new FailedSaveException("kayıt işlemi başarısız");
+        if (defectRepository.getDefectsByTypeAndVehicle(defectDto.getType(), vehicle) != null) {
+            throw new EntityNotFoundException("Operation failed!! The defect record exists for the vehicle with registration plate " +
+                    defectDto.getVehicle().getRegistrationPlate());
         }
+
+        List<Location> locations = defectDto.getLocations().stream()
+                .map(location -> locationService.findLocationByXAndY(location.getX(), location.getY()))
+                .collect(Collectors.toList());
+
+        Defect newDefect = new Defect(defectDto.getType(), vehicle, locations, imageService.saveImage(file, defectDto.getLocations()));
+        return modelMapper.map(defectRepository.save(newDefect), DefectDto.class);
     }
+
     /**
-     * Verilen DefectDto verileri ve resim dosyası ile hata kaydını günceller.
-     * Güncellenmiş hata kaydı veritabanına kaydedilir ve bir DefectDto nesnesi olarak döndürülür.
-     *
-     * @param defectDto Hata kaydının güncellenecek verilerini içeren DefectDto nesnesi.
-     * @param file      Güncellenmiş resim dosyası.
-     * @return  Güncellenmiş hata kaydının DefectDto temsili.
-     * @throws IOException Resim dosyası kaydedilirken bir hata oluşursa fırlatılır.
-     * @throws SQLException Veritabanı işlemleri sırasında bir hata oluşursa fırlatılır.
-     * @throws EntityNotFoundException Verilen plaka koduna sahip araç için mevcut bir hata kaydı yoksa fırlatılır.
-     * @throws FailedSaveException dosya okuma-yazma işlemi başarısız olursa fıtlatılır.
+     * Updates an existing Defect entity with the given DefectDto object and image file. The Defect is identified by the type and vehicle registration plate in the DefectDto object.
+     * @param defectDto the DefectDto object containing the updated information
+     * @param file the image file to be associated with the Defect entity
+     * @return the updated DefectDto object
+     * @throws IOException if there is an error with reading or writing the image file
+     * @throws SQLException if there is an error with the SQL database operation
+     * @throws EntityNotFoundException if there is no Defect entity matching the type and vehicle registration plate in the DefectDto object
      */
     @Override
-    public DefectDto update(DefectDto defectDto, MultipartFile file) throws SQLException {
-        try {
+    public DefectDto update(DefectDto defectDto, MultipartFile file)  throws IOException, SQLException {
             Vehicle vehicle = vehicleService.findVehicleByRegistrationPlate(defectDto.getVehicle().getRegistrationPlate());
             Defect defect = defectRepository.getDefectsByTypeAndVehicle(defectDto.getType(), vehicle);
             if (defect == null) {
-                LOGGER.warn("işlem başarısız!!{} plaka kodlu araç için böyle bir hata kayıtlı değil. ", defectDto.getVehicle().getRegistrationPlate());
-
-                throw new EntityNotFoundException(defectDto.getVehicle().getRegistrationPlate() +
-                        " plaka kodlu araç için böyle bir hata kayıtlı değildir.");
+                    throw new EntityNotFoundException("Operation failed!! No such defect is recorded for the vehicle with the registration plate "+defectDto.getVehicle().getRegistrationPlate());
             }
-            List<Location> locations = new ArrayList<>();
 
-            defectDto.getLocations().forEach(location -> {
-                Location location1 = locationService.findLocationByXAndY(location.getX(), location.getY());
-                locations.add(location1);
-            });
+            List<Location> locations = defectDto.getLocations().stream()
+                    .map(location -> locationService.findLocationByXAndY(location.getX(), location.getY()))
+                    .collect(Collectors.toList());
+
             defect.setLocations(locations);
             defect.setImage(imageService.saveImage(file, defectDto.getLocations()));
             return modelMapper.map(defectRepository.save(defect), DefectDto.class);
-        }catch (IOException e){
-            LOGGER.warn("{} plaka kodlu araç için güncelleme işlemi başarısız. ", defectDto.getVehicle().getRegistrationPlate());
-            throw new FailedSaveException("güncelleme işlemi başarısız.");
-        }
     }
 }

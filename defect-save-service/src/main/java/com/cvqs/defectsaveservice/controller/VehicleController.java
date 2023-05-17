@@ -12,8 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 /**
- * VehicleController sınıfı,VehicleController servisinin isteklerini karşılamak için kullanılır.
- *
+ * The VehicleController class is used to handle the requests of the Vehicle service.
  * @author Enes Bekkaya
  * @since  12.02.2023
  */
@@ -24,18 +23,17 @@ public class VehicleController {
 
     private final VehicleService vehicleService;
     /**
-     * Araç ekleme isteklerini  karşılamak için kullanılır.
-     *
-     * @param vehicleDto Eklenecek araç bilgileri
-     * @return Eklenen aracın bilgileri
+     * Used to handle vehicle save requests.
+     * @param vehicleDto Information of the vehicle to be added.
+     * @return Information of the saved vehicle.
      */
     @PostMapping("/save")
     public ResponseEntity<VehicleDto> saveVehicle(@RequestBody @Valid VehicleDto vehicleDto){
         return ResponseEntity.ok(vehicleService.save(vehicleDto));
     }
     /**
-     * Tüm araçların listesini döndürme isteklerini karşılamak için kullanılır.
-     * @return Araçların listesi
+     * Used to handle requests for returning the list of all vehicles.
+     * @return List of vehicles
      */
     @RequestMapping("/getAll")
     public ResponseEntity<List<VehicleDto>> getAllVehicle(){

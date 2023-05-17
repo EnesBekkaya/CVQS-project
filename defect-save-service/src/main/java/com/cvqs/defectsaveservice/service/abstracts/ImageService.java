@@ -8,28 +8,28 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 /**
- * ImageService arayüzü, Image nesneleriyle ilgili işlemleri gerçekleştirir
+ * ImageService interface performs operations on Image objects
  *
  * @author Enes Bekkaya
  * @since  12.02.2023
  */
 public interface ImageService {
     /**
-     * Belirtilen MultipartFile dosyasını, belirtilen lokasyonlarla ilişkilendirilmiş bir  Image varlığı olarak kaydeder
-     * @param file resim verilerini içeren  MultipartFile
-     * @param locations resimle ilişkilendirilmiş Location listesi
-     * @return kaydedilen Image
-     * @throws IOException eğer dosya işlenirken bir hata oluşursa
-     * @throws SQLException eğer veritabanına kaydetmek için bir sorun oluşursa
+     * Saves the specified MultipartFile as an Image entity associated with the given locations.
+     * @param file MultipartFile containing the image data
+     * @param locations list of Location entities associated with the image
+     * @return the saved Image entity
+     * @throws IOException if an error occurs while processing the file
+     * @throws SQLException if there is an issue saving to the database
      */
     Image  saveImage( MultipartFile file,List<Location> locations) throws IOException, SQLException;
 
     /**
-     * Belirtilen MultipartFile dosyasını, belirtilen lokasyonlarla işleyerek işlenmiş resim verilerini byte dizisi olarak döndürür
-     * @param file işlenecek resim verilerini içeren MultipartFile
-     * @param locations resimle ilişkilendirilmiş Location listesi
-     * @return işlenmiş resim verilerini içeren byte dizisi
-     * @throws IOException eğer dosya işlenirken bir hata oluşursa
+     * Processes the specified MultipartFile containing image data associated with the given locations and returns the processed image data as a byte array.
+     * @param file MultipartFile containing image data to be processed
+     * @param locations List of locations associated with the image
+     * @return Byte array containing the processed image data
+     * @throws IOException if an error occurs while processing the file
      */
      byte[] processingImage(MultipartFile file, List<Location> locations) throws IOException;
 

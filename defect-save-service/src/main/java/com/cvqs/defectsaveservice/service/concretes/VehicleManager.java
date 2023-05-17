@@ -7,8 +7,6 @@ import com.cvqs.defectsaveservice.repository.VehicleRepository;
 import com.cvqs.defectsaveservice.service.abstracts.VehicleService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -16,8 +14,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.stream.Collectors;
 /**
- * VehicleManager sınıfı,VehicleService arayüzünden türetilmiştir ve
- *  araçlarla ilgili işlemleri yönetir. Bu sınıf, veritabanı işlemleri için VehicleRepository nesnelerini kullanmaktadır.
+ * The VehicleManager class is derived from the VehicleService interface and
+ * manages operations related to vehicles. This class uses VehicleRepository objects for database operations.
  *
  * @author Enes Bekkaya
  * @since  13.02.2023
@@ -27,19 +25,18 @@ import java.util.stream.Collectors;
 public class VehicleManager implements VehicleService {
     private final VehicleRepository vehicleRepository;
     private final ModelMapper modelMapper;
-    private static final Logger LOGGER= LoggerFactory.getLogger(VehicleManager.class);
 
     /**
-     * Verilen VehicleDto nesnesini kullanarak bir Vehicle nesnesi oluşturur ve bu nesneyi veritabanına kaydeder.
-     * @param vehicleDto kaydedilecek VehicleDto nesnesi
-     * @throws ResponseStatusException kayıt plakasına sahip bir Vehicle nesnesi bulunduğunda fıraltılır
-     * @return kaydedilen VehicleDto nesnesi
+     * Creates a Vehicle object using the given VehicleDto object and saves it to the database.
+     * Throws a ResponseStatusException if a Vehicle object with the same registration plate already exists.
+     * @param vehicleDto the VehicleDto object to be saved
+     * @throws ResponseStatusException if a Vehicle object with the same registration plate already exists
+     * @return the saved VehicleDto object
      *
      */
     @Override
     public VehicleDto save(VehicleDto vehicleDto) {
         if (vehicleRepository.findVehicleByRegistrationPlate(vehicleDto.getRegistrationPlate()) != null) {
-            LOGGER.warn("işlem başarısız!!{} plaka koduna sahip araç zaten kayıtlı. ",vehicleDto.getRegistrationPlate());
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Bu plaka koduna sahip araç zaten kayıtlı.");
         }
         Vehicle vehicle =modelMapper.map(vehicleDto, Vehicle.class);
@@ -47,9 +44,8 @@ public class VehicleManager implements VehicleService {
     }
 
     /**
-     *
-     * Veritabanındaki tüm Vehicle nesnelerini bulur ve bunları VehicleDto nesnelerine dönüştürerek bir liste olarak döndürür.
-     * @return Veritabanındaki tüm Vehicle nesnelerinin VehicleDto karşılıklarını içeren bir liste
+     * Finds all Vehicle objects in the database, converts them to VehicleDto objects, and returns them as a list.
+     * @return a list containing VehicleDto counterparts of all Vehicle objects in the database
      */
     @Override
     public List<VehicleDto> getAll() {
@@ -59,18 +55,18 @@ public class VehicleManager implements VehicleService {
     }
 
     /**
+     * Finds a Vehicle object with the given registration plate.
+     * @param registrationPlate registration plate of the Vehicle object to be found
+     * @return the Vehicle object with the given registration plate
+     * @throws EntityNotFoundException if a Vehicle object with the given registration plate cannot be found
      *
-     * Verilen kayıt plakasına sahip bir Vehicle nesnesi bulur.
-     * @param registrationPlate bulunacak Vehicle nesnesinin kayıt plakası
-     * @return kayıt plakasına sahip Vehicle nesnesi
-     * @throws EntityNotFoundException kayıt plakasına sahip bir Vehicle nesnesi bulunamadığında fırlatılır
      */
     @Override
     public Vehicle findVehicleByRegistrationPlate(String registrationPlate) {
         Vehicle vehicle = vehicleRepository.findVehicleByRegistrationPlate(registrationPlate);
         if(vehicle ==null) {
-            LOGGER.warn("işlem başarısız!!{} plaka kodlu araç bulunamadı. ",registrationPlate);
-            throw new EntityNotFoundException("Plakaya ait Araç bulunamadı");
+            throw new EntityNotFoundException("Operation failed!! No such vehicle with the registration plate "+registrationPlate);
+
         }
         return vehicle;
     }

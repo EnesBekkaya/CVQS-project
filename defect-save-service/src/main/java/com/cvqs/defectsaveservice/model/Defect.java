@@ -1,7 +1,6 @@
 package com.cvqs.defectsaveservice.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -10,6 +9,7 @@ import java.util.List;
 @Entity(name = "defect")
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Defect {
     @Id
     @Getter
@@ -41,4 +41,11 @@ public class Defect {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "image_id", referencedColumnName = "id")
     private Image image;
+
+    public Defect(String type, Vehicle vehicle, List<Location> locations, Image image) {
+        this.type = type;
+        this.vehicle = vehicle;
+        this.locations = locations;
+        this.image = image;
+    }
 }

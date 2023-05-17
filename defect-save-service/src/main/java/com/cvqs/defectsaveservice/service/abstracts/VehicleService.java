@@ -5,29 +5,29 @@ import com.cvqs.defectsaveservice.model.Vehicle;
 
 import java.util.List;
 /**
- * VehicleService arayüzü, Vehicle nesneleriyle ilgili işlemleri gerçekleştirir
+ * VehicleService interface performs operations on Vehicle objects
  *
  * @author Enes Bekkaya
  * @since  12.02.2023
  */
 public interface VehicleService {
     /**
-     * Verilen VehicleDto nesnesini kaydeder
-     * @param vehicleDto kaydedilecek araç bilgileri nesnesi
-     * @return kaydedilen vehicleDto nesnesi
+     * Saves the given VehicleDto object.
+     * @param vehicleDto the object containing the information of the vehicle to be saved
+     * @return the saved VehicleDto object
      */
     VehicleDto save(VehicleDto vehicleDto);
 
     /**
-     * Bütün araçların bir listesini döndürür.
-     * @return araçların listesi  VehicleDto
+     * Returns a list of all vehicles.
+     * @return a list of vehicles as VehicleDto
      */
      List<VehicleDto> getAll();
 
     /**
-     * Belirtilen plakaya sahip aracı bulur ve döndürür
-     * @param registrationPlate aracın plakası
-     * @return belirtilen plakaya sahip araç Vehicle
+     * Finds and returns the vehicle with the given registration plate.
+     * @param registrationPlate the registration plate of the vehicle to find
+     * @return the vehicle with the given registration plate
      */
      Vehicle findVehicleByRegistrationPlate(String registrationPlate);
 }

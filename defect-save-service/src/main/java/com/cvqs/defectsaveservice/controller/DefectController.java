@@ -2,21 +2,16 @@ package com.cvqs.defectsaveservice.controller;
 
 import com.cvqs.defectsaveservice.dto.DefectDto;
 import com.cvqs.defectsaveservice.service.abstracts.DefectService;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.List;
 /**
- * DefectController sınıfı,Defect servisinin isteklerini karşılamak için kullanılır.
+ * The DefectController class is used to handle requests for the Defect service.
  *
  * @author Enes Bekkaya
  * @since  12.02.2023
@@ -26,33 +21,30 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DefectController {
     private final DefectService defectService;
-    private static final Logger LOGGER= LoggerFactory.getLogger(DefectController.class);
 
 
     /**
-     * Yeni bir hata kaydı oluşturma isteklerini karşılamak için kullanılır
-     * @param defectDto Yeni hata kaydı için kullanılacak bilgiler
-     * @param file Arızaya ait resim dosyası
-     * @return Kaydedilen hata kaydı bilgileri
+     * Used to handle requests for creating a new defect record
+     * @param defectDto Information to be used for creating the new defect record
+     * @param file Image file for the defect
+     * @return Information of the saved defect record
      */
     @PostMapping("/save")
     public ResponseEntity<DefectDto> saveDefect(@RequestPart("defect")@Valid DefectDto defectDto, @RequestPart("file") MultipartFile file) throws IOException, SQLException {
-        LOGGER.info("Incoming request for /defects/save");
         return ResponseEntity.ok(defectService.save(defectDto,file));
     }
 
     /**
      *
-     * Bir hata kaydını güncelleme isteklerini karşılamak için kullanılır
-     * @param defectDto Hata kaydı verilerini içeren DefectDto nesnesi
-     * @param file Güncellenen hata kaydına eklenen dosya (isteğe bağlı)
-     * @return Güncellenen hata kaydını temsil eden DefectDto nesnesi
-     * @throws IOException Bir I/O hatası oluştuğunda fırlatılır
-     * @throws SQLException Veritabanı işlemleri sırasında bir hata oluştuğunda fırlatılır
+     * Used to handle requests for updating a defect record.
+     * @param defectDto DefectDto object containing the data for the updated defect record
+     * @param file File added to the updated defect record (optional)
+     * @return DefectDto object representing the updated defect record
+     * @throws IOException Thrown when an I/O error occurs
+     * @throws SQLException Thrown when a database error occurs
      */
     @PostMapping("/update")
     public ResponseEntity<DefectDto>updateDefect(@RequestPart("defect")@Valid DefectDto defectDto,@RequestPart("file") MultipartFile file) throws IOException, SQLException{
-    LOGGER.info("Incoming request for /defects/update");
     return ResponseEntity.ok(defectService.update(defectDto,file));
     }
 

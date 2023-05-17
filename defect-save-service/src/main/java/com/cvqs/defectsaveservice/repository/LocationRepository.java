@@ -2,21 +2,18 @@ package com.cvqs.defectsaveservice.repository;
 
 import com.cvqs.defectsaveservice.model.Location;
 import org.springframework.data.jpa.repository.JpaRepository;
-import com.cvqs.defectsaveservice.model.Defect;
-import java.util.List;
 /**
- * LocationRepository, Location nesnelerinin veritabanı işlemlerini yapmak için kullanılan arayüz.
+ * LocationRepository is the interface used to perform database operations of Location objects.
  *
  * @author Enes Bekkaya
  * @since  12.02.2023
  */
 public interface LocationRepository extends JpaRepository<Location,String> {
   /**
-   * Verilen x ve y koordinatlarına sahip olan bir Location kaydını getirir.
-   *
-   * @param x X koordinatı
-   * @param y Y koordinatı
-   * @return Verilen koordinatlara sahip bir Location kaydı varsa o kaydı, aksi halde null döndürür.
+   * Gets a Location record with the given x and y coordinates.
+   * @param x The x coordinate
+   * @param y The y coordinate
+   * @return The Location record with the given coordinates if it exists, otherwise null.
    */
   Location findLocationByXAndY(int x,int y);
 }
