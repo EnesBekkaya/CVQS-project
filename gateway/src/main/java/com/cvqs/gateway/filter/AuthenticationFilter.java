@@ -8,8 +8,8 @@ import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import reactor.core.publisher.Mono;
@@ -19,18 +19,17 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * GatewayFilter sınıfını miras alan ve bir yapılandırma sınıfını parametre olarak alan
- *  AbstractGatewayFilterFactory alt sınıfıdır. Bu sınıf, bir isteğin kimlik doğrulamasını yapar
- * ve yapılandırılmış olan güvenli olmayan endpoint'lerden gelen istekleri filtreler. Bu sınıf ayrıca
- * bir RouteValidator ve bir RestTemplate bağımlılığı enjekte eder. Doğrulama için bir
- * JWT token'ı ve kullanıcı rolü gerekir ve doğrulama isteği bir harici servis aracılığıyla gönderilir.
- * İsteğin kimlik doğrulama mekanizmasına uymadığı durumda yanıt verir ve yanıtı döndürür.
+ * An AbstractGatewayFilterFactory subclass that inherits from the GatewayFilter class and takes a configuration
+ * class as a parameter. This class performs authentication of a request and filters requests coming from
+ * configured insecure endpoints. Additionally, this class injects a RouteValidator and a RestTemplate dependency.
+ * Authentication requires a JWT token and a user role, and the authentication request is sent through an external service.
+ * If the request does not comply with the authentication mechanism, it responds and returns the response.
  *
  * @author Enes Bekkaya
- * @since  25.03.2023
+ * @since 25.03.2023
  */
 @Component
-public class AuthenticationFilter extends AbstractGatewayFilterFactory<AuthenticationFilter.Config>  {
+public class AuthenticationFilter extends AbstractGatewayFilterFactory<AuthenticationFilter.Config> {
 
     @Autowired
     private RouteValidator routeValidator;
@@ -38,7 +37,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
     private RestTemplate restTemplate;
 
 
-    private static final Logger LOGGER= LoggerFactory.getLogger(AuthenticationFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationFilter.class);
 
     public AuthenticationFilter() {
         super(Config.class);
@@ -47,43 +46,44 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
     @Override
     public GatewayFilter apply(Config config) {
         return ((exchange, chain) -> {
-            var request = exchange.getRequest();
             if (routeValidator.isSecured.test(exchange.getRequest())) {
                 if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-                    LOGGER.warn("missing authorization header");
-
-                    var responseMissing = exchange.getResponse();
-                    responseMissing.setStatusCode(HttpStatus.UNAUTHORIZED);
-                    responseMissing.getHeaders().setContentType(MediaType.APPLICATION_JSON);
-                    String errorResponse = " Missing authorization header...!";
-                    var bufferFactory = responseMissing.bufferFactory();
-                    var dataBuffer = bufferFactory.wrap(errorResponse.getBytes(StandardCharsets.UTF_8));
-                    LOGGER.warn("Missing authorization header");
-                    return responseMissing.writeWith(Mono.just(dataBuffer));
+                    String errorResponse = "Missing authorization header!";
+                    return Mono.defer(() -> {
+                        ServerHttpResponse response = exchange.getResponse();
+                        LOGGER.warn(errorResponse);
+                        return response.writeWith(Mono.just(response.bufferFactory().wrap(errorResponse.getBytes(StandardCharsets.UTF_8))));
+                    });
                 }
                 String authHeader = exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
                 if (authHeader != null && authHeader.startsWith("Bearer ")) {
                     authHeader = authHeader.substring(7);
                 }
                 try {
-                    ResponseEntity<Boolean> response = restTemplate.getForEntity("http://host.docker.internal:9092/auth/validateToken?token="+authHeader+"&role="+config.getRole(), Boolean.class);
-                    LOGGER.info("Auth API'ye doğrulama isteği gönderildi.");
-                    Boolean isTokenValid= response.getBody();
-
-                    if (!isTokenValid){
-                        var responseUnauthorized = exchange.getResponse();
-                        responseUnauthorized.setStatusCode(HttpStatus.UNAUTHORIZED);
-                        responseUnauthorized.getHeaders().setContentType(MediaType.APPLICATION_JSON);
-                        String errorResponse = " Error: Invalid access...! ";
-                        var bufferFactory = responseUnauthorized.bufferFactory();
-                        var dataBuffer = bufferFactory.wrap(errorResponse.getBytes(StandardCharsets.UTF_8));
-                        LOGGER.warn("Invalid access");
-                        return responseUnauthorized.writeWith(Mono.just(dataBuffer));
+                    ResponseEntity<String> response = restTemplate.getForEntity("http://host.docker.internal:9092/auth/validateToken?token=" + authHeader + "&role=" + config.getRole(), String.class);
+                    LOGGER.info("Authentication request sent to the Auth API.");
+                    String responseBody = response.getBody();
+                    if (responseBody.equals("notValid")) {
+                        return Mono.defer(() -> {
+                            ServerHttpResponse responseNotValid  = exchange.getResponse();
+                            LOGGER.warn("Invalid access!");
+                            return responseNotValid .writeWith(Mono.just(responseNotValid .bufferFactory().wrap("Invalid access!".getBytes(StandardCharsets.UTF_8))));
+                        });
+                    }else if(responseBody.equals("unauthorized")){
+                        return Mono.defer(() -> {
+                            ServerHttpResponse responseUnauthorized  = exchange.getResponse();
+                            LOGGER.warn("Unauthorized access!");
+                            responseUnauthorized.setStatusCode(HttpStatus.UNAUTHORIZED);
+                            return responseUnauthorized .writeWith(Mono.just(responseUnauthorized .bufferFactory().wrap("Unauthorized access!".getBytes(StandardCharsets.UTF_8))));
+                        });
                     }
 
                 } catch (Exception e) {
-                    LOGGER.warn("Failed to make request to the server");
-                    throw new RuntimeException("Failed to make request to the server");
+                    LOGGER.error("Failed to make request to the server!");
+                    return Mono.defer(() -> {
+                        ServerHttpResponse responseFailded  = exchange.getResponse();
+                        return responseFailded .writeWith(Mono.just(responseFailded .bufferFactory().wrap("Failed to make request to the server!".getBytes(StandardCharsets.UTF_8))));
+                    });
                 }
             }
             return chain.filter(exchange);
@@ -94,6 +94,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
     public static class Config {
         private String role;
     }
+
     @Override
     public List<String> shortcutFieldOrder() {
         return Arrays.asList("role");

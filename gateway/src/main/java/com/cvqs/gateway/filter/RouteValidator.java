@@ -7,14 +7,14 @@ import java.util.List;
 import java.util.function.Predicate;
 
 /**
- * Bu sınıf, gelen bir sunucu isteğinin güvenli olup olmadığını belirlemek için kullanılır.
+ * This class is used to determine whether an incoming server request is secure or not.
  * @author Enes Bekkaya
  * @since  25.03.2023
  */
 @Component
 public class RouteValidator {
     /**
-     * Açık API uç noktalarının listesi.
+     * List of open API endpoints.
      */
     public static final List<String> openApiEndpoints = List.of(
             "/users/login",
@@ -23,9 +23,9 @@ public class RouteValidator {
             "/eureka"
     );
     /**
-     * Verilen bir sunucu isteğinin güvenli olup olmadığını belirlemek için kullanılan bir predikattır.
-     * @param request kontrol edilecek sunucu isteği
-     * @return sunucu isteğinin güvenli olup olmadığını belirten boolean değer
+     * A predicate used to determine whether a given server request is secure or not.
+     * @param request the server request to be checked
+     * @return a boolean value indicating whether the server request is secure or not
      */
     public Predicate<ServerHttpRequest> isSecured =
             request -> openApiEndpoints

@@ -9,26 +9,26 @@ spring:
           filters:
             -name: AuthenticationFilter
             args:
-              roles:[admin,takım lideri,operator]
+              roles:[admin,teamLeader,operator]
 
         - id: defect-listing-service
           uri: lb://DEFECT-LISTING-SERVICE
           predicates:
             - Path=/defectListing/**
           filters:
-            - AuthenticationFilter=takım lideri
+            - AuthenticationFilter=teamLeader
 
         - id: defect-save-service
           uri: lb://DEFECT-SAVE-SERVICE
           predicates:
-            - Path=/defects/**
+            - Path=/defects/**,/vehicle/**
           filters:
             - AuthenticationFilter=operator
 
         - id: user-management-service
           uri: lb://USER-MANAGEMENT-SERVICE
           predicates:
-            - Path=/users/**
+            - Path=/users/**,/roles/**
           filters:
             - AuthenticationFilter=admin
 
@@ -41,9 +41,5 @@ spring:
 server:
   port: 8888
 
-  eureka:
-    client:
-      service-url:
-        defaultZone: http://host.docker.internal:8761/eureka
 logging:
   config: classpath:log4j2.xml

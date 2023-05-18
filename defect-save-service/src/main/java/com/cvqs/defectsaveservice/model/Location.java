@@ -12,7 +12,6 @@ import org.hibernate.annotations.GenericGenerator;
 @Entity(name = "location")
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class Location {
     @Id
     @Getter

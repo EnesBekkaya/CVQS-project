@@ -9,7 +9,6 @@ import java.util.List;
 @Entity(name = "defect")
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class Defect {
     @Id
     @Getter

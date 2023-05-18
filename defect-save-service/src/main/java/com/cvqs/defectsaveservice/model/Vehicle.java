@@ -11,7 +11,6 @@ import java.util.List;
 @Entity(name = "vehicle")
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class Vehicle {
     @Id
     @Getter
