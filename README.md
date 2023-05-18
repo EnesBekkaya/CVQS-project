@@ -64,3 +64,18 @@ GET	| /defectListing/sort	| Get defect in order	| ×
 ## Infrastructure
 [Spring cloud](https://spring.io/projects/spring-cloud) provides powerful tools for developers to quickly implement common distributed systems patterns -
 <img width="880" alt="Infrastructure services" src="https://user-images.githubusercontent.com/83051118/235382264-9276f10f-06db-4b37-aec3-e2e381edd893.jpg">
+
+## Let's try it out
+
+#### Before you start
+- Install Docker and Docker Compose.
+
+#### How to run
+All images will be pulled from Docker Hub.
+
+Copy the docker-compose.yml file and run the 'docker-compose up' command in the command prompt.
+
+
+#### Important endpoints
+- http://localhost:8761 - Eureka Dashboard
+- http://localhost:8888 - Gateway 
