@@ -7,13 +7,11 @@ import com.cvqs.usermanagementservice.repository.RoleRepository;
 import com.cvqs.usermanagementservice.service.abstracts.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
- *  RoleManager sınıfı, RoleService arayüzünden türetilmiştir ve
- *  role işlemlerini yönetir. Bu sınıf, veritabanı işlemleri için SectionRepository nesnelerini kullanmaktadır.
+ *  The RoleManager class is derived from the RoleService interface and
+ * manages role operations. This class uses SectionRepository objects for database operations.
  *
  *  @author Enes Bekkaya
  *  @since  26.02.2023
@@ -23,12 +21,11 @@ import org.springframework.stereotype.Service;
 public class RoleManager implements RoleService {
     private final RoleRepository roleRepository;
     private final ModelMapper modelMapper;
-    private static final Logger LOGGER= LoggerFactory.getLogger(RoleManager.class);
 
     /**
-     * RoleDto nesnesini alır ve veritabanına kaydeder.
-     * @param roleDto kaydedilecek RoleDto nesnesi
-     * @return kaydedilen RoleDto nesnesi
+     * Takes a RoleDto object and saves it to the database.
+     * @param roleDto the RoleDto object to be saved
+     * @return the saved RoleDto object
      */
     @Override
     public RoleDto save(RoleDto roleDto) {
@@ -38,18 +35,16 @@ public class RoleManager implements RoleService {
     }
 
     /**
-     * Bir rol ismine göre Role nesnesi bulur.
-     * @param name aranan rolün ismi
-     * @return bulunan Role nesnesi
-     * @throws EntityNotFoundException aranan isimde bir rol bulunamazsa fırlatılır.
-
+     * Finds a Role object based on a role name.
+     * @param name the name of the role to search for
+     * @return the found Role object
+     * @throws EntityNotFoundException if a role with the given name cannot be found
      */
     @Override
     public Role findRoleByName(String name) {
         Role role= roleRepository.findRoleByName(name);
         if(role==null) {
-            LOGGER.warn("işlem başarısız!!{} isminde kayıtlı bir rol bulunamadı. ",name);
-            throw new EntityNotFoundException(name + ": Bu isimde kayıtlı bir rol bulunamadı.");
+            throw new EntityNotFoundException("No role found with the name: "+name);
         }
         else
             return role;

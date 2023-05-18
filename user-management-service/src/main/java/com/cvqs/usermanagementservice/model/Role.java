@@ -10,7 +10,6 @@ import java.util.List;
 @Entity(name = "role")
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class Role {
     @Id
     @Getter

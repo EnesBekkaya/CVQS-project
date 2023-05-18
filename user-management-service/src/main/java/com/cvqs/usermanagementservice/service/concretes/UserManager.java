@@ -1,8 +1,8 @@
 package com.cvqs.usermanagementservice.service.concretes;
 
 import com.cvqs.usermanagementservice.dto.AuthRequest;
-import com.cvqs.usermanagementservice.dto.AuthenticationResponse;
 import com.cvqs.usermanagementservice.dto.UserDto;
+import com.cvqs.usermanagementservice.dto.UserResponseDto;
 import com.cvqs.usermanagementservice.exception.EntityNotFoundException;
 import com.cvqs.usermanagementservice.exception.ServerRequestException;
 import com.cvqs.usermanagementservice.model.Role;
@@ -12,12 +12,11 @@ import com.cvqs.usermanagementservice.service.abstracts.RoleService;
 import com.cvqs.usermanagementservice.service.abstracts.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -25,8 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 /**
- *  UserManager sınıfı, UserService arayüzünden türetilmiştir ve
- *  user işlemlerini yönetir. Bu sınıf, veritabanı işlemleri için UserRepository nesnelerini kullanmaktadır.
+ *  The UserManager class is derived from the UserService interface and manages user operations.
+ *  This class uses UserRepository objects for database operations.
  *
  *  @author Enes Bekkaya
  *  @since  26.02.2023
@@ -42,32 +41,31 @@ public class UserManager implements UserService {
     @Autowired
     private RestTemplate restTemplate;
 
-    private static final Logger LOGGER= LoggerFactory.getLogger(UserManager.class);
 
     /**
-     * Veritabanındaki tüm kullanıcıları alır ve UserDto listesi olarak döndürür.
-     * @return Veritabanındaki tüm kullanıcıların UserDto listesi.
+     * Gets all users from the database and returns them as a list of UserDto objects.
+     * @return List of UserDto objects for all users in the database.
      */
     @Override
-    public List<UserDto> getAll() {
+    public List<UserResponseDto> getAll() {
         List <User> users=userRepository.findAll();
-        List<UserDto> userDtos=users.stream().map(user1 -> modelMapper.map(user1,UserDto.class)).collect(Collectors.toList());
-        return userDtos;
+        List<UserResponseDto> userResponseDtos=users.stream().map(user1 -> modelMapper.map(user1,UserResponseDto.class)).collect(Collectors.toList());
+        return userResponseDtos;
     }
 
     /**
-     * UserDto nesnesini alır, bu kullanıcının rollerini veritabanından alır ve kullanıcıyı kaydeder.
-     *
-     * @param userDto kaydedilecek UserDto nesnesi
-     * @throw new ResponseStatusException kullanıcı adı veritabanında kayıtlıysa fırlatılır
-     * @return kaydedilen UserDto nesnesi
-
+     * Saves the UserDto object to the database after checking if the username already exists in the database.
+     * Otherwise, the UserDto object is converted to a User object, the roles are retrieved from the RoleService and added to the user object,
+     * the password is encoded using the passwordEncoder, and the user object is saved to the UserRepository.
+     * Finally, the saved User object is converted to a UserDto object and returned.
+     * @param userDto the UserDto object to be saved
+     * @return the saved UserDto object
+     * @throws ResponseStatusException if the username already exists in the database
      */
     @Override
-    public UserDto save(UserDto userDto) {
+    public UserResponseDto save(UserDto userDto) {
         if(userRepository.findUserByUsername(userDto.getUsername())!=null){
-            LOGGER.warn("işlem başarısız!!{} adlı kullanıcı adı zaten kayıtlı. ", userDto.getUsername());
-            throw new ResponseStatusException(HttpStatus.CONFLICT,"Bu kullanıcı adı zaten kayıtlı.");
+            throw new ResponseStatusException(HttpStatus.CONFLICT,"This username is already registered.");
         }
         User newUser=new User();
         List<Role> roles=new ArrayList<>();
@@ -82,24 +80,22 @@ public class UserManager implements UserService {
         newUser.setLastname(userDto.getLastname());
         newUser.setPassword(passwordEncoder.encode(userDto.getPassword()));
         newUser.setRoles(roles);
-        return modelMapper.map(userRepository.save(newUser), UserDto.class);
+        return modelMapper.map(userRepository.save(newUser), UserResponseDto.class);
     }
 
     /**
-     * UserDto nesnesini alır ve veritabanında bu kullanıcı adına sahip bir kullanıcı varsa,
-     * kullanıcının bilgilerini günceller ve güncellenen UserDto nesnesini döndürür.
-     * Eğer kullanıcı yoksa, EntityNotFoundException fırlatır.
-     * @param userDto güncellenecek UserDto nesnesi
-     * @return güncellenen UserDto nesnesi
-     * @throws EntityNotFoundException kullanıcı adına sahip bir kullanıcı yoksa fırlatılır
+     * Takes a UserDto object and updates the user's information in the database if a user with this username exists,
+     * returns the updated UserDto object. If the user does not exist, throws an EntityNotFoundException.
+     * @param userDto UserDto object to be updated
+     * @return Updated UserDto object
+     * @throws EntityNotFoundException if there is no user with the given username
      */
     @Override
-    public UserDto updateUser(UserDto userDto ) {
+    public UserResponseDto updateUser(UserDto userDto ) {
         User user=userRepository.findUserByUsername(userDto.getUsername());
         List<Role> roles=new ArrayList<>();
         if(user==null) {
-            LOGGER.warn("işlem başarısız!!{} adlı kullanıcı bulunamadı ", userDto.getUsername());
-            throw new EntityNotFoundException(userDto.getUsername() + " kullanıcı isimli bir kullanıcı bulunamadı");
+            throw new EntityNotFoundException("No user found with the username :"+userDto.getUsername());
         }
         userDto.getRoles().forEach(role -> {
             Role savedRole=roleService.findRoleByName(role.getName());
@@ -108,44 +104,47 @@ public class UserManager implements UserService {
         });
         user.setName(userDto.getName());
         user.setLastname(userDto.getLastname());
-        user.setPassword(userDto.getPassword());
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         user.setRoles(roles);
-        return modelMapper.map(userRepository.save(user),UserDto.class);
+        return modelMapper.map(userRepository.save(user),UserResponseDto.class);
     }
 
     /**
-     * UserDto nesnesini alır ve veritabanında bu kullanıcı adına sahip bir kullanıcı varsa,
-     * kullanıcının deleted özelliğini true olarak günceller ve güncellenen UserDto nesnesini döndürür.
-     * Eğer kullanıcı yoksa, EntityNotFoundException fırlatır.
-     * @param username silinecek kullanıcının kullanıcı ismi
-     * @return silinen UserDto nesnesi
-     * @throws EntityNotFoundException kullanıcı adına sahip bir kullanıcı yoksa fırlatılır
+     * Takes a UserDto object and if there is a user in the database with this username,
+     * updates the deleted property of the user to true and returns the updated UserDto object.
+     * If there is no user with this username, throws an EntityNotFoundException.
+     * @param username username of the user to be deleted
+     * @return deleted UserDto object
+     * @throws EntityNotFoundException if there is no user with the given username
      */
     @Override
-    public UserDto delete(String username) {
+    public UserResponseDto delete(String username) {
         User user=userRepository.findUserByUsername(username);
         if(user==null) {
-            LOGGER.warn("işlem başarısız!!{} adlı kullanıcı bulunamadı ", username);
-            throw new EntityNotFoundException(username + "  kullanıcı isimli bir kullanıcı bulunamadı");
+            throw new EntityNotFoundException("No user found with the username :"+username);
         }
         user.setDeleted(true);
-        return modelMapper.map(userRepository.save(user),UserDto.class);
+        return modelMapper.map(userRepository.save(user),UserResponseDto.class);
     }
 
     /**
-     * Kullanıcının kimlik bilgileriyle kimlik doğrulamasını yapmak için, kimlik doğrulama sunucusuna REST isteği yaparak kullanıcının kimlik bilgilerini doğrular.
-     * @param authRequest kullanıcının kimlik bilgilerini içeren kimlik doğrulama isteği
-     * @return kullanıcının kimlik bilgisini içeren AuthenticationResponse nesnesi
-     * @throws ServerRequestException sunucuya REST isteği yaparken bir hata oluşursa fırlatılır
+     * Performs authentication with the user's credentials by making a REST request to the authentication server and verifying the user's credentials.
+     * @param authRequest authentication request object containing user's credentials
+     * @return AuthenticationResponse object containing the user's authentication information
+     * @throws ServerRequestException if there is an error making a REST request to the server
      */
     @Override
-    public AuthenticationResponse login(AuthRequest authRequest) {
+    public String login(AuthRequest authRequest) {
         try {
-            String url = "http://localhost:9092/auth/authenticate";
-            AuthenticationResponse response = restTemplate.postForObject(url, authRequest, AuthenticationResponse.class);
-            return response;
-        }catch (Exception e){
-            LOGGER.warn("Failed to make request to the server");
+            String url = "http://host.docker.internal:9092/auth/authenticate";
+            String response = restTemplate.postForObject(url, authRequest, String.class);
+            if(!response.equals("failed")) {
+                return response;
+            }else {
+                throw new EntityNotFoundException("Incorrect username or password");
+            }
+        }catch (RestClientException e){
+
             throw new ServerRequestException("Failed to make request to the server");
         }
     }

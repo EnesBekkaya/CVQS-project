@@ -5,30 +5,30 @@ import com.cvqs.terminalservice.model.Section;
 
 import java.util.List;
 /**
- * SectionService arayüzü, Section nesneleriyle ilgili işlemleri gerçekleştirir
+ *  SectionService interface performs operations related to Section objects.
  *
  * @author Enes Bekkaya
  * @since  18.02.2023
  */
 public interface SectionService {
     /**
-     * Verilen section listesini kaydeder.
+     * Saves the given list of sections.
      *
-     * @param sections Kaydedilecek section listesi
-     * @return Kaydedilen section listesi
+     * @param sections list of sections to be saved
+     * @return the saved list of sections
      */
     List<Section> saveSection(List<Section> sections);
     /**
-     * Tüm section'ları döndürür.
+     * Returns all sections.
      *
-     * @return Tüm section'lar
+     * @return All sections
      */
     List<SectionDto> getAllSection();
     /**
-     * Verilen isimdeki section'ı döndürür.
+     * Returns the section with the given name.
      *
-     * @param sectionName Aranacak section'ın ismi
-     * @return Verilen isimdeki section
+     * @param sectionName the name of the section to search for
+     * @return the section with the given name
      */
     Section findSectionByName(String sectionName);
 }

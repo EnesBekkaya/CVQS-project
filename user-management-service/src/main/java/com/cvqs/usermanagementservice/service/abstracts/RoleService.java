@@ -3,24 +3,24 @@ package com.cvqs.usermanagementservice.service.abstracts;
 import com.cvqs.usermanagementservice.dto.RoleDto;
 import com.cvqs.usermanagementservice.model.Role;
 /**
- * RoleService arayüzü, Role nesneleriyle ilgili işlemleri gerçekleştirir
+ * RoleService is an interface used for performing database operations on Role objects.
  *
  * @author Enes Bekkaya
  * @since  26.02.2023
  */
 public interface RoleService {
      /**
-      * Verilen RoleDto nesnesini veritabanına kaydeder ve kaydedilen Role nesnesini RoleDto nesnesine dönüştürerek geri döndürür.
-      * @param roleDto kaydedilecek RoleDto nesnesi
-      * @return kaydedilen Role nesnesini RoleDto nesnesine dönüştürerek geri döndürür.
+      * Saves the given RoleDto object to the database, and returns the saved Role object converted to a RoleDto object.
+      * @param roleDto the RoleDto object to be saved
+      * @return the saved Role object converted to a RoleDto object
       */
      RoleDto save(RoleDto roleDto);
 
      /**
-      * Verilen role adına sahip Role nesnesini veritabanından arar ve bulduğu takdirde Role nesnesini döndürür.
-      * Eğer veritabanında aranan role adına sahip bir Role nesnesi yoksa EntityNotFoundException fırlatır.
-      * @param name aranacak role adı
-      * @return bulunan Role nesnesi
+      * Searches the Role object in the database with the given role name and returns the found Role object.
+      * If there is no Role object in the database with the searched role name, it throws an EntityNotFoundException.
+      * @param name the role name to search
+      * @return the found Role object
       */
      Role findRoleByName(String name);
 

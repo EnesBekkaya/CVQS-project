@@ -77,7 +77,7 @@ class RoleManagerTest  {
         });
 
 
-        String expectedMessage = "admin: Bu isimde kayıtlı bir rol bulunamadı.";
+        String expectedMessage = "No role found with the name: "+roleName;
         String actualMessage = exception.getMessage();
         Assertions.assertEquals(expectedMessage, actualMessage);
 

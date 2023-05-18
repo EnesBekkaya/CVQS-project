@@ -1,50 +1,49 @@
 package com.cvqs.usermanagementservice.service.abstracts;
 
 import com.cvqs.usermanagementservice.dto.AuthRequest;
-import com.cvqs.usermanagementservice.dto.AuthenticationResponse;
 import com.cvqs.usermanagementservice.dto.UserDto;
+import com.cvqs.usermanagementservice.dto.UserResponseDto;
 
 import java.util.List;
 /**
- * UserService arayüzü, User nesneleriyle ilgili işlemleri gerçekleştirir
+ * The UserService interface performs operations related to User objects.
  *
  * @author Enes Bekkaya
  * @since  26.02.2023
  */
 public interface UserService {
     /**
-     * Tüm kullanıcıları getirir.
+     * Retrieves all users.
      *
-     * @return UserDto tipinde bir liste.
+     * @return A list of UserDto objects.
      */
-    List<UserDto> getAll();
+    List<UserResponseDto> getAll();
     /**
-     * Yeni bir kullanıcı kaydeder.
-     *
-     * @param userDto Kaydedilecek kullanıcının bilgilerini içeren UserDto nesnesi.
-     * @return Kaydedilen kullanıcının UserDto olarak dönüştürülmüş hali.
+     * Saves a new user.
+     * @param userDto UserDto object containing the information of the user to be saved.
+     * @return The saved user as a UserDto object.
      */
-    UserDto save(UserDto userDto);
+    UserResponseDto save(UserDto userDto);
     /**
-     * Var olan bir kullanıcıyı günceller.
+     * Updates an existing user.
      *
-     * @param userDto Güncellenecek kullanıcının bilgilerini içeren UserDto nesnesi.
-     * @return Güncellenen kullanıcının UserDto olarak dönüştürülmüş hali.
+     * @param userDto UserDto object containing the updated user information.
+     * @return Updated user information as a UserDto object.
      */
-    UserDto updateUser(UserDto userDto);
+    UserResponseDto updateUser(UserDto userDto);
     /**
-     * Var olan bir kullanıcıyı siler.
+     *  Deletes an existing user.
      *
-     * @param username Silinecek kullanıcının bilgilerini içeren UserDto nesnesi.
-     * @return Silinen kullanıcının UserDto olarak dönüştürülmüş hali.
+     * @param username UserDto object containing information about the user to be deleted.
+     * @return UserDto object of the deleted user.
      */
-    UserDto delete(String username);
+    UserResponseDto delete(String username);
 
     /**
-     * Bu metod kullanıcının kimlik doğrulama isteğini işler ve sonucunda bir AuthenticationResponse döndürür.
-     * @param authRequest Kullanıcının kimlik doğrulama isteği.
-     * @return Kimlik doğrulama işleminin sonucu olan AuthenticationResponse objesi.
+     *  Processes the user's authentication request and returns an AuthenticationResponse object as a result.
+     *  @param authRequest The user's authentication request.
+     * @return The AuthenticationResponse object representing the result of the authentication process.
      */
-    AuthenticationResponse login(AuthRequest authRequest);
+    String login(AuthRequest authRequest);
 
 }

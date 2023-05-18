@@ -3,16 +3,16 @@ package com.cvqs.usermanagementservice.repository;
 import com.cvqs.usermanagementservice.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 /**
- * UserRepository, User nesnelerinin veritabanı işlemlerini yapmak için kullanılan arayüz.
+ * UserRepository is an interface used for performing database operations on User objects.
  *
  * @author Enes Bekkaya
  * @since  26.02.2023
  */
 public interface UserRepository extends JpaRepository<User,String> {
     /**
-     * Kullanıcı adına göre kullanıcıyı veritabanından bulur.
-     * @param userName Kullanıcı adı.
-     * @return Verilen kullanıcı adına sahip olan kullanıcıyı döndürür
+     * Finds the user from the database by the given username.
+     * @param userName Username of the user.
+     * @return The user with the given username.
      */
     User findUserByUsername(String userName);
 }

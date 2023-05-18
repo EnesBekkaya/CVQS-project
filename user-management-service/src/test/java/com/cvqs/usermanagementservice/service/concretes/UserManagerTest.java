@@ -1,6 +1,7 @@
 package com.cvqs.usermanagementservice.service.concretes;
 
 import com.cvqs.usermanagementservice.dto.UserDto;
+import com.cvqs.usermanagementservice.dto.UserResponseDto;
 import com.cvqs.usermanagementservice.exception.EntityNotFoundException;
 import com.cvqs.usermanagementservice.model.Role;
 import com.cvqs.usermanagementservice.model.User;
@@ -51,11 +52,11 @@ class UserManagerTest {
 
         List<User> users=new ArrayList<>(Arrays.asList(user,user2));
 
-        List<UserDto> expectedResult=users.stream().map(user1 -> modelMapper.map(user1,UserDto.class)).collect(Collectors.toList());
+        List<UserResponseDto> expectedResult=users.stream().map(user1 -> modelMapper.map(user1,UserResponseDto.class)).collect(Collectors.toList());
 
         Mockito.when(userRepository.findAll()).thenReturn(users);
 
-        List<UserDto> result=userManager.getAll();
+        List<UserResponseDto> result=userManager.getAll();
 
         Assertions.assertEquals(expectedResult,result);
 
@@ -79,13 +80,13 @@ class UserManagerTest {
         user.setUsername("testUsername");
         user.setPassword("encodedPassword");
         user.setRoles(roles);
-        UserDto expectedResult=modelMapper.map(user,UserDto.class);
+        UserResponseDto expectedResult=modelMapper.map(user,UserResponseDto.class);
 
         Mockito.when(passwordEncoder.encode(userDto.getPassword())).thenReturn("encodedPassword");
         Mockito.when(roleService.findRoleByName(role.getName())).thenReturn(role);
         Mockito.when(userRepository.save(user)).thenReturn(user);
 
-        UserDto result=userManager.save(userDto);
+        UserResponseDto result=userManager.save(userDto);
 
         Assertions.assertEquals(expectedResult,result);
 
@@ -111,13 +112,13 @@ class UserManagerTest {
         user.setPassword("encodedPassword");
         user.setRoles(roles);
 
-        UserDto expectedResult=modelMapper.map(user,UserDto.class);
+        UserResponseDto expectedResult=modelMapper.map(user,UserResponseDto.class);
 
         Mockito.when(userRepository.findUserByUsername(user.getUsername())).thenReturn(user);
         Mockito.when(roleService.findRoleByName(role.getName())).thenReturn(role);
         Mockito.when(userRepository.save(user)).thenReturn(user);
 
-        UserDto result=userManager.updateUser(userDto);
+        UserResponseDto result=userManager.updateUser(userDto);
 
         Assertions.assertEquals(expectedResult,result);
 
@@ -149,7 +150,7 @@ class UserManagerTest {
             userManager.updateUser(userDto);
         });
 
-        String expectedMessage = userDto.getUsername() + " kullanıcı isimli bir kullanıcı bulunamadı";
+        String expectedMessage = "No user found with the username :"+userDto.getUsername();
         String actualMessage = exception.getMessage();
         Assertions.assertEquals(expectedMessage, actualMessage);
 
@@ -167,12 +168,12 @@ class UserManagerTest {
         user.setUsername("testUsername");
         user.setPassword("encodedPassword");
 
-        UserDto expectedResult=modelMapper.map(user,UserDto.class);
+        UserResponseDto expectedResult=modelMapper.map(user,UserResponseDto.class);
 
         Mockito.when(userRepository.findUserByUsername(userDto.getUsername())).thenReturn(user);
         Mockito.when(userRepository.save(user)).thenReturn(user);
 
-        UserDto result=userManager.delete(userDto.getUsername());
+        UserResponseDto result=userManager.delete(userDto.getUsername());
 
         Assertions.assertEquals(expectedResult,result);
         Mockito.verify(userRepository).findUserByUsername(userDto.getUsername());
@@ -198,26 +199,8 @@ class UserManagerTest {
             userManager.delete(userDto.getUsername());
         });
         Assertions.assertNotNull(exception);
-        Assertions.assertEquals(userDto.getUsername() + "  kullanıcı isimli bir kullanıcı bulunamadı", exception.getMessage());
+        Assertions.assertEquals("No user found with the username :"+userDto.getUsername(), exception.getMessage());
         Mockito.verify(userRepository).findUserByUsername(userDto.getUsername());
-    }
-    @DisplayName("should Find User By Name And Return User")
-    @Test
-    void shouldFindUserByNameAndReturnUser(){
-        User user=new User();
-        user.setName("testName");
-        user.setUsername("testUsername");
-        user.setPassword("encodedPassword");
-
-
-        User expectedResult=user;
-
-        Mockito.when(userRepository.findUserByUsername(user.getUsername())).thenReturn(user);
-
-        User result=userManager.findUserByUserName(user.getUsername());
-
-        Assertions.assertEquals(expectedResult,result);
-        Mockito.verify(userRepository).findUserByUsername(user.getUsername());
     }
 
 }

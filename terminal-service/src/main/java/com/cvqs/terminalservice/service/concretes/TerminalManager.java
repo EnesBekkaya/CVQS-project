@@ -19,9 +19,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 /**
- *  TerminalManager sınıfı, TerminalService arayüzünden türetilmiştir ve
- *  terminal  işlemlerini yönetir. Bu sınıf, veritabanı işlemleri için TerminalRepository
- *  section işlemleri için SectionService nesnelerini kullanır.
+ * The TerminalManager class is derived from the TerminalService interface and manages terminal operations.
+ * This class uses TerminalRepository objects for database operations and SectionService objects for section operations.
  *
  *  @author Enes Bekkaya
  *  @since  18.02.2023
@@ -34,9 +33,9 @@ public class TerminalManager implements TerminalService {
     private final SectionService sectionService;
 
     /**
-     * Aktif durumdaki tüm terminalleri getirir.
-     * @param active terminal aktiflik durumu
-     * @return active parametresine bağlı olarak filtrelenmiş TerminalDto listesi
+     * gets all terminals with the specified active status.
+     * @param active the active status of the terminals to retrieve
+     * @return a list of TerminalDto objects filtered based on the active parameter
      */
     @Override
     public List<TerminalDto> getActiveTerminals(Boolean active) {
@@ -46,12 +45,12 @@ public class TerminalManager implements TerminalService {
        return terminalDtos;
     }
     /**
-     * Belirtilen sayfadaki, belirtilen boyutta sayıda aktif terminallerin sayfasını döndürür.
+     * Returns a page of active terminals with the specified page size and page number.
      *
-     * @param active aktiflik durumu
-     * @param pageSize sayfa boyutu
-     * @param page sayfa numarası
-     * @return istenen sayfa boyutu ve numarasındaki aktif terminallerin bir sayfası
+     * @param active the status of the terminals to be get
+     * @param pageSize the size of the page
+     * @param page the page number
+     * @return a page of active terminals with the specified page size and page number
      */
     @Override
     public Page<TerminalDto> pagination(Boolean active,int pageSize, int page) {
@@ -63,9 +62,9 @@ public class TerminalManager implements TerminalService {
     }
 
     /**
-     * Verilen bölüme ait terminalleri döndürür.
-     * @param sectionName Terimallerin bulunacağı bölümün ismi
-     * @return Bölüme ait terminallerin listesi
+     * Returns the terminals belonging to the given section name.
+     * @param sectionName The name of the section where the terminals will be get
+     * @return A list of terminals belonging to the section
      */
     @Override
     public List<TerminalDto> findTerminalBySection(String sectionName) {
@@ -75,10 +74,11 @@ public class TerminalManager implements TerminalService {
         return terminalDtos;
     }
 
+
     /**
-     * Yeni bir terminal oluşturur veya mevcut bir terminali günceller.
-     * @param terminalDto Terminal verilerini içeren DTO nesnesi
-     * @return Kaydedilen veya güncellenen terminal verilerini içeren DTO nesnesi
+     * Creates a new terminal or updates an existing one.
+     * @param terminalDto DTO object containing terminal data
+     * @return DTO object containing the saved or updated terminal data
      */
     @Override
     public TerminalDto SaveTerminal(TerminalDto terminalDto) {
@@ -102,8 +102,8 @@ public class TerminalManager implements TerminalService {
     }
 
     /**
-     * Bu metot, tarihe göre sıralanmış aktif terminallerin bir listesini döndürür.
-     * @return tarihe göre sıralanmış TerminalDto listesi
+     * This method returns a list of active terminals sorted by date.
+     * @return List of TerminalDto objects sorted by date
      */
     public List<TerminalDto> getTerminalSortedByDate() {
         List<TerminalDto>terminals=getActiveTerminals(true);

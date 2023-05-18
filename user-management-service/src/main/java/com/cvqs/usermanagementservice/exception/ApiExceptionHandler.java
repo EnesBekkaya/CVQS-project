@@ -1,7 +1,5 @@
 package com.cvqs.usermanagementservice.exception;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -20,7 +18,6 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
-    private static final Logger LOGGER= LoggerFactory.getLogger(ApiExceptionHandler.class);
 
     @ExceptionHandler({EntityNotFoundException.class})
     public final ResponseEntity<ExceptionResponse> entityNotFound(Exception exception){
@@ -44,14 +41,12 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
-        LOGGER.warn("MethodArgumentNotValidException: "+ex.getMessage());
 
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(SQLException.class)
     public ResponseEntity<String> handleSQLException(SQLException ex) {
-        LOGGER.warn("SQLException: "+ex.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("İşlem başarısız. Veritabanı hatası oluştu.");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Operation failed. Database error occurred.");
     }
 
 }

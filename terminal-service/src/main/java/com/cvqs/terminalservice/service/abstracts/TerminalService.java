@@ -6,47 +6,46 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 /**
- * TerminalService arayüzü, Terminal nesneleriyle ilgili işlemleri gerçekleştirir
+ * TerminalService interface performs operations related to Terminal objects.
  *
  * @author Enes Bekkaya
  * @since  18.02.2023
  */
 public interface TerminalService {
     /**
-     * Verilen duruma göre aktif tüm terminalleri döndürür.
+     * Returns a list of all active terminals based on the specified status.
      *
-     * @param active Terminallerin aktiflik durumunu belirten boolean değer
-     * @return Terminallerin TerminalDto nesneleri olarak listesi
+     * @param active a boolean value indicating the status of the terminals
+     * @return a list of TerminalDto objects representing the terminals
      */
      List<TerminalDto> getActiveTerminals(Boolean active);
     /**
-     * Belirtilen sayfa boyutu ve sayfa numarasına göre sayfalama yaparak terminalleri döndürür.
-     *
-     * @param active Terminallerin aktiflik durumunu belirten boolean değer
-     * @param pageSize Sayfa boyutu
-     * @param page Sayfa numarası
-     * @return Terminallerin TerminalDto nesneleri olarak sayfalanmış listesi
+     * Returns a paginated list of terminals according to the specified page size and page number and their active status.
+     * @param active Boolean value indicating the activity status of the terminals
+     * @param pageSize Page size
+     * @param page Page number
+     * @return A paginated list of terminals as TerminalDto objects
      */
      Page<TerminalDto> pagination(Boolean active,int pageSize,int page);
     /**
-     * Belirtilen bölüm adına göre terminalleri döndürür.
+     * Returns the list of terminals belonging to the specified section.
      *
-     * @param sectionName Bölüm adı
-     * @return Belirtilen bölüme ait terminallerin TerminalDto nesneleri olarak listesi
+     * @param sectionName the name of the section
+     * @return the list of terminals belonging to the specified section as TerminalDto objects
      */
 
      List<TerminalDto> findTerminalBySection(String sectionName);
     /**
-     * Belirtilen TerminalDto nesnesine göre terminalleri kaydeder ya da günceller.
+     * Saves or updates terminals according to the given TerminalDto object.
      *
-     * @param terminalDto Kaydedilecek ya da güncellenecek TerminalDto nesnesi
-     * @return Kaydedilen ya da güncellenen TerminalDto nesnesi
+     * @param terminalDto TerminalDto object to be saved or updated
+     * @return Saved or updated TerminalDto object
      */
      TerminalDto SaveTerminal(TerminalDto terminalDto);
     /**
-     * Terminalleri oluşturulma tarihine göre sıralı bir şekilde döndürür.
+     * Returns the terminals sorted by their creation date in ascending order.
      *
-     * @return Terminallerin TerminalDto nesneleri olarak oluşturulma tarihine göre sıralanmış listesi
+     * @return List of terminals sorted by their creation date as TerminalDto objects
      */
       List<TerminalDto> getTerminalSortedByDate();
 

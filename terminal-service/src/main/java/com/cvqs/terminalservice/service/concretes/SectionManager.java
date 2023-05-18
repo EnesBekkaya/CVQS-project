@@ -7,16 +7,14 @@ import com.cvqs.terminalservice.repository.SectionRepository;
 import com.cvqs.terminalservice.service.abstracts.SectionService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 /**
- *  SectionManager sınıfı, SectionService arayüzünden türetilmiştir ve
- *  section işlemlerini yönetir. Bu sınıf, veritabanı işlemleri için SectionRepository nesnelerini kullanmaktadır.
+ * SectionManager class is derived from the SectionService interface and manages section operations.
+ * This class uses SectionRepository objects for database operations.
  *
  *  @author Enes Bekkaya
  *  @since  18.02.2023
@@ -24,16 +22,15 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class  SectionManager implements SectionService {
-    private static final Logger LOGGER= LoggerFactory.getLogger(SectionManager.class);
 
     private final SectionRepository sectionRepository;
     private final ModelMapper modelMapper;
 
     /**
-     * Verilen section listesindeki her bir section için adı kullanarak veritabanında bir section arar ve eşleşen kayıt varsa yeni section listesine ekler.
-     * Eşleşen kayıt yoksa, sectionRepository kullanarak section'ı veritabanına kaydeder ve yeni section listesine ekler.
-     * @param sections kaydedilecek olan Section listesi
-     * @return kaydedilmiş Section listesi
+     * For each section in the given section list, searches for a section in the database using its name and adds the matching record to a new section list.
+     * If there is no matching record, saves the section to the database using sectionRepository and adds it to the new section list.
+     * @param sections list of Section objects to be saved
+     * @return list of saved Section objects
      */
     @Override
     public List<Section> saveSection(List<Section> sections) {
@@ -52,8 +49,8 @@ public class  SectionManager implements SectionService {
     }
 
     /**
-     * Tüm section kayıtlarını döndürür.
-     * @return SectionDto türünde bir liste döndürür.
+     * Returns all section records.
+     * @return a list of SectionDto.
      */
     @Override
     public List<SectionDto> getAllSection() {
@@ -61,18 +58,19 @@ public class  SectionManager implements SectionService {
         return sectionRepository.findAll().stream().map(section -> modelMapper.map(section,SectionDto.class)).collect(Collectors.toList());
     }
 
+
     /**
-     * Verilen isimdeki Section nesnesini döndürür.
-     * @param sectionName String türünde Section adı
-     * @return Section türünde Section nesnesi
-     * @throws EntityNotFoundException Section adı bulunamazsa fırlatılır.
+     * Returns the Section object with the given name.
+     *
+     * @param sectionName The name of the Section as a String
+     * @return The Section object with the given name
+     * @throws EntityNotFoundException if the Section with the given name cannot be found
      */
     @Override
     public Section findSectionByName(String sectionName) {
         Section section=sectionRepository.findSectionByName(sectionName);
         if(section==null) {
-            LOGGER.warn("işlem başarısız!!{} adlı terminal bulunamadı. ",sectionName);
-            throw new EntityNotFoundException("Terminal bulunamadı");
+            throw new EntityNotFoundException("Terminal not found.");
         }
         else
             return section;
