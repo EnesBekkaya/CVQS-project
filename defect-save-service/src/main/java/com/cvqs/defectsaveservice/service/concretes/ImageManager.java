@@ -55,7 +55,7 @@ public class ImageManager implements ImageService {
 
             return imageRepository.save(image);
         }catch (Exception e){
-            throw new IOException("kaydetme işlemi başarısız");
+            throw new IOException("The save operation has failed.");
         }
     }
 
@@ -89,7 +89,7 @@ public class ImageManager implements ImageService {
             byte[] markedBytes = outputStream.toByteArray();
             return markedBytes;
         }catch (IOException e){
-            throw  new IOException("Dosyadan bayt okunurken hata oluştu",e);
+            throw  new IOException("An error occurred while reading bytes from a file.",e);
         }
 
     }

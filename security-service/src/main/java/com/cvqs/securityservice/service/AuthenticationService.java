@@ -1,23 +1,21 @@
 package com.cvqs.securityservice.service;
 
 import com.cvqs.securityservice.dto.AuthRequest;
-import com.cvqs.securityservice.dto.AuthenticationResponse;
 import com.cvqs.securityservice.dto.UserSecurityDto;
 import com.cvqs.securityservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
+
 /**
- * AuthenticationService, kullanıcı kimlik doğrulama ve JWT işlemleri için bir servistir.
+ * The AuthenticationService is a service used for user authentication and JWT operations.
  *
  * @author Enes Bekkaya
- * @since  25.03.2023
+ * @since 25.03.2023
  */
 @Service
 @RequiredArgsConstructor
@@ -27,42 +25,48 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
     private final ModelMapper modelMapper;
-    private static final Logger LOGGER= LoggerFactory.getLogger(AuthenticationService.class);
 
 
     /**
-     * Kullanıcının kimlik doğrulamasını yapar ve JWT token oluşturur.
+     * Performs user authentication and creates a JWT token.
      *
-     * @param request  AuthRequest, kullanıcının kimlik bilgilerini içeren  nesne.
-     * @return AuthenticationResponse, kullanıcının kimlik doğrulaması başarılıysa JWT token döndürür.
+     * @param request an AuthRequest object containing the user's credentials
+     * @return an AuthenticationResponse object containing a JWT token if the user's authentication is successful
      */
-    public AuthenticationResponse authenticate(AuthRequest request) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-        var user = userRepository.findByUsername(request.getUsername());
-        var jwtToken = jwtService.generateToken(modelMapper.map(user, UserSecurityDto.class));
-        return AuthenticationResponse.builder()
-                .token(jwtToken)
-                .build();
+    public String authenticate(AuthRequest request) {
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+            var user = userRepository.findByUsername(request.getUsername());
+            var jwtToken = jwtService.generateToken(modelMapper.map(user, UserSecurityDto.class));
+            return jwtToken;
+        }catch (Exception e){
+            return "failed";
+        }
     }
+
     /**
-     * Verilen JWT token'ın geçerli olup olmadığını ve belirtilen rolü içerip içermediğini kontrol eder.
+     * Checks the given JWT token is valid and contains the specified role.
      *
-     * @param token String, kontrol edilecek JWT token'ı.
-     * @param role String, kontrol edilecek rol.
-     * @return boolean, token geçerliyse ve belirtilen rolü içeriyorsa true, aksi halde false döndürür.
+     * @param token String, JWT token to be checked.
+     * @param role  String, role to be checked.
+     * @return boolean, true if the token is valid and contains the specified role, false otherwise.
      */
-    public boolean isInvalid(String token,String role) {
+    public String isInvalid(String token, String role) {
         try {
             String username = jwtService.extractUsername(token);
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-            if (jwtService.isTokenValidAndHasRole(token, userDetails,role)) {
-                return true;
+
+            if (jwtService.isTokenValid(token, userDetails)) {
+                if (jwtService.hasRole(token, role)) {
+                    return "valid";
+                } else {
+                    return "unauthorized";
+                }
             }
+            return "notValid";
+
+        } catch (Exception e) {
+            return "notValid";
         }
-      catch (Exception e){
-          LOGGER.warn("Invalid access...!");
-          return false;
-        }
-        return false;
     }
 }

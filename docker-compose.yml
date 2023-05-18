@@ -1,0 +1,105 @@
+version: '3'
+
+networks:
+  my-network:
+
+services:
+  eureka:
+    container_name: eureka
+    image: enesbek13/eureka
+    ports:
+      - "8761:8761"
+    networks:
+      - my-network
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "10"
+
+  gateway:
+    container_name: gateway
+    image:  enesbek13/gateway
+    ports:
+      - "8888:8888"
+    networks:
+      - my-network
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "10"
+
+
+  security-service:
+    container_name: security
+    image:  enesbek13/security
+    ports:
+      - "9092:9092"
+    networks:
+      - my-network
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "10"
+
+  user-management-service:
+    container_name: user-service
+    image: enesbek13/user-service
+
+    ports:
+      - "8082:8082"
+    networks:
+      - my-network
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "10"
+
+  terminal-service:
+    container_name: terminal-service
+    image: enesbek13/terminal-service
+    ports:
+      - "8081:8081"
+    networks:
+      - my-network
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "10"
+
+
+  defect-save-service:
+    container_name: defect-save
+    image: enesbek13/defect-save
+    ports:
+      - "9091:9091"
+    networks:
+      - my-network
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "10"
+
+
+  defect-listing-service:
+    container_name: defect-listing
+    image: enesbek13/defect-listing
+    ports:
+      - "9094:9094"
+    networks:
+      - my-network
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "10"
+
+  postgres:
+    container_name: postgres
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=12345
+      - POSTGRES_DB=CvqsDb
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    networks:
+      - my-network
+

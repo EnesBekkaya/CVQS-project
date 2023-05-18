@@ -1,7 +1,6 @@
 package com.cvqs.securityservice.service;
 
 import com.cvqs.securityservice.dto.AuthRequest;
-import com.cvqs.securityservice.dto.AuthenticationResponse;
 import com.cvqs.securityservice.dto.User;
 import com.cvqs.securityservice.dto.UserSecurityDto;
 import com.cvqs.securityservice.repository.UserRepository;
@@ -48,16 +47,14 @@ class AuthenticationServiceTest {
         UserSecurityDto userSecurityDto = new UserSecurityDto();
         userSecurityDto=modelMapper.map(user,UserSecurityDto.class);
 
-        AuthenticationResponse expectedResult= AuthenticationResponse.builder()
-                .token(jwt)
-                .build();
+        String  expectedResult= jwt;
         Mockito.when(userRepository.findByUsername(request.getUsername())).thenReturn(user);
 
 
         Mockito.when(jwtService.generateToken(userSecurityDto)).thenReturn(jwt);
 
 
-        AuthenticationResponse result = authenticationService.authenticate(request);
+        String result = authenticationService.authenticate(request);
 
         Assertions.assertEquals(expectedResult,result);
     }
