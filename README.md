@@ -40,7 +40,7 @@ GET	| /sections/getAll| Get all terminals | ×
 
 
 #### Defect Save service
-Error logging and updating operations.
+Defect save and updating operations.
 
 
 Method	| Path	| Description	| User authenticated
@@ -62,7 +62,6 @@ GET	| /defectListing/getImage	| Get image 	| ×
 GET	| /defectListing/sort	| Get defect in order	| ×
 
 ## Infrastructure
-[Spring cloud](https://spring.io/projects/spring-cloud) provides powerful tools for developers to quickly implement common distributed systems patterns -
 <img width="880" alt="Infrastructure services" src="https://user-images.githubusercontent.com/83051118/235382264-9276f10f-06db-4b37-aec3-e2e381edd893.jpg">
 
 ## Let's try it out
